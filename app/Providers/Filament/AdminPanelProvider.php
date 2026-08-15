@@ -27,6 +27,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path(env('FILAMENT_PATH', 'griblex-9q2-hatchway'))
             ->login()
+            ->profile()
             ->authGuard('admin')
             ->colors([
                 'primary' => Color::Amber,
