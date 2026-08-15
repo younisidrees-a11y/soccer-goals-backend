@@ -34,11 +34,17 @@
         </div>
         <div class="stat-item">
           <div class="stat-label">League Leader</div>
-          <div class="stat-value"><span class="crest crest-{{ $leader->team->crest_code }}" role="img" aria-label="{{ $leader->team->full_name }} badge"></span>{{ $leader->team->name }}</div>
+          <div class="stat-value">
+            @if($leader)
+              <span class="crest crest-{{ $leader->team->crest_code }}" role="img" aria-label="{{ $leader->team->full_name }} badge"></span>{{ $leader->team->name }}
+            @else
+              TBC
+            @endif
+          </div>
         </div>
         <div class="stat-item">
           <div class="stat-label">Leader's Points</div>
-          <div class="stat-value">{{ $leader->points }} pts</div>
+          <div class="stat-value">{{ $leader->points ?? 0 }} pts</div>
         </div>
         <div class="stat-item">
           <div class="stat-label">Next Matchday</div>
@@ -133,16 +139,16 @@
 
       <section aria-labelledby="matches-heading" id="fixtures">
         <div class="section-head">
-          <h2 id="matches-heading">Matchday 1 &mdash; Full Results</h2>
+          <h2 id="matches-heading">Matchday 1 &mdash; {{ $matchdayOneResults->contains(fn ($m) => $m->isFinal()) ? 'Full Results' : 'Fixtures' }}</h2>
         </div>
 
         <div class="match-grid">
           @foreach ($matchdayOneResults as $m)
           <a href="{{ route('matches.show', $m->id) }}" class="match-card">
-            <div class="match-meta"><span class="match-comp">{{ $league->name }} &middot; {{ $m->venue }}</span><span class="match-status">Full-Time</span></div>
+            <div class="match-meta"><span class="match-comp">{{ $league->name }} &middot; {{ $m->venue }}</span><span class="match-status">{{ $m->isFinal() ? 'Full-Time' : $m->kickoff_at->format('D j M, H:i') }}</span></div>
             <div class="match-teams">
-              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->homeTeam->crest_code }}" role="img" aria-label="{{ $m->homeTeam->full_name }} badge"></span><span class="team-name">{{ $m->homeTeam->name }}</span></div><span class="team-score{{ $m->home_score > $m->away_score ? ' winning' : '' }}">{{ $m->home_score }}</span></div>
-              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->awayTeam->crest_code }}" role="img" aria-label="{{ $m->awayTeam->full_name }} badge"></span><span class="team-name">{{ $m->awayTeam->name }}</span></div><span class="team-score{{ $m->away_score > $m->home_score ? ' winning' : '' }}">{{ $m->away_score }}</span></div>
+              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->homeTeam->crest_code }}" role="img" aria-label="{{ $m->homeTeam->full_name }} badge"></span><span class="team-name">{{ $m->homeTeam->name }}</span></div>@if($m->isFinal())<span class="team-score{{ $m->home_score > $m->away_score ? ' winning' : '' }}">{{ $m->home_score }}</span>@endif</div>
+              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->awayTeam->crest_code }}" role="img" aria-label="{{ $m->awayTeam->full_name }} badge"></span><span class="team-name">{{ $m->awayTeam->name }}</span></div>@if($m->isFinal())<span class="team-score{{ $m->away_score > $m->home_score ? ' winning' : '' }}">{{ $m->away_score }}</span>@endif</div>
             </div>
             <div class="match-venue">{{ $m->venue }}</div>
           </a>
