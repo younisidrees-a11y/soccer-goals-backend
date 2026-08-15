@@ -16,6 +16,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -29,6 +30,16 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->profile(\App\Filament\Pages\Auth\EditProfile::class)
             ->authGuard('admin')
+            ->brandName('The Soccer Goals')
+            ->brandLogo(new HtmlString(
+                '<span style="display:flex;align-items:center;gap:.5rem;font-weight:700;">'
+                .'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="width:1.5rem;height:1.5rem;">'
+                .'<path d="M3 4h18M3 4v15M21 4v15M3 8.2h4.2M3 12h4.2M3 15.8h4.2M21 8.2h-4.2M21 12h-4.2M21 15.8h-4.2"/>'
+                .'</svg>'
+                .'<span>The Soccer Goals</span>'
+                .'</span>'
+            ))
+            ->favicon(asset('favicon.ico'))
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -40,7 +51,6 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
