@@ -54,6 +54,10 @@ class TeamResource extends Resource
                     ->numeric(),
                 Forms\Components\Textarea::make('history_essay')
                     ->columnSpanFull(),
+                Forms\Components\Toggle::make('is_published')
+                    ->label('Published (visible on live site)')
+                    ->helperText('Off by default. Review the team, then switch this on to make it public.')
+                    ->default(false),
 
                 SeoFields::section(),
             ]);
@@ -85,6 +89,10 @@ class TeamResource extends Resource
                 Tables\Columns\TextColumn::make('founded_year')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\IconColumn::make('is_published')
+                    ->label('Live')
+                    ->boolean()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -98,12 +106,31 @@ class TeamResource extends Resource
                 Tables\Filters\SelectFilter::make('league_id')
                     ->relationship('league', 'name')
                     ->label('League'),
+                Tables\Filters\TernaryFilter::make('is_published')
+                    ->label('Published'),
             ])
             ->actions([
+                Tables\Actions\Action::make('togglePublish')
+                    ->label(fn (Team $record) => $record->is_published ? 'Unpublish' : 'Publish')
+                    ->icon(fn (Team $record) => $record->is_published ? 'heroicon-o-eye-slash' : 'heroicon-o-eye')
+                    ->color(fn (Team $record) => $record->is_published ? 'gray' : 'success')
+                    ->action(fn (Team $record) => $record->update(['is_published' => ! $record->is_published])),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('publish')
+                        ->label('Publish selected')
+                        ->icon('heroicon-o-eye')
+                        ->color('success')
+                        ->action(fn ($records) => Team::whereIn('id', $records->pluck('id'))->update(['is_published' => true]))
+                        ->deselectRecordsAfterCompletion(),
+                    Tables\Actions\BulkAction::make('unpublish')
+                        ->label('Unpublish selected')
+                        ->icon('heroicon-o-eye-slash')
+                        ->color('gray')
+                        ->action(fn ($records) => Team::whereIn('id', $records->pluck('id'))->update(['is_published' => false]))
+                        ->deselectRecordsAfterCompletion(),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);

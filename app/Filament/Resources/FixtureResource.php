@@ -73,6 +73,11 @@ class FixtureResource extends Resource
                             ->rows(3),
                     ]),
 
+                Forms\Components\Toggle::make('is_published')
+                    ->label('Published (visible on live site)')
+                    ->helperText('Off by default. Review the fixture, then switch this on to make it public.')
+                    ->default(false),
+
                 SeoFields::section(),
             ]);
     }
@@ -101,6 +106,10 @@ class FixtureResource extends Resource
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state) => $state === 'live' ? 'warning' : 'gray'),
+                Tables\Columns\IconColumn::make('is_published')
+                    ->label('Live')
+                    ->boolean()
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('league_id')
@@ -113,8 +122,15 @@ class FixtureResource extends Resource
                         ->orderBy('matchday')
                         ->pluck('matchday', 'matchday')
                         ->toArray()),
+                Tables\Filters\TernaryFilter::make('is_published')
+                    ->label('Published'),
             ])
             ->actions([
+                Tables\Actions\Action::make('togglePublish')
+                    ->label(fn (MatchFixture $record) => $record->is_published ? 'Unpublish' : 'Publish')
+                    ->icon(fn (MatchFixture $record) => $record->is_published ? 'heroicon-o-eye-slash' : 'heroicon-o-eye')
+                    ->color(fn (MatchFixture $record) => $record->is_published ? 'gray' : 'success')
+                    ->action(fn (MatchFixture $record) => $record->update(['is_published' => ! $record->is_published])),
                 Tables\Actions\Action::make('reportResult')
                     ->label('Report result')
                     ->icon('heroicon-o-check-circle')
@@ -162,6 +178,18 @@ class FixtureResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('publish')
+                        ->label('Publish selected')
+                        ->icon('heroicon-o-eye')
+                        ->color('success')
+                        ->action(fn ($records) => MatchFixture::whereIn('id', $records->pluck('id'))->update(['is_published' => true]))
+                        ->deselectRecordsAfterCompletion(),
+                    Tables\Actions\BulkAction::make('unpublish')
+                        ->label('Unpublish selected')
+                        ->icon('heroicon-o-eye-slash')
+                        ->color('gray')
+                        ->action(fn ($records) => MatchFixture::whereIn('id', $records->pluck('id'))->update(['is_published' => false]))
+                        ->deselectRecordsAfterCompletion(),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);

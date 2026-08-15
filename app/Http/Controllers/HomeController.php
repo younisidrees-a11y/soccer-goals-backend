@@ -11,15 +11,18 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $premierLeague = League::where('slug', 'premier-league')->first();
-        $laLiga = League::where('slug', 'la-liga')->first();
+        $premierLeague = League::published()->where('slug', 'premier-league')->first();
+        $laLiga = League::published()->where('slug', 'la-liga')->first();
 
-        $todaysMatches = MatchFixture::with(['homeTeam', 'awayTeam'])
-            ->where('league_id', $premierLeague->id)
-            ->where('matchday', 1)
-            ->orderBy('kickoff_at')
-            ->take(4)
-            ->get();
+        $todaysMatches = $premierLeague
+            ? MatchFixture::with(['homeTeam', 'awayTeam'])
+                ->published()
+                ->where('league_id', $premierLeague->id)
+                ->where('matchday', 1)
+                ->orderBy('kickoff_at')
+                ->take(4)
+                ->get()
+            : collect();
 
         $latestNews = NewsArticle::with(['league', 'team'])
             ->published()
@@ -28,28 +31,29 @@ class HomeController extends Controller
             ->get();
 
         $upcomingFixtures = MatchFixture::with(['homeTeam', 'awayTeam', 'league'])
+            ->published()
             ->where('status', 'scheduled')
             ->orderBy('kickoff_at')
             ->take(5)
             ->get();
 
         $recentResults = MatchFixture::with(['homeTeam', 'awayTeam', 'league'])
+            ->published()
             ->where('status', 'final')
             ->orderByDesc('kickoff_at')
             ->take(5)
             ->get();
 
-        $plStandings = Standing::with('team')
-            ->where('league_id', $premierLeague->id)
-            ->orderBy('position')
-            ->get();
+        $plStandings = $premierLeague
+            ? Standing::with('team')->where('league_id', $premierLeague->id)->orderBy('position')->get()
+            : collect();
 
-        $laLigaStandings = Standing::with('team')
-            ->where('league_id', $laLiga->id)
-            ->orderBy('position')
-            ->get();
+        $laLigaStandings = $laLiga
+            ? Standing::with('team')->where('league_id', $laLiga->id)->orderBy('position')->get()
+            : collect();
 
         $tickerMatches = MatchFixture::with(['homeTeam', 'awayTeam'])
+            ->published()
             ->where('status', 'final')
             ->orderByDesc('kickoff_at')
             ->take(7)

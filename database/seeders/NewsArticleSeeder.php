@@ -26,11 +26,8 @@ class NewsArticleSeeder extends Seeder
             'league_id' => $pl?->id,
             'team_id' => $liverpool?->id,
             'source' => 'ai',
-            'status' => 'published',
+            'status' => 'pending_review',
             'author' => 'AI Draft, reviewed by Editorial Admin',
-            'reviewed_by' => $editor?->id,
-            'reviewed_at' => now()->subHours(4),
-            'published_at' => now()->subHours(4),
         ]);
 
         NewsArticle::updateOrCreate(['slug' => 'city-derby-week-win-sample'], [

@@ -17,12 +17,19 @@ class MatchFixture extends Model
         'venue', 'home_preview_note', 'away_preview_note',
         'status', 'home_score', 'away_score', 'match_report', 'stats',
         'meta_title', 'meta_description', 'meta_keywords',
+        'is_published',
     ];
 
     protected $casts = [
         'kickoff_at' => 'datetime',
         'stats' => 'array',
+        'is_published' => 'boolean',
     ];
+
+    public function scopePublished($query)
+    {
+        return $query->where('is_published', true);
+    }
 
     public function league(): BelongsTo
     {

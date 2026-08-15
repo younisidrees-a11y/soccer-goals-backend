@@ -8,24 +8,29 @@ class MatchController extends Controller
 {
     public function show(MatchFixture $match)
     {
+        abort_unless($match->is_published, 404);
+
         $match->load(['league', 'homeTeam', 'awayTeam']);
 
         $homeStanding = $match->homeTeam->standing()->where('league_id', $match->league_id)->first();
         $awayStanding = $match->awayTeam->standing()->where('league_id', $match->league_id)->first();
 
-        $homeNext = MatchFixture::where('status', '!=', 'final')
+        $homeNext = MatchFixture::published()
+            ->where('status', '!=', 'final')
             ->where(fn ($q) => $q->where('home_team_id', $match->home_team_id)->orWhere('away_team_id', $match->home_team_id))
             ->where('id', '!=', $match->id)
             ->orderBy('kickoff_at')
             ->first();
 
-        $awayNext = MatchFixture::where('status', '!=', 'final')
+        $awayNext = MatchFixture::published()
+            ->where('status', '!=', 'final')
             ->where(fn ($q) => $q->where('home_team_id', $match->away_team_id)->orWhere('away_team_id', $match->away_team_id))
             ->where('id', '!=', $match->id)
             ->orderBy('kickoff_at')
             ->first();
 
         $tickerMatches = MatchFixture::with(['homeTeam', 'awayTeam'])
+            ->published()
             ->where('status', 'final')
             ->orderByDesc('kickoff_at')
             ->take(7)

@@ -18,7 +18,7 @@ class TeamController extends Controller
 
     public function show(string $slug)
     {
-        $team = Team::with('league')->where('slug', $slug)->firstOrFail();
+        $team = Team::with('league')->published()->where('slug', $slug)->firstOrFail();
 
         $leagueStandings = Standing::with('team')
             ->where('league_id', $team->league_id)
@@ -28,12 +28,14 @@ class TeamController extends Controller
         $standing = $leagueStandings->firstWhere('team_id', $team->id);
 
         $upcomingMatches = MatchFixture::with(['homeTeam', 'awayTeam'])
+            ->published()
             ->where(fn ($q) => $q->where('home_team_id', $team->id)->orWhere('away_team_id', $team->id))
             ->where('status', 'scheduled')
             ->orderBy('kickoff_at')
             ->get();
 
         $recentMatches = MatchFixture::with(['homeTeam', 'awayTeam'])
+            ->published()
             ->where(fn ($q) => $q->where('home_team_id', $team->id)->orWhere('away_team_id', $team->id))
             ->where('status', 'final')
             ->orderByDesc('kickoff_at')
@@ -57,6 +59,7 @@ class TeamController extends Controller
             ->get();
 
         $tickerMatches = MatchFixture::with(['homeTeam', 'awayTeam'])
+            ->published()
             ->where('status', 'final')
             ->orderByDesc('kickoff_at')
             ->take(7)

@@ -14,7 +14,17 @@ class League extends Model
         'name', 'slug', 'country', 'flag_code', 'season', 'total_matchdays',
         'table_intro', 'table_closing',
         'meta_title', 'meta_description', 'meta_keywords',
+        'is_published',
     ];
+
+    protected $casts = [
+        'is_published' => 'boolean',
+    ];
+
+    public function scopePublished($query)
+    {
+        return $query->where('is_published', true);
+    }
 
     public function teams(): HasMany
     {

@@ -15,7 +15,17 @@ class Team extends Model
         'league_id', 'name', 'full_name', 'slug', 'crest_code', 'color_hex',
         'stadium', 'stadium_capacity', 'manager', 'founded_year', 'history_essay',
         'meta_title', 'meta_description', 'meta_keywords',
+        'is_published',
     ];
+
+    protected $casts = [
+        'is_published' => 'boolean',
+    ];
+
+    public function scopePublished($query)
+    {
+        return $query->where('is_published', true);
+    }
 
     public function league(): BelongsTo
     {

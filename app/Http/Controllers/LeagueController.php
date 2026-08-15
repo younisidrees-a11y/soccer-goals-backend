@@ -12,7 +12,7 @@ class LeagueController extends Controller
 {
     public function show(Request $request, string $slug)
     {
-        $league = League::where('slug', $slug)->firstOrFail();
+        $league = League::published()->where('slug', $slug)->firstOrFail();
 
         $standings = Standing::with('team')
             ->where('league_id', $league->id)
@@ -22,12 +22,14 @@ class LeagueController extends Controller
         $leader = $standings->first();
 
         $matchdayOneResults = MatchFixture::with(['homeTeam', 'awayTeam'])
+            ->published()
             ->where('league_id', $league->id)
             ->where('matchday', 1)
             ->orderBy('kickoff_at')
             ->get();
 
-        $nextFixture = MatchFixture::where('league_id', $league->id)
+        $nextFixture = MatchFixture::published()
+            ->where('league_id', $league->id)
             ->where('status', 'scheduled')
             ->orderBy('kickoff_at')
             ->first();
@@ -39,6 +41,7 @@ class LeagueController extends Controller
             ->get();
 
         $tickerMatches = MatchFixture::with(['homeTeam', 'awayTeam'])
+            ->published()
             ->where('status', 'final')
             ->orderByDesc('kickoff_at')
             ->take(7)
