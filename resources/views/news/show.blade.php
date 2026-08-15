@@ -1,0 +1,118 @@
+@extends('layouts.site')
+
+@section('title', $article->meta_title ?: $article->title . ' | The Soccer Goals')
+@section('meta_description', $article->meta_description ?: $article->dek)
+@section('meta_keywords', $article->meta_keywords ?: $article->title . ', ' . $categoryLabel . ($article->team ? ', ' . $article->team->name : '') . ($article->league ? ', ' . $article->league->name : ''))
+@section('canonical', route('news.show', $article->slug))
+@section('og_title', $article->meta_title ?: $article->title)
+@section('og_description', $article->meta_description ?: $article->dek)
+
+@section('content')
+
+  <div class="wrap" style="padding-top:24px;">
+    <div class="breadcrumb">
+      <a href="{{ route('home') }}">Home</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+      <a href="{{ route('news.index') }}">News</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+      <a href="{{ route('news.category', $article->category) }}">{{ $categoryLabel }}</a>
+    </div>
+  </div>
+
+  <div class="wrap content-grid">
+    <div class="content-main">
+
+      <article>
+        @php
+          $catTag = match ($article->category) {
+              'match-report' => ['cat-report', 'Match Report'],
+              'transfers' => ['cat-transfers', 'Transfers'],
+              'analysis' => ['cat-analysis', 'Analysis'],
+              'injury' => ['cat-report', 'Injury Update'],
+              default => ['cat-opinion', 'Club News'],
+          };
+        @endphp
+        <span class="cat-tag {{ $catTag[0] }}">{{ $catTag[1] }}</span>
+        <h1 style="font-size:clamp(1.6rem,1.2rem + 1.6vw,2.2rem);margin-top:12px;">{{ $article->title }}</h1>
+        <p class="dek" style="font-size:16px;color:var(--ink-muted);margin-top:10px;">{{ $article->dek }}</p>
+        <div class="byline" style="margin-top:14px;">
+          By {{ $article->author ?: 'The Soccer Goals' }}
+          <span class="dot"></span>
+          {{ ($article->published_at ?? $article->created_at)->format('j M Y') }}
+          @if($article->team)
+          <span class="dot"></span>
+          <a href="{{ route('teams.show', $article->team->slug) }}" style="color:inherit;text-decoration:underline;">{{ $article->team->name }}</a>
+          @endif
+          @if($article->league)
+          <span class="dot"></span>
+          <a href="{{ route('leagues.show', $article->league->slug) }}" style="color:inherit;text-decoration:underline;">{{ $article->league->name }}</a>
+          @endif
+        </div>
+
+        <div style="margin-top:24px;font-size:15.5px;line-height:1.75;color:var(--ink);max-width:68ch;">
+          @foreach (explode("\n", $article->body) as $paragraph)
+            @continue(trim($paragraph) === '')
+            <p style="margin-bottom:16px;">{{ trim($paragraph) }}</p>
+          @endforeach
+        </div>
+      </article>
+
+      @if($related->isNotEmpty())
+      <section aria-labelledby="related-heading" style="margin-top:40px;">
+        <div class="section-head"><h2 id="related-heading">Related Stories</h2></div>
+        <div class="news-grid">
+          @foreach ($related as $rel)
+          @php
+            $relTag = match ($rel->category) {
+                'match-report' => ['cat-report', 'Match Report'],
+                'transfers' => ['cat-transfers', 'Transfers'],
+                'analysis' => ['cat-analysis', 'Analysis'],
+                'injury' => ['cat-report', 'Injury Update'],
+                default => ['cat-opinion', 'Club News'],
+            };
+          @endphp
+          <article class="news-card">
+            <a href="{{ route('news.show', $rel->slug) }}"><div class="media" aria-hidden="true"><svg viewBox="0 0 200 150"><circle cx="160" cy="20" r="60" fill="#fff" fill-opacity=".08"/></svg></div></a>
+            <span class="cat-tag {{ $relTag[0] }}">{{ $relTag[1] }}</span>
+            <a href="{{ route('news.show', $rel->slug) }}"><h3>{{ $rel->title }}</h3></a>
+            <p class="dek">{{ $rel->dek }}</p>
+          </article>
+          @endforeach
+        </div>
+      </section>
+      @endif
+
+    </div>
+
+    <aside class="sidebar" aria-label="Sidebar">
+      <div class="widget">
+        <h2 style="margin-bottom:14px;">More News</h2>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <a href="{{ route('news.index') }}" class="btn btn-ghost btn-block">All News</a>
+          <a href="{{ route('news.category', $article->category) }}" class="btn btn-ghost btn-block">More {{ $categoryLabel }}</a>
+        </div>
+      </div>
+
+      <div class="ad-slot ad-mpu">
+        <span class="ad-eyebrow">Advertisement</span>
+        <span class="ad-size">300 &times; 250 &middot; AdSense unit</span>
+      </div>
+
+      <div class="widget newsletter-widget">
+        <h2>The Matchday Briefing</h2>
+        <p>Every score, every storyline, every morning &mdash; straight to your inbox.</p>
+        <form class="nl-form" onsubmit="return false;">
+          <input type="email" placeholder="you@email.com" required aria-label="Email address">
+          <button class="btn btn-accent btn-block" type="submit">Sign Up Free</button>
+        </form>
+        <p class="nl-fine">No spam. Unsubscribe anytime.</p>
+      </div>
+
+      <div class="ad-slot ad-skyscraper">
+        <span class="ad-eyebrow">Advertisement</span>
+        <span class="ad-size">300 &times; 600 &middot; AdSense unit</span>
+      </div>
+    </aside>
+  </div>
+
+@endsection

@@ -1,0 +1,76 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class MatchFixture extends Model
+{
+    use HasFactory;
+
+    protected $table = 'matches';
+
+    protected $fillable = [
+        'league_id', 'home_team_id', 'away_team_id', 'matchday', 'kickoff_at',
+        'venue', 'home_preview_note', 'away_preview_note',
+        'status', 'home_score', 'away_score', 'match_report', 'stats',
+        'meta_title', 'meta_description', 'meta_keywords',
+    ];
+
+    protected $casts = [
+        'kickoff_at' => 'datetime',
+        'stats' => 'array',
+    ];
+
+    public function league(): BelongsTo
+    {
+        return $this->belongsTo(League::class);
+    }
+
+    public function homeTeam(): BelongsTo
+    {
+        return $this->belongsTo(Team::class, 'home_team_id');
+    }
+
+    public function awayTeam(): BelongsTo
+    {
+        return $this->belongsTo(Team::class, 'away_team_id');
+    }
+
+    public function isFinal(): bool
+    {
+        return $this->status === 'final';
+    }
+
+    /** A fixture is upcoming until it's been reported as final. */
+    public function isFixture(): bool
+    {
+        return $this->status !== 'final';
+    }
+
+    public function scopeFixtures($query)
+    {
+        return $query->where('status', '!=', 'final');
+    }
+
+    public function scopeResults($query)
+    {
+        return $query->where('status', 'final');
+    }
+
+    /** Win/draw/loss from the home team's perspective, or null if not played. */
+    public function homeResult(): ?string
+    {
+        if (! $this->isFinal() || $this->home_score === null) {
+            return null;
+        }
+
+        return match (true) {
+            $this->home_score > $this->away_score => 'win',
+            $this->home_score < $this->away_score => 'loss',
+            default => 'draw',
+        };
+    }
+}
