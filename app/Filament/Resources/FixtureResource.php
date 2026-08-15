@@ -89,11 +89,14 @@ class FixtureResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('league.name')
                     ->label('League')
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('homeTeam.name')
-                    ->label('Home'),
+                    ->label('Home')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('awayTeam.name')
-                    ->label('Away'),
+                    ->label('Away')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('matchday')
                     ->numeric()
                     ->sortable(),
