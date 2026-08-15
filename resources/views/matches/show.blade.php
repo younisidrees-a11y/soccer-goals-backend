@@ -7,16 +7,31 @@
   $kickoffTime = $match->kickoff_at->format('H:i');
   $dateLong = $match->kickoff_at->format('j M Y');
 
-  $defaultTitle = $isFinal
-      ? "{$title} {$match->home_score}-{$match->away_score} — {$year} Match Result & Report | The Soccer Goals"
-      : "{$title} — {$year} Fixture, Match Kick-off {$kickoffTime} | The Soccer Goals";
+  if ($isFinal) {
+      $score = "{$match->home_score}-{$match->away_score}";
+      $goalDiff = abs($match->home_score - $match->away_score);
+      $isDraw = $match->home_score === $match->away_score;
+      $winner = $isDraw ? null : ($match->home_score > $match->away_score ? $match->homeTeam->name : $match->awayTeam->name);
 
-  $defaultDescription = $isFinal
-      ? "{$title} {$match->home_score}-{$match->away_score}: full match report, stats and result from {$match->venue}, {$dateLong}. {$match->league->name} {$match->league->season} season."
-      : "{$match->homeTeam->name} host {$match->awayTeam->name} at {$match->venue} on {$dateLong}, kick-off {$kickoffTime}. Team news, form and match preview. {$match->league->name} {$match->league->season} season.";
+      $resultPhrase = $isDraw
+          ? 'Match Ends in a Draw'
+          : "{$winner} Win by {$goalDiff} " . Str::plural('Goal', $goalDiff);
 
-  $defaultKeywords = "{$match->homeTeam->name}, {$match->awayTeam->name}, {$title}, {$match->league->name}"
-      . ($isFinal ? ', match report, final score, result' : ', fixture, match preview, kick off time');
+      $defaultTitle = "{$title} {$score} Match Result {$year}: {$resultPhrase} | The Soccer Goals";
+
+      $defaultDescription = $isDraw
+          ? "{$title} ended {$score} at {$match->venue} on {$dateLong}. Full-time result, match report and stats from this {$match->league->name} {$match->league->season} clash."
+          : "{$title} {$score}: {$winner} win by {$goalDiff} " . Str::plural('goal', $goalDiff) . " at {$match->venue} on {$dateLong}. Full match report, stats and final score from this {$match->league->name} {$match->league->season} fixture.";
+
+      $defaultKeywords = "{$match->homeTeam->name}, {$match->awayTeam->name}, {$title}, {$score}, match result, final score, {$match->league->name}, {$year}"
+          . ($isDraw ? ', draw' : ", {$winner} win");
+  } else {
+      $defaultTitle = "{$title} Live Match {$year}: Going to Play on {$dateLong} at {$kickoffTime} | The Soccer Goals";
+
+      $defaultDescription = "{$match->homeTeam->name} host {$match->awayTeam->name} live at {$match->venue} on {$dateLong}, kick-off {$kickoffTime}. Team news, form and match preview for this {$match->league->name} {$match->league->season} fixture.";
+
+      $defaultKeywords = "{$match->homeTeam->name}, {$match->awayTeam->name}, {$title}, live match, {$match->league->name}, fixture {$year}, kick off time, match preview";
+  }
 @endphp
 
 @section('title', $match->meta_title ?: $defaultTitle)
