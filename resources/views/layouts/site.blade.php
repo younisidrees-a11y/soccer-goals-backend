@@ -99,7 +99,7 @@
             <div class="mega-col">
               <div class="mega-col-title">Quick Links</div>
               <ul>
-                <li><a href="{{ route('tables.index') }}">Points Tables</a></li>
+                <li><a href="{{ route('tables.index') }}">Points Table</a></li>
                 <li><a href="{{ route('fixtures.index') }}">Fixtures</a></li>
                 <li><a href="{{ route('results.index') }}">Results</a></li>
                 <li><a href="#">Top Scorers</a></li>
@@ -158,7 +158,7 @@
 
         <li><a class="nav-link" href="{{ route('fixtures.index') }}">Fixtures</a></li>
         <li><a class="nav-link" href="{{ route('results.index') }}">Results</a></li>
-        <li><a class="nav-link" href="{{ route('tables.index') }}">Tables</a></li>
+        <li><a class="nav-link" href="{{ route('tables.index') }}">Points Table</a></li>
         <li><a class="nav-link" href="#">Transfers</a></li>
       </ul>
     </nav>
@@ -214,7 +214,7 @@
       </details>
       <a href="{{ route('fixtures.index') }}">Fixtures</a>
       <a href="{{ route('results.index') }}">Results</a>
-      <a href="{{ route('tables.index') }}">Tables</a>
+      <a href="{{ route('tables.index') }}">Points Table</a>
       <a href="#">Transfers</a>
     </div>
 
@@ -276,7 +276,7 @@
       <ul>
         <li><a href="{{ route('fixtures.index') }}">Fixtures</a></li>
         <li><a href="{{ route('results.index') }}">Results</a></li>
-        <li><a href="{{ route('tables.index') }}">Points Tables</a></li>
+        <li><a href="{{ route('tables.index') }}">Points Table</a></li>
         <li><a href="#">Top Scorers</a></li>
         <li><a href="#">Transfers</a></li>
         <li><a href="#">Team Directory</a></li>
