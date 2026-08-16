@@ -51,6 +51,7 @@ class SaudiProLeagueSeeder extends Seeder
                 'flag_code' => 'sau',
                 'season' => '2026-27',
                 'total_matchdays' => 34,
+                'about_text' => "The Saudi Pro League has become one of the most talked-about competitions in world football over the past few years. What was once a solid domestic league watched mainly inside Saudi Arabia has grown into a genuine global story, as clubs have invested heavily to bring in experienced players and coaches from Europe's top leagues.\nEighteen clubs compete for the title each season, with Al-Hilal, Al-Nassr and Al-Ittihad among the sides that have set the pace in recent years. The season runs from August through to the following spring, with every club playing each other twice, home and away, across a long and demanding campaign.",
             ]
         );
 

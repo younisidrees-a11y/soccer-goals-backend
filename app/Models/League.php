@@ -12,7 +12,7 @@ class League extends Model
 
     protected $fillable = [
         'name', 'slug', 'country', 'flag_code', 'season', 'total_matchdays',
-        'table_intro', 'table_closing',
+        'about_text', 'table_intro', 'table_closing',
         'meta_title', 'meta_description', 'meta_keywords',
         'is_published',
     ];

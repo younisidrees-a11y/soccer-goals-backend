@@ -160,7 +160,12 @@
         <div class="essay-part-tag">League History</div>
         <h2 id="history-heading-1">About the {{ $league->name }}</h2>
         <p class="lede">The {{ $league->name }} is {{ $league->country }}'s top professional football division, contested by {{ $league->teams->count() }} clubs across {{ $league->total_matchdays }} matchdays every season.</p>
-        <p>This page is served entirely from the live database &mdash; the standings, results and league leader above are read straight out of MySQL through the same Filament admin panel editors use to keep scores current, rather than being hand-written into the page.</p>
+        @if($league->about_text)
+          @foreach (explode("\n", $league->about_text) as $paragraph)
+            @continue(trim($paragraph) === '')
+            <p>{{ trim($paragraph) }}</p>
+          @endforeach
+        @endif
       </section>
 
       <div class="ad-slot ad-native">

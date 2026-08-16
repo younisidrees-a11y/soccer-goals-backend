@@ -43,6 +43,11 @@ class LeagueResource extends Resource
                 Forms\Components\TextInput::make('total_matchdays')
                     ->required()
                     ->numeric(),
+                Forms\Components\Textarea::make('about_text')
+                    ->label('About this league')
+                    ->helperText('Shown under "About the [League]" on the public league page. One paragraph per line.')
+                    ->rows(4)
+                    ->columnSpanFull(),
                 Forms\Components\Toggle::make('is_published')
                     ->label('Published (visible on live site)')
                     ->helperText('Off by default. Review the league, then switch this on to make it public.')
