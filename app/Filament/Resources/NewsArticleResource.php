@@ -40,6 +40,14 @@ class NewsArticleResource extends Resource
                             ->required()
                             ->rows(12)
                             ->columnSpanFull(),
+                        Forms\Components\FileUpload::make('image_path')
+                            ->label('Article image')
+                            ->image()
+                            ->disk('public')
+                            ->directory('news-images')
+                            ->visibility('public')
+                            ->imageEditor()
+                            ->columnSpanFull(),
                         Forms\Components\Select::make('category')
                             ->options([
                                 'match-report' => 'Match report',
@@ -101,6 +109,9 @@ class NewsArticleResource extends Resource
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
+                Tables\Columns\ImageColumn::make('image_url')
+                    ->label('')
+                    ->square(),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable()
                     ->limit(50)

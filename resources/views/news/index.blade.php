@@ -53,7 +53,13 @@
         };
       @endphp
       <article class="news-card">
-        <a href="{{ route('news.show', $article->slug) }}"><div class="media" aria-hidden="true"><svg viewBox="0 0 200 150"><circle cx="160" cy="20" r="60" fill="#fff" fill-opacity=".08"/></svg></div></a>
+        <a href="{{ route('news.show', $article->slug) }}"><div class="media" aria-hidden="true">
+          @if($article->image_url)
+            <img src="{{ $article->image_url }}" alt="{{ $article->title }}" loading="lazy">
+          @else
+            <svg viewBox="0 0 200 150"><circle cx="160" cy="20" r="60" fill="#fff" fill-opacity=".08"/></svg>
+          @endif
+        </div></a>
         <span class="cat-tag {{ $catTag[0] }}">{{ $catTag[1] }}</span>
         <a href="{{ route('news.show', $article->slug) }}"><h3>{{ $article->title }}</h3></a>
         <p class="dek">{{ $article->dek }}</p>

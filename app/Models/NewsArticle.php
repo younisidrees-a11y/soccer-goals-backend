@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class NewsArticle extends Model
@@ -12,7 +13,7 @@ class NewsArticle extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'slug', 'dek', 'body', 'category', 'league_id', 'team_id',
+        'title', 'slug', 'dek', 'body', 'image_path', 'category', 'league_id', 'team_id',
         'match_id', 'source', 'status', 'author', 'reviewed_by', 'reviewed_at',
         'rejection_reason', 'published_at',
         'meta_title', 'meta_description', 'meta_keywords',
@@ -30,6 +31,27 @@ class NewsArticle extends Model
                 $article->slug = Str::slug($article->title).'-'.Str::random(6);
             }
         });
+    }
+
+    /**
+     * Resolves image_path to a real URL whether it's a static asset path
+     * (e.g. seeded articles) or a path from Filament's storage-disk upload.
+     */
+    public function getImageUrlAttribute(): ?string
+    {
+        if (! $this->image_path) {
+            return null;
+        }
+
+        if (Str::startsWith($this->image_path, ['http://', 'https://', '/'])) {
+            return $this->image_path;
+        }
+
+        if (Storage::disk('public')->exists($this->image_path)) {
+            return Storage::disk('public')->url($this->image_path);
+        }
+
+        return asset($this->image_path);
     }
 
     public function league(): BelongsTo

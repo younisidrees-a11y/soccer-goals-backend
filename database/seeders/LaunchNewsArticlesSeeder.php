@@ -39,6 +39,7 @@ Chelsea, for their part, will leave Manchester with few regrets. They matched Ci
 
 Both teams are back in action next weekend, with City on the road and Chelsea returning to Stamford Bridge. Neither performance will have settled many arguments about who the real contenders are this season, but it was, at the very least, a proper opening-day football match.
 BODY,
+                'image_path' => 'assets/img/news/man-city-2-1-chelsea-opening-day-2026.svg',
                 'category' => 'match-report',
                 'league_id' => $premierLeague?->id,
                 'team_id' => 55, // Man City
@@ -70,6 +71,7 @@ Barcelona's front line looked sharp throughout, combining well in tight spaces a
 
 Both clubs return to action in a fortnight, with Barcelona facing a trip across the country and Valencia looking to bounce back on home soil at the Mestalla. On this evidence, Barcelona will start as favourites wherever they play this season.
 BODY,
+                'image_path' => 'assets/img/news/barcelona-4-1-valencia-season-opener-2026.svg',
                 'category' => 'match-report',
                 'league_id' => $laLiga?->id,
                 'team_id' => 13, // Barcelona
@@ -101,6 +103,7 @@ Kingdom Arena will be full and loud for kick-off, and the pressure on the home s
 
 Whatever happens this weekend, it is only the opening chapter of a long season. But in a league where opening-day form has a habit of setting the tone, Al-Hilal will want to start the way they mean to go on.
 BODY,
+                'image_path' => 'assets/img/news/al-hilal-saudi-pro-league-season-preview-2026.svg',
                 'category' => 'analysis',
                 'league_id' => $saudiProLeague?->id,
                 'team_id' => $alHilal?->id,

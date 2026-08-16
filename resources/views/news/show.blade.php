@@ -49,6 +49,12 @@
           @endif
         </div>
 
+        @if($article->image_url)
+        <div class="media media-hero" style="margin-top:22px;">
+          <img src="{{ $article->image_url }}" alt="{{ $article->title }}">
+        </div>
+        @endif
+
         <div style="margin-top:24px;font-size:15.5px;line-height:1.75;color:var(--ink);max-width:68ch;">
           @foreach (explode("\n", $article->body) as $paragraph)
             @continue(trim($paragraph) === '')
@@ -72,7 +78,13 @@
             };
           @endphp
           <article class="news-card">
-            <a href="{{ route('news.show', $rel->slug) }}"><div class="media" aria-hidden="true"><svg viewBox="0 0 200 150"><circle cx="160" cy="20" r="60" fill="#fff" fill-opacity=".08"/></svg></div></a>
+            <a href="{{ route('news.show', $rel->slug) }}"><div class="media" aria-hidden="true">
+              @if($rel->image_url)
+                <img src="{{ $rel->image_url }}" alt="{{ $rel->title }}" loading="lazy">
+              @else
+                <svg viewBox="0 0 200 150"><circle cx="160" cy="20" r="60" fill="#fff" fill-opacity=".08"/></svg>
+              @endif
+            </div></a>
             <span class="cat-tag {{ $relTag[0] }}">{{ $relTag[1] }}</span>
             <a href="{{ route('news.show', $rel->slug) }}"><h3>{{ $rel->title }}</h3></a>
             <p class="dek">{{ $rel->dek }}</p>
