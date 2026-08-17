@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Transfer deadline day graphic">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1552C0"/>
+      <stop offset="55%" stop-color="#0E3E96"/>
+      <stop offset="100%" stop-color="#081B33"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="72%" cy="32%" r="60%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <g transform="translate(950,220)" opacity="0.22">
+    <circle cx="0" cy="0" r="160" fill="none" stroke="#ffffff" stroke-width="6"/>
+    <line x1="0" y1="0" x2="0" y2="-100" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+    <line x1="0" y1="0" x2="70" y2="30" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="0" cy="0" r="10" fill="#ffffff"/>
+  </g>
+
+  <rect x="64" y="56" width="210" height="40" rx="7" fill="#0A1620" fill-opacity="0.4"/>
+  <text x="169" y="82" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" letter-spacing="1.5" fill="#ffffff" text-anchor="middle">TRANSFER NEWS</text>
+
+  <text x="64" y="320" font-family="Georgia, 'Times New Roman', serif" font-size="56" font-weight="700" fill="#ffffff">Deadline Day</text>
+  <text x="64" y="372" font-family="Georgia, 'Times New Roman', serif" font-size="44" font-weight="700" fill="#ffffff" fill-opacity="0.85">Nerves</text>
+
+  <text x="64" y="450" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="600" fill="#ffffff" fill-opacity="0.9">Inside football's most chaotic 24 hours</text>
+
+  <rect x="64" y="546" width="1072" height="1.5" fill="#ffffff" fill-opacity="0.18"/>
+  <text x="64" y="588" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="600" letter-spacing="1" fill="#ffffff" fill-opacity="0.8">THE SOCCER GOALS · TRANSFER WINDOW 2026-27</text>
+</svg>
