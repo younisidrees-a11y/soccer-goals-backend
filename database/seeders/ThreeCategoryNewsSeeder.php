@@ -82,11 +82,11 @@ BODY,
                 'body' => <<<'BODY'
 Crystal Palace and West Ham served up an entertaining afternoon at Selhurst Park, sharing four goals in a 2-2 draw that had spells of real quality from both sides. Neither team was content to sit back and protect what they had, and that approach made for one of the more open games of the opening weekend.
 
-The numbers back up just how close this one was. Palace shaded possession with 55% of the ball, but West Ham matched them almost shot for shot, with 11 attempts to the home side's 12 and three shots on target apiece. It was the kind of game where either side could easily have finished with all three points, and neither would have had much to complain about if they had.
+The numbers show just how close this game really was. Crystal Palace had a little more of the ball, with 55% possession, but West Ham matched them shot for shot. Palace had 12 attempts on goal, West Ham had 11, and both teams managed three shots on target. This was the kind of game either team could have won, and nobody would have complained if they had.
 
-What made the afternoon so watchable was the momentum swinging back and forth. Just as one side looked to be taking control, the other found a response, and that pattern continued right through to the final whistle. For the neutral, it was four goals and a genuine contest from start to finish. For both sets of players, it was the kind of result that leaves you replaying moments long after the final whistle.
+What made this match so entertaining was the way momentum kept shifting. Just when one team looked to be in control, the other hit back. That pattern carried on right until the final whistle. For anyone watching, it was four goals and a real contest from start to finish. For the players, it was the kind of game that stays with you long after it ends.
 
-A draw is rarely the outcome either team wants, but on this occasion it felt like a fair reflection of two sides who matched each other for most of the afternoon. Both Palace and West Ham will take real positives from their attacking play into the weeks ahead, even if their defending will need tightening up if they want to turn performances like this into three points.
+A draw was not what either side wanted, but it felt like a fair result. Both teams were evenly matched for most of the game. Crystal Palace and West Ham will be pleased with how they attacked, and both will look to build on that. At the same time, both teams know they need to tighten up at the back if they want performances like this to bring home wins.
 BODY,
                 'image_path' => 'assets/img/news/crystal-palace-2-2-west-ham-2026.svg',
                 'category' => 'match-report',
