@@ -54,13 +54,13 @@ BODY,
                 'title' => "Deadline Day Nerves: Inside Football's Most Chaotic 24 Hours",
                 'dek' => 'Phones buzzing, medicals booked at the last minute, fans refreshing their timelines. Deadline day is unlike anything else in football.',
                 'body' => <<<'BODY'
-There is nothing quite like the final hours of a transfer window. Deals that have been quietly discussed for weeks suddenly speed up, medicals get booked at short notice, and supporters spend the day refreshing their phones hoping for one more signing before the window shuts.
+There is nothing quite like the final hours of a transfer window. Deals that have been quietly discussed for weeks suddenly speed up, medicals get booked at short notice, and fans spend the whole day refreshing their phones, hoping for one more signing before the window shuts.
 
-For clubs, deadline day is often less about big-money statement signings and more about fine-tuning a squad. A back-up goalkeeper here, a versatile defender there, a young player sent out on loan to get regular football. These are the moves that rarely make the front pages but can matter just as much once the season gets into full swing and injuries or suspensions start to bite.
+For most clubs, deadline day is not really about big, exciting signings. It is about fine-tuning the squad before the deadline. A back-up goalkeeper might arrive. A versatile defender could be added for cover. A young player may be sent out on loan just to get regular game time. These moves rarely make headlines, but they often matter just as much once the season is in full swing and injuries or suspensions start to bite.
 
-Behind the scenes, it is organised chaos. Agents, club officials and lawyers work against the clock to get paperwork finished before the deadline, and even deals that look certain in the morning can fall apart by the evening if terms cannot be agreed in time. It is a stressful day for everyone involved, and often just as tense for supporters watching from the outside as it is for the people negotiating the deals.
+Behind the scenes, deadline day is organised chaos. Agents, club officials, and lawyers all race against the clock to get the paperwork finished in time. Even deals that look certain in the morning can fall apart by the evening if the final details cannot be agreed. It is a stressful day for everyone involved, and just as nerve-wracking for supporters watching from home as it is for the people actually doing the negotiating.
 
-Once the window closes, attention shifts fully to results, and the business done in the previous weeks starts to be judged in a very different way. Signings that looked exciting on deadline day only really mean something once a player starts contributing on the pitch. For now, though, the drama of deadline day is a reminder of just how fast-moving the modern transfer market has become.
+Once the transfer window shuts, the focus shifts fully to results. Every deal made in the past few weeks now gets judged in a completely different way. A signing that looked exciting on deadline day only really matters once that player starts making a difference on the pitch. For now though, the drama of deadline day is a reminder of just how fast the modern transfer market really moves.
 BODY,
                 'image_path' => 'assets/img/news/transfer-deadline-day-nerves-2026.svg',
                 'category' => 'transfers',
