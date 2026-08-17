@@ -140,6 +140,34 @@
 
       @if($isFinal)
 
+        @php
+          $isDraw = $match->home_score === $match->away_score;
+          $bridgeSeed = hexdec(substr(md5('bridge-' . $match->id), 0, 6));
+
+          if ($isDraw) {
+              $bridgeTemplates = [
+                  "{$match->homeTeam->name} and {$match->awayTeam->name} drew {$match->home_score}-{$match->away_score} at {$match->venue}. Here's a closer look at how the numbers from the game stacked up.",
+                  "It finished {$match->home_score}-{$match->away_score} between {$match->homeTeam->name} and {$match->awayTeam->name} at {$match->venue}. Below is a look at how the game played out, statistically.",
+                  "{$match->homeTeam->name} and {$match->awayTeam->name} shared the points at {$match->venue}, drawing {$match->home_score}-{$match->away_score}. Here's what the numbers from the match tell us.",
+              ];
+          } else {
+              $winner = $match->home_score > $match->away_score ? $match->homeTeam->name : $match->awayTeam->name;
+              $loser = $match->home_score > $match->away_score ? $match->awayTeam->name : $match->homeTeam->name;
+              $bridgeTemplates = [
+                  "{$match->homeTeam->name} {$match->home_score}-{$match->away_score} {$match->awayTeam->name} was the final score at {$match->venue}. Here's a closer look at how the numbers from the game stacked up.",
+                  "{$winner} beat {$loser} {$match->home_score}-{$match->away_score} at {$match->venue}. Below is a look at how the game played out, statistically.",
+                  "It finished {$match->home_score}-{$match->away_score} to {$winner} at {$match->venue}. Here's what the numbers from the match tell us.",
+              ];
+          }
+
+          $bridgeParagraph = $bridgeTemplates[$bridgeSeed % count($bridgeTemplates)];
+        @endphp
+
+        <section aria-labelledby="summary-heading" style="margin-top:32px;">
+          <div class="section-head"><h2 id="summary-heading">Match Summary</h2></div>
+          <p style="font-size:15px;line-height:1.7;color:var(--ink);max-width:68ch;">{{ $bridgeParagraph }}</p>
+        </section>
+
         @if($match->stats)
         <section aria-labelledby="stats-heading" style="margin-top:32px;">
           <div class="section-head"><h2 id="stats-heading">Match Statistics</h2></div>
@@ -168,6 +196,44 @@
               @endif
             @endforeach
           </div>
+        </section>
+        @endif
+
+        @if($homeNext || $awayNext)
+        @php
+          $aheadSeed = hexdec(substr(md5('ahead-' . $match->id), 0, 6));
+
+          $describeNext = function ($team, $next) {
+              if (! $next) {
+                  return null;
+              }
+              $opponent = $next->home_team_id === $team->id ? $next->awayTeam->name : $next->homeTeam->name;
+              $venueWord = $next->home_team_id === $team->id ? 'at home to' : 'away at';
+
+              return "{$team->name} are back in action {$venueWord} {$opponent} on {$next->kickoff_at->format('j M')}";
+          };
+
+          $homeNextLine = $describeNext($match->homeTeam, $homeNext);
+          $awayNextLine = $describeNext($match->awayTeam, $awayNext);
+
+          if ($homeNextLine && $awayNextLine) {
+              $aheadTemplates = [
+                  "Looking ahead, {$homeNextLine}, while {$awayNextLine}.",
+                  "{$homeNextLine}. Meanwhile, {$awayNextLine}.",
+                  "Both sides are back in action soon: {$homeNextLine}, and {$awayNextLine}.",
+              ];
+          } elseif ($homeNextLine) {
+              $aheadTemplates = ["Looking ahead, {$homeNextLine}. {$match->awayTeam->name} do not have a fixture confirmed yet."];
+          } else {
+              $aheadTemplates = ["Looking ahead, {$awayNextLine}. {$match->homeTeam->name} do not have a fixture confirmed yet."];
+          }
+
+          $aheadParagraph = $aheadTemplates[$aheadSeed % count($aheadTemplates)];
+        @endphp
+
+        <section aria-labelledby="ahead-heading" style="margin-top:32px;">
+          <div class="section-head"><h2 id="ahead-heading">Looking Ahead</h2></div>
+          <p style="font-size:15px;line-height:1.7;color:var(--ink);max-width:68ch;">{{ $aheadParagraph }}</p>
         </section>
         @endif
 
