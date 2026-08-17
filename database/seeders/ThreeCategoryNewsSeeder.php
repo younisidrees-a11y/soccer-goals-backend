@@ -28,11 +28,11 @@ class ThreeCategoryNewsSeeder extends Seeder
                 'body' => <<<'BODY'
 There is a different energy around Sunderland right now, and you do not need to be inside the Stadium of Light to notice it. After years away from the top flight, the club is back in the Premier League, and the opening weekend gave supporters exactly the start they had been hoping for: a 2-1 win over Brentford in front of a crowd that was loud from the first whistle to the last.
 
-Promotion brings pressure as well as excitement, and plenty of newly-promoted teams find the step up tough going in the opening weeks. Sunderland did not look like a team overawed by the occasion. They played with energy, pressed high when they needed to, and gave their fans a performance to match the mood in the stands.
+Promotion brings excitement, but it also brings pressure. Many newly-promoted teams struggle in their first few games back in the Premier League. Sunderland did not look like one of those teams. They played with real energy, pressed high when it mattered, and matched the mood of their fans with a strong performance.
 
-What stood out most was not just the result, but the feeling around the place. Local pubs were full hours before kick-off, replica shirts were everywhere in the city centre, and the walk to the ground had the kind of buzz that only comes around when a club returns to where its supporters feel it belongs. For a fanbase that has waited a long time for this moment, that atmosphere matters just as much as the three points.
+What stood out most was not just the win, but the feeling around the club. Local pubs were packed hours before kick-off. Replica shirts were everywhere in the city centre. There was a real buzz on the walk to the stadium, the kind you only get when a club returns to where its fans feel it truly belongs. For supporters who have waited a long time for this, that feeling matters just as much as the three points.
 
-There is a long season ahead, and staying in the Premier League will be a far tougher challenge than getting promoted to it. But if the opening weekend is anything to go by, Sunderland look ready to embrace the challenge rather than fear it. The club, and the city behind it, are enjoying being back where they believe they belong.
+There is a long season ahead, and staying in the Premier League will be much harder than getting promoted to it. But based on this first weekend, Sunderland look ready for the challenge. The club, and the whole city behind it, are simply enjoying being back where they feel they belong.
 BODY,
                 'image_path' => 'assets/img/news/sunderland-return-club-news-2026.svg',
                 'category' => 'club-news',
