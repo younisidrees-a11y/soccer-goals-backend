@@ -143,24 +143,41 @@
         @php
           $isDraw = $match->home_score === $match->away_score;
           $bridgeSeed = hexdec(substr(md5('bridge-' . $match->id), 0, 6));
+          $possHome = $match->stats['possession']['home'] ?? null;
+          $shotsHome = $match->stats['shots']['home'] ?? null;
+          $shotsAway = $match->stats['shots']['away'] ?? null;
 
           if ($isDraw) {
+              $possLine = $possHome
+                  ? "Neither team could really take control of the ball for long, with {$match->homeTeam->name} holding {$possHome}% possession, close enough to an even split to explain why the game never settled into one side's favour."
+                  : "It was an even contest for large parts of the afternoon, with neither team able to take control of the game for long.";
+
               $bridgeTemplates = [
-                  "{$match->homeTeam->name} and {$match->awayTeam->name} drew {$match->home_score}-{$match->away_score} at {$match->venue}. Here's a closer look at how the numbers from the game stacked up.",
-                  "It finished {$match->home_score}-{$match->away_score} between {$match->homeTeam->name} and {$match->awayTeam->name} at {$match->venue}. Below is a look at how the game played out, statistically.",
-                  "{$match->homeTeam->name} and {$match->awayTeam->name} shared the points at {$match->venue}, drawing {$match->home_score}-{$match->away_score}. Here's what the numbers from the match tell us.",
+                  "{$match->homeTeam->name} and {$match->awayTeam->name} drew {$match->home_score}-{$match->away_score} at {$match->venue}, in a game that could easily have finished either way. {$possLine} Both sides had spells on top without ever pulling clear, and the shot count on the day backs up just how tight things were. A draw is rarely the result either team sets out to get, but on this occasion it was a fair reflection of ninety minutes where chances were shared roughly evenly. Below is a closer look at exactly how the numbers from the match broke down.",
+                  "It finished {$match->home_score}-{$match->away_score} between {$match->homeTeam->name} and {$match->awayTeam->name} at {$match->venue}, a scoreline that summed up a game short on clear separation between the two sides. {$possLine} There were spells of pressure from both teams, but not enough to turn a share of the points into all three. Days like this are part of a long season, and how each side responds in their next fixture will say plenty about their form heading forward. Here is a closer look at how the two teams compared statistically.",
               ];
           } else {
               $winner = $match->home_score > $match->away_score ? $match->homeTeam->name : $match->awayTeam->name;
               $loser = $match->home_score > $match->away_score ? $match->awayTeam->name : $match->homeTeam->name;
+              $winnerIsHome = $match->home_score > $match->away_score;
+
+              $possLine = $possHome
+                  ? ($winnerIsHome
+                      ? "{$winner} also had the better share of the ball, holding {$possHome}% possession, which usually goes hand in hand with the extra control a winning side tends to show."
+                      : "Even without the extra share of possession, which finished {$possHome}% in favour of {$loser}, {$winner} made the most of the chances that mattered and did enough to see the game out.")
+                  : "";
+
+              $shotsLine = ($shotsHome !== null && $shotsAway !== null)
+                  ? "The shot count told a similar story, with {$shotsHome} attempts from {$match->homeTeam->name} against {$shotsAway} from {$match->awayTeam->name} over the course of the game."
+                  : "";
+
               $bridgeTemplates = [
-                  "{$match->homeTeam->name} {$match->home_score}-{$match->away_score} {$match->awayTeam->name} was the final score at {$match->venue}. Here's a closer look at how the numbers from the game stacked up.",
-                  "{$winner} beat {$loser} {$match->home_score}-{$match->away_score} at {$match->venue}. Below is a look at how the game played out, statistically.",
-                  "It finished {$match->home_score}-{$match->away_score} to {$winner} at {$match->venue}. Here's what the numbers from the match tell us.",
+                  "{$winner} beat {$loser} {$match->home_score}-{$match->away_score} at {$match->venue}, and the numbers from the match back up how the game played out. {$possLine} {$shotsLine} {$loser} had their moments and did not make it easy from start to finish, but ultimately came up short on the day. Small margins like this one tend to add up over a season, and results such as this are often what separates teams in the table further down the line. Here is a closer look at exactly how the two sides compared, statistically.",
+                  "{$match->homeTeam->name} {$match->home_score}-{$match->away_score} {$match->awayTeam->name} was the final score at {$match->venue}, in a game where {$winner} did enough across the ninety minutes to deserve the three points. {$possLine} {$shotsLine} It was not always comfortable for {$winner}, and {$loser} pushed for a way back into the game, but the result stood. Games like this can carry real weight later in the season, so this is a scoreline worth remembering. Below is a closer look at how the match broke down, statistically.",
               ];
           }
 
-          $bridgeParagraph = $bridgeTemplates[$bridgeSeed % count($bridgeTemplates)];
+          $bridgeParagraph = trim(preg_replace('/\s+/', ' ', $bridgeTemplates[$bridgeSeed % count($bridgeTemplates)]));
         @endphp
 
         <section aria-labelledby="summary-heading" style="margin-top:32px;">
@@ -203,37 +220,37 @@
         @php
           $aheadSeed = hexdec(substr(md5('ahead-' . $match->id), 0, 6));
 
-          $describeNext = function ($team, $next) {
-              if (! $next) {
-                  return null;
-              }
-              $opponent = $next->home_team_id === $team->id ? $next->awayTeam->name : $next->homeTeam->name;
-              $venueWord = $next->home_team_id === $team->id ? 'at home to' : 'away at';
+          $aheadIntros = [
+              "does not have long to wait before getting back out onto the pitch",
+              "will already be turning their attention to what comes next",
+              "have a quick chance to build on this result",
+          ];
+          $homeAheadIntro = $aheadIntros[$aheadSeed % count($aheadIntros)];
+          $awayAheadIntro = $aheadIntros[($aheadSeed + 1) % count($aheadIntros)];
 
-              return "{$team->name} are back in action {$venueWord} {$opponent} on {$next->kickoff_at->format('j M')}";
-          };
-
-          $homeNextLine = $describeNext($match->homeTeam, $homeNext);
-          $awayNextLine = $describeNext($match->awayTeam, $awayNext);
-
-          if ($homeNextLine && $awayNextLine) {
-              $aheadTemplates = [
-                  "Looking ahead, {$homeNextLine}, while {$awayNextLine}.",
-                  "{$homeNextLine}. Meanwhile, {$awayNextLine}.",
-                  "Both sides are back in action soon: {$homeNextLine}, and {$awayNextLine}.",
-              ];
-          } elseif ($homeNextLine) {
-              $aheadTemplates = ["Looking ahead, {$homeNextLine}. {$match->awayTeam->name} do not have a fixture confirmed yet."];
-          } else {
-              $aheadTemplates = ["Looking ahead, {$awayNextLine}. {$match->homeTeam->name} do not have a fixture confirmed yet."];
-          }
-
-          $aheadParagraph = $aheadTemplates[$aheadSeed % count($aheadTemplates)];
+          $nextLinkText = fn ($next) => "{$next->homeTeam->name} vs {$next->awayTeam->name} going to play at {$next->kickoff_at->format('j F Y')} in {$next->league->name} {$next->league->season}";
         @endphp
 
         <section aria-labelledby="ahead-heading" style="margin-top:32px;">
           <div class="section-head"><h2 id="ahead-heading">Looking Ahead</h2></div>
-          <p style="font-size:15px;line-height:1.7;color:var(--ink);max-width:68ch;">{{ $aheadParagraph }}</p>
+          <div style="font-size:15px;line-height:1.7;color:var(--ink);max-width:68ch;">
+            @if($homeNext)
+            <p>
+              {{ $match->homeTeam->name }} {{ $homeAheadIntro }}. Their next test comes {{ $homeNext->home_team_id === $match->homeTeam->id ? 'at home to' : 'away at' }} {{ $homeNext->home_team_id === $match->homeTeam->id ? $homeNext->awayTeam->name : $homeNext->homeTeam->name }}, and how they respond after this result will be worth watching. You can follow the build-up and everything you need to know when
+              <a href="{{ route('matches.show', $homeNext->id) }}" style="color:var(--accent);text-decoration:underline;">{{ $nextLinkText($homeNext) }}</a>.
+            </p>
+            @else
+            <p>{{ $match->homeTeam->name }} do not have a fixture confirmed yet, so their next test is still to be set.</p>
+            @endif
+            @if($awayNext)
+            <p>
+              {{ $match->awayTeam->name }}, meanwhile, {{ $awayAheadIntro }}. They are next in action {{ $awayNext->home_team_id === $match->awayTeam->id ? 'at home to' : 'away at' }} {{ $awayNext->home_team_id === $match->awayTeam->id ? $awayNext->awayTeam->name : $awayNext->homeTeam->name }}, a game that will give an early sense of how they carry this result forward. Full details are here:
+              <a href="{{ route('matches.show', $awayNext->id) }}" style="color:var(--accent);text-decoration:underline;">{{ $nextLinkText($awayNext) }}</a>.
+            </p>
+            @else
+            <p>{{ $match->awayTeam->name }} do not have a fixture confirmed yet, so their next test is still to be set.</p>
+            @endif
+          </div>
         </section>
         @endif
 
