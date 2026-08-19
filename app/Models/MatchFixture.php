@@ -14,14 +14,17 @@ class MatchFixture extends Model
 
     protected $fillable = [
         'league_id', 'home_team_id', 'away_team_id', 'matchday', 'kickoff_at',
-        'venue', 'home_preview_note', 'away_preview_note',
-        'status', 'home_score', 'away_score', 'match_report', 'stats',
+        'venue', 'home_preview_note', 'away_preview_note', 'preview_published_at',
+        'status', 'home_score', 'away_score', 'home_score_ht', 'away_score_ht',
+        'match_report', 'halftime_report', 'halftime_published_at', 'stats',
         'meta_title', 'meta_description', 'meta_keywords',
         'is_published',
     ];
 
     protected $casts = [
         'kickoff_at' => 'datetime',
+        'preview_published_at' => 'datetime',
+        'halftime_published_at' => 'datetime',
         'stats' => 'array',
         'is_published' => 'boolean',
     ];
@@ -49,6 +52,11 @@ class MatchFixture extends Model
     public function isFinal(): bool
     {
         return $this->status === 'final';
+    }
+
+    public function isLive(): bool
+    {
+        return $this->status === 'live';
     }
 
     /** A fixture is upcoming until it's been reported as final. */

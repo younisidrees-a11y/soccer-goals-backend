@@ -3,6 +3,7 @@
 @php
   $title = $match->homeTeam->name . ' vs ' . $match->awayTeam->name;
   $isFinal = $match->status === 'final';
+  $isLive = $match->status === 'live';
   $year = $match->kickoff_at->format('Y');
   $kickoffTime = $match->kickoff_at->format('H:i');
   $dateLong = $match->kickoff_at->format('j M Y');
@@ -57,7 +58,14 @@
         <div>
           <div class="league-hero-eyebrow eyebrow" style="color:#8FB8FF;">{{ $match->league->name }}@if($match->venue) &middot; {{ $match->venue }}@endif</div>
           <h1 class="league-hero-title">{{ $title }}</h1>
-          <div class="league-hero-meta">{{ $match->kickoff_at->format('D j M Y') }} &middot; {{ $isFinal ? 'Full-Time' : $match->kickoff_at->format('H:i') . ' kick-off' }}</div>
+          <div class="league-hero-meta">
+            {{ $match->kickoff_at->format('D j M Y') }} &middot;
+            @if($isFinal) Full-Time
+            @elseif($isLive && $match->halftime_published_at) LIVE &middot; {{ $match->home_score_ht }}-{{ $match->away_score_ht }} at half-time
+            @elseif($isLive) LIVE &middot; first half underway
+            @else {{ $match->kickoff_at->format('H:i') }} kick-off
+            @endif
+          </div>
         </div>
       </div>
 
@@ -67,8 +75,13 @@
           <div class="stat-value">{{ $match->kickoff_at->format('D j M Y') }}</div>
         </div>
         <div class="stat-item">
-          <div class="stat-label">{{ $isFinal ? 'Status' : 'Kick-off' }}</div>
-          <div class="stat-value">{{ $isFinal ? 'Full-Time' : '' }}@unless($isFinal)<span class="dot-waiting" aria-hidden="true"></span>{{ $match->kickoff_at->format('H:i') }}@endunless</div>
+          <div class="stat-label">{{ $isFinal ? 'Status' : ($isLive ? 'Status' : 'Kick-off') }}</div>
+          <div class="stat-value">
+            @if($isFinal) Full-Time
+            @elseif($isLive) <span class="dot-waiting" aria-hidden="true"></span> LIVE
+            @else <span class="dot-waiting" aria-hidden="true"></span>{{ $match->kickoff_at->format('H:i') }}
+            @endif
+          </div>
         </div>
         <div class="stat-item">
           <div class="stat-label">Venue</div>
@@ -76,7 +89,13 @@
         </div>
         <div class="stat-item">
           <div class="stat-label">Result</div>
-          <div class="stat-value">{{ $isFinal ? $match->home_score . '-' . $match->away_score : 'Not yet played' }}</div>
+          <div class="stat-value">
+            @if($isFinal) {{ $match->home_score }}-{{ $match->away_score }}
+            @elseif($isLive && $match->halftime_published_at) {{ $match->home_score_ht }}-{{ $match->away_score_ht }} (HT)
+            @elseif($isLive) In progress
+            @else Not yet played
+            @endif
+          </div>
         </div>
       </div>
     </div>
@@ -91,6 +110,13 @@
 
   <div class="wrap content-grid">
     <div class="content-main">
+
+      @if($isLive && $match->halftime_report)
+        <section class="detail-closing" aria-labelledby="live-heading">
+          <h2 id="live-heading">Live Update &middot; Half-Time</h2>
+          <p>{{ $match->halftime_report }}</p>
+        </section>
+      @endif
 
       @if($isFinal)
 
