@@ -1,0 +1,87 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\MatchFixture;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+
+/**
+ * Writes a genuinely unique match report per fixture via the Anthropic API,
+ * so reports don't repeat the way a fixed template bank eventually does.
+ *
+ * Returns null on any failure (no key configured, network error, bad
+ * response) so callers can fall back to the local template bank instead of
+ * breaking the publish command.
+ */
+class AiMatchReportWriter
+{
+    public function write(MatchFixture $fixture, int $homeScore, int $awayScore, array $stats): ?string
+    {
+        $apiKey = config('services.anthropic.key');
+
+        if (! $apiKey) {
+            return null;
+        }
+
+        try {
+            $response = Http::withHeaders([
+                'x-api-key' => $apiKey,
+                'anthropic-version' => '2023-06-01',
+                'content-type' => 'application/json',
+            ])
+                ->timeout(30)
+                ->retry(2, 500)
+                ->post('https://api.anthropic.com/v1/messages', [
+                    'model' => config('services.anthropic.model'),
+                    'max_tokens' => 400,
+                    'messages' => [
+                        ['role' => 'user', 'content' => $this->buildPrompt($fixture, $homeScore, $awayScore, $stats)],
+                    ],
+                ]);
+
+            if ($response->failed()) {
+                Log::warning('AI match report request failed', [
+                    'match_id' => $fixture->id,
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]);
+
+                return null;
+            }
+
+            $text = trim((string) $response->json('content.0.text'));
+
+            return $text !== '' ? $text : null;
+        } catch (\Throwable $e) {
+            Log::warning('AI match report generation errored: '.$e->getMessage(), ['match_id' => $fixture->id]);
+
+            return null;
+        }
+    }
+
+    private function buildPrompt(MatchFixture $fixture, int $homeScore, int $awayScore, array $stats): string
+    {
+        $home = $fixture->homeTeam->name;
+        $away = $fixture->awayTeam->name;
+        $venue = $fixture->venue;
+        $league = $fixture->league->name;
+
+        $possessionHome = $stats['possession']['home'] ?? 50;
+        $possessionAway = $stats['possession']['away'] ?? 50;
+        $shotsHome = $stats['shots']['home'] ?? '-';
+        $shotsAway = $stats['shots']['away'] ?? '-';
+
+        return <<<PROMPT
+        Write a short football match report for a sports news website, in plain, natural, human English - the kind a real local sports journalist would write for a matchday roundup. Avoid robotic or corporate phrasing (no "furthermore", "it is important to note", "in conclusion"), avoid bullet points, and do not repeat the scoreline as a heading.
+
+        Match: {$home} {$homeScore}-{$awayScore} {$away}
+        Venue: {$venue}
+        Competition: {$league}
+        Possession: {$home} {$possessionHome}% - {$possessionAway}% {$away}
+        Shots: {$home} {$shotsHome} - {$shotsAway} {$away}
+
+        Write two short paragraphs, around 90-130 words in total, covering how the game went and what the result means. Weave the numbers in naturally rather than listing them. Return only the two paragraphs, no title, no headings, no markdown formatting.
+        PROMPT;
+    }
+}
