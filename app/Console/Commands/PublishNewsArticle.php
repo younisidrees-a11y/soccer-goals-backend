@@ -153,6 +153,8 @@ class PublishNewsArticle extends Command
 
         Write a 4-5 paragraph match report (roughly 350-450 words). Cover how the match unfolded, what the result means for both teams' league position, and a forward-looking closing line. Only use the facts given above - do not invent goal scorers, cards, or incidents not implied by the numbers.
 
+        The exact score ({$match->home_score}-{$match->away_score}) MUST appear as digits somewhere in the first paragraph - do not describe the result only in vague words like "a point apiece" or "shared the points" without also stating the literal scoreline. The title and every description of the result (draw, win, thriller, rout, etc.) must be factually consistent with that exact score - for example, never call a drawn match a "five-goal thriller" or any other framing that implies a result other than what the score above shows.
+
         {$this->jsonInstructions(4)}
         PROMPT;
 
