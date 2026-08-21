@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\MatchFixture;
+use App\Models\SiteSetting;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
     {
         View::composer('layouts.site', function ($view) {
             $view->with('hasLiveMatch', MatchFixture::where('status', 'live')->where('is_published', true)->exists());
+            $view->with('siteSettings', SiteSetting::current());
         });
     }
 }

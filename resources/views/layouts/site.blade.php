@@ -21,8 +21,14 @@
 <link rel="alternate icon" href="{{ asset('favicon.ico') }}">
 <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/site.css') }}">
+@if($siteSettings->analytics_head_code ?? null)
+{!! $siteSettings->analytics_head_code !!}
+@endif
 </head>
 <body>
+@if($siteSettings->analytics_body_code ?? null)
+{!! $siteSettings->analytics_body_code !!}
+@endif
 
 <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false">
 <defs>
