@@ -93,12 +93,16 @@ class PublishNewsArticle extends Command
         return self::SUCCESS;
     }
 
-    private function jsonInstructions(): string
+    private function jsonInstructions(int $minParagraphs): string
     {
-        return <<<'TXT'
+        return <<<TXT
+        Do not name any manager, player, coach, owner, or other real person who was not explicitly given to you in the facts above - not even ones you're confident about from general knowledge. Names change (managers get sacked, players get transferred) and a name you "know" may already be wrong. Refer to teams and squads only ("the visitors", "United's defence"), never named individuals who weren't provided.
+
+        The body is REQUIRED to contain at least {$minParagraphs} separate paragraphs, each a genuine paragraph of multiple sentences, separated by a blank line (two \\n characters). A response with fewer paragraphs than that is incorrect - check your own draft against this count before responding.
+
         Respond with ONLY valid JSON (no markdown fences, no commentary before or after) in exactly this shape:
-        {"title": "...", "dek": "...", "body": "paragraph one\n\nparagraph two\n\nparagraph three", "meta_title": "...", "meta_description": "...", "meta_keywords": "comma, separated, keywords"}
-        The title should be attractive, simple, and sleek - not clickbait. The dek is a single-sentence subtitle. Body paragraphs must be separated by a blank line (two \n characters).
+        {"title": "...", "dek": "...", "body": "paragraph one\\n\\nparagraph two\\n\\nparagraph three", "meta_title": "...", "meta_description": "...", "meta_keywords": "comma, separated, keywords"}
+        The title should be attractive, simple, and sleek - not clickbait. The dek is a single-sentence subtitle.
         TXT;
     }
 
@@ -147,7 +151,7 @@ class PublishNewsArticle extends Command
 
         Write a 4-5 paragraph match report (roughly 350-450 words). Cover how the match unfolded, what the result means for both teams' league position, and a forward-looking closing line. Only use the facts given above - do not invent goal scorers, cards, or incidents not implied by the numbers.
 
-        {$this->jsonInstructions()}
+        {$this->jsonInstructions(4)}
         PROMPT;
 
         return [
@@ -218,7 +222,7 @@ class PublishNewsArticle extends Command
 
         Write a 3-4 paragraph club news article (roughly 280-350 words) about how {$team->name}'s season is going right now - form, mood around the club, what's coming up. Only use the facts given above - do not invent transfers, injuries, or manager changes.
 
-        {$this->jsonInstructions()}
+        {$this->jsonInstructions(3)}
         PROMPT;
 
         return [
@@ -257,7 +261,7 @@ class PublishNewsArticle extends Command
 
         Write a 3-4 paragraph article (roughly 280-350 words).
 
-        {$this->jsonInstructions()}
+        {$this->jsonInstructions(3)}
         PROMPT;
 
         return [

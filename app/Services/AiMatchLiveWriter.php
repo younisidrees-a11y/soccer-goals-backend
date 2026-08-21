@@ -42,7 +42,7 @@ class AiMatchLiveWriter
         {$home->name} current league position: {$homePosition} ({$homePoints} points)
         {$away->name} current league position: {$awayPosition} ({$awayPoints} points)
 
-        Write two short previews, 2-3 sentences each, one written from each team's perspective - what's at stake for them in this match given their current position. Only use the facts given above.
+        Write two short previews, 2-3 sentences each, one written from each team's perspective - what's at stake for them in this match given their current position. Only use the facts given above. Do not name any manager, player, or other real person not given above - not even ones you're confident about from general knowledge, since names change and may already be outdated.
 
         Respond with ONLY valid JSON (no markdown fences, no commentary):
         {"home": "2-3 sentence preview from the home team's perspective", "away": "2-3 sentence preview from the away team's perspective"}
@@ -70,7 +70,7 @@ class AiMatchLiveWriter
         Venue: {$fixture->venue}
         Half-time score: {$home} {$homeScoreHt}-{$awayScoreHt} {$away}
 
-        Write 2-3 sentences summing up how the first half went, based only on the score given above - do not invent goal scorers, cards, or incidents.
+        Write 2-3 sentences summing up how the first half went, based only on the score given above - do not invent goal scorers, cards, or incidents, and do not name any manager, player, or other real person not given above.
 
         Respond with ONLY valid JSON (no markdown fences, no commentary):
         {"update": "2-3 sentence half-time update"}

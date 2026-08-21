@@ -82,6 +82,8 @@ class AiMatchReportWriter
         Shots: {$home} {$shotsHome} - {$shotsAway} {$away}
 
         Write two short paragraphs, around 90-130 words in total, covering how the game went and what the result means. Weave the numbers in naturally rather than listing them. Return only the two paragraphs, no title, no headings, no markdown formatting.
+
+        Do not name any manager, player, coach, or other real person - not even ones you're confident about from general knowledge, since names change and may already be outdated. Refer to the teams and squads only, never named individuals who weren't provided above.
         PROMPT;
     }
 }
