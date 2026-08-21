@@ -59,7 +59,7 @@ class NewsArticleResource extends Resource
                             ->required(),
                         Forms\Components\Select::make('source')
                             ->options([
-                                'ai' => 'AI-drafted',
+                                'ai' => 'Morphie',
                                 'human' => 'Human-written',
                             ])
                             ->required()
@@ -120,6 +120,7 @@ class NewsArticleResource extends Resource
                     ->badge(),
                 Tables\Columns\TextColumn::make('source')
                     ->badge()
+                    ->formatStateUsing(fn (string $state) => $state === 'ai' ? 'Morphie' : 'Human-written')
                     ->color(fn (string $state) => $state === 'ai' ? 'info' : 'gray'),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
