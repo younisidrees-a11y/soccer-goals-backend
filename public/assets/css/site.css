@@ -376,7 +376,7 @@
     display:grid;gap:28px;padding-block:36px 8px;
   }
   .media{
-    position:relative;border-radius:var(--radius-lg);overflow:hidden;
+    display:block;position:relative;border-radius:var(--radius-lg);overflow:hidden;
     background:
       radial-gradient(120% 140% at 15% 15%, rgba(255,255,255,.14), transparent 55%),
       linear-gradient(135deg, #0E2233 0%, #124C9E 55%, #1552C0 100%);

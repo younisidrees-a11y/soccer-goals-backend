@@ -14,15 +14,34 @@ class NewsArticle extends Model
 
     protected $fillable = [
         'title', 'slug', 'dek', 'body', 'image_path', 'category', 'league_id', 'team_id',
-        'match_id', 'source', 'status', 'author', 'reviewed_by', 'reviewed_at',
+        'match_id', 'source', 'status', 'is_pinned', 'author', 'reviewed_by', 'reviewed_at',
         'rejection_reason', 'published_at',
         'meta_title', 'meta_description', 'meta_keywords',
     ];
 
     protected $casts = [
+        'is_pinned' => 'boolean',
         'reviewed_at' => 'datetime',
         'published_at' => 'datetime',
     ];
+
+    private const CATEGORY_LABELS = [
+        'match-report' => ['cat-report', 'Match Report'],
+        'transfers' => ['cat-transfers', 'Transfers'],
+        'analysis' => ['cat-analysis', 'Analysis'],
+        'injury' => ['cat-report', 'Injury Update'],
+        'club-news' => ['cat-opinion', 'Club News'],
+    ];
+
+    public function getCategoryBadgeClassAttribute(): string
+    {
+        return self::CATEGORY_LABELS[$this->category][0] ?? 'cat-opinion';
+    }
+
+    public function getCategoryLabelAttribute(): string
+    {
+        return self::CATEGORY_LABELS[$this->category][1] ?? 'Club News';
+    }
 
     protected static function booted(): void
     {
@@ -110,5 +129,10 @@ class NewsArticle extends Model
     public function scopePublished($query)
     {
         return $query->where('status', 'published');
+    }
+
+    public function scopePinned($query)
+    {
+        return $query->where('is_pinned', true);
     }
 }

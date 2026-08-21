@@ -30,6 +30,18 @@ class HomeController extends Controller
             ->take(6)
             ->get();
 
+        $heroArticles = NewsArticle::published()->pinned()->orderByDesc('published_at')->take(4)->get();
+
+        if ($heroArticles->count() < 4) {
+            $heroArticles = $heroArticles->concat(
+                NewsArticle::published()
+                    ->whereNotIn('id', $heroArticles->pluck('id'))
+                    ->orderByDesc('published_at')
+                    ->take(4 - $heroArticles->count())
+                    ->get()
+            );
+        }
+
         $upcomingFixtures = MatchFixture::with(['homeTeam', 'awayTeam', 'league'])
             ->published()
             ->where('status', 'scheduled')
@@ -62,6 +74,7 @@ class HomeController extends Controller
         return view('home', compact(
             'todaysMatches',
             'latestNews',
+            'heroArticles',
             'upcomingFixtures',
             'recentResults',
             'plStandings',

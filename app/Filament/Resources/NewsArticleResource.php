@@ -90,6 +90,9 @@ class NewsArticleResource extends Resource
                             ])
                             ->required()
                             ->native(false),
+                        Forms\Components\Toggle::make('is_pinned')
+                            ->label('Pin to homepage')
+                            ->helperText('Pinned + published articles appear in the homepage hero, newest-pinned first. Only takes effect once the article is Published - up to 4 show at a time.'),
                         Forms\Components\Select::make('reviewed_by')
                             ->relationship('reviewer', 'name')
                             ->label('Reviewed by')
@@ -116,6 +119,9 @@ class NewsArticleResource extends Resource
                     ->searchable()
                     ->limit(50)
                     ->wrap(),
+                Tables\Columns\ToggleColumn::make('is_pinned')
+                    ->label('Pinned')
+                    ->tooltip('Pinned + published articles show in the homepage hero'),
                 Tables\Columns\TextColumn::make('category')
                     ->badge(),
                 Tables\Columns\TextColumn::make('source')
@@ -167,6 +173,8 @@ class NewsArticleResource extends Resource
                         'analysis' => 'Analysis',
                         'club-news' => 'Club news',
                     ]),
+                Tables\Filters\TernaryFilter::make('is_pinned')
+                    ->label('Pinned'),
             ])
             ->actions([
                 Tables\Actions\Action::make('approve')

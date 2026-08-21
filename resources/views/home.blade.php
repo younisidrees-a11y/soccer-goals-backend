@@ -10,57 +10,50 @@
 @section('content')
 
   <section class="hero wrap" aria-labelledby="hero-heading">
+    @if($heroArticles->isNotEmpty())
+    @php $lead = $heroArticles->first(); @endphp
     <article class="hero-lead">
-      <div class="media media-hero" aria-hidden="true">
-        <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
-          <line x1="400" y1="0" x2="400" y2="450" stroke="#fff" stroke-opacity=".18" stroke-width="2"/>
-          <circle cx="400" cy="225" r="62" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="2"/>
-          <circle cx="400" cy="225" r="3" fill="#fff" fill-opacity=".3"/>
-          <path d="M0 90 h110 v150 h-110 z" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width="2"/>
-          <path d="M800 90 h-110 v150 h110 z" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width="2"/>
-          <circle cx="140" cy="120" r="46" fill="#fff" fill-opacity=".07"/>
-          <circle cx="700" cy="340" r="70" fill="#fff" fill-opacity=".06"/>
-        </svg>
-        <span class="media-tag">Opening Weekend</span>
-      </div>
-      <div class="eyebrow">Premier League &middot; Season Preview</div>
-      <h1 id="hero-heading">Five Storylines to Watch as the Premier League Kicks Off</h1>
-      <p class="dek">New signings, a reshuffled top six and a fixture list front-loaded with early collisions &mdash; here's everything worth knowing before the first whistle of the new campaign.</p>
-      <div class="byline">By Marcus Ferreira <span class="dot"></span> 13 Aug 2026 <span class="dot"></span> 6 min read</div>
+      <a href="{{ route('news.show', $lead->slug) }}" class="media media-hero" aria-hidden="true">
+        @if($lead->image_url)
+          <img src="{{ $lead->image_url }}" alt="{{ $lead->title }}" loading="lazy">
+        @else
+          <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
+            <line x1="400" y1="0" x2="400" y2="450" stroke="#fff" stroke-opacity=".18" stroke-width="2"/>
+            <circle cx="400" cy="225" r="62" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="2"/>
+            <circle cx="400" cy="225" r="3" fill="#fff" fill-opacity=".3"/>
+            <path d="M0 90 h110 v150 h-110 z" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width="2"/>
+            <path d="M800 90 h-110 v150 h110 z" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width="2"/>
+            <circle cx="140" cy="120" r="46" fill="#fff" fill-opacity=".07"/>
+            <circle cx="700" cy="340" r="70" fill="#fff" fill-opacity=".06"/>
+          </svg>
+        @endif
+        <span class="media-tag">{{ $lead->category_label }}</span>
+      </a>
+      <div class="eyebrow">{{ $lead->league->name ?? $lead->category_label }} &middot; {{ $lead->category_label }}</div>
+      <a href="{{ route('news.show', $lead->slug) }}"><h1 id="hero-heading">{{ $lead->title }}</h1></a>
+      <p class="dek">{{ $lead->dek }}</p>
+      <div class="byline">By {{ $lead->author }} <span class="dot"></span> {{ $lead->published_at?->format('j M Y') }}</div>
     </article>
 
     <div class="hero-side">
+      @foreach($heroArticles->slice(1, 3) as $side)
       <article class="hero-side-card">
-        <div class="media" aria-hidden="true">
-          <svg viewBox="0 0 200 140" preserveAspectRatio="xMidYMid slice"><circle cx="160" cy="20" r="50" fill="#fff" fill-opacity=".08"/><circle cx="20" cy="120" r="40" fill="#fff" fill-opacity=".08"/></svg>
-        </div>
+        <a href="{{ route('news.show', $side->slug) }}" class="media" aria-hidden="true">
+          @if($side->image_url)
+            <img src="{{ $side->image_url }}" alt="{{ $side->title }}" loading="lazy">
+          @else
+            <svg viewBox="0 0 200 140" preserveAspectRatio="xMidYMid slice"><circle cx="160" cy="20" r="50" fill="#fff" fill-opacity=".08"/><circle cx="20" cy="120" r="40" fill="#fff" fill-opacity=".08"/></svg>
+          @endif
+        </a>
         <div>
-          <div class="eyebrow">Transfers</div>
-          <h3>Deadline Countdown: Ten Deals Still in Motion</h3>
-          <div class="byline">Aug 13 <span class="dot"></span> 4 min</div>
+          <div class="eyebrow">{{ $side->category_label }}</div>
+          <a href="{{ route('news.show', $side->slug) }}"><h3>{{ $side->title }}</h3></a>
+          <div class="byline">{{ $side->published_at?->format('M j') }}</div>
         </div>
       </article>
-      <article class="hero-side-card">
-        <div class="media" aria-hidden="true">
-          <svg viewBox="0 0 200 140" preserveAspectRatio="xMidYMid slice"><rect x="0" y="0" width="200" height="140" fill="none" stroke="#fff" stroke-opacity=".12" stroke-width="3"/><circle cx="100" cy="70" r="26" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="2"/></svg>
-        </div>
-        <div>
-          <div class="eyebrow">La Liga</div>
-          <h3>Bellingham and Yamal Headline a Star-Studded Round One</h3>
-          <div class="byline">Aug 13 <span class="dot"></span> 5 min</div>
-        </div>
-      </article>
-      <article class="hero-side-card">
-        <div class="media" aria-hidden="true">
-          <svg viewBox="0 0 200 140" preserveAspectRatio="xMidYMid slice"><circle cx="50" cy="40" r="60" fill="#fff" fill-opacity=".07"/></svg>
-        </div>
-        <div>
-          <div class="eyebrow">Bundesliga</div>
-          <h3>Bayern Look to Reload After a Busy Summer Rebuild</h3>
-          <div class="byline">Aug 12 <span class="dot"></span> 4 min</div>
-        </div>
-      </article>
+      @endforeach
     </div>
+    @endif
   </section>
 
   <div class="wrap">
@@ -101,15 +94,6 @@
         </div>
         <div class="news-grid">
           @forelse ($latestNews as $article)
-          @php
-            $catTag = match ($article->category) {
-                'match-report' => ['cat-report', 'Match Report'],
-                'transfers' => ['cat-transfers', 'Transfers'],
-                'analysis' => ['cat-analysis', 'Analysis'],
-                'injury' => ['cat-report', 'Injury Update'],
-                default => ['cat-opinion', 'Club News'],
-            };
-          @endphp
           <article class="news-card">
             <a href="{{ route('news.show', $article->slug) }}"><div class="media" aria-hidden="true">
               @if($article->image_url)
@@ -118,7 +102,7 @@
                 <svg viewBox="0 0 200 150"><circle cx="160" cy="20" r="60" fill="#fff" fill-opacity=".08"/></svg>
               @endif
             </div></a>
-            <span class="cat-tag {{ $catTag[0] }}">{{ $catTag[1] }}</span>
+            <span class="cat-tag {{ $article->category_badge_class }}">{{ $article->category_label }}</span>
             <a href="{{ route('news.show', $article->slug) }}"><h3>{{ $article->title }}</h3></a>
             <p class="dek">{{ $article->dek }}</p>
           </article>
