@@ -15,6 +15,11 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="@yield('og_title', 'The Soccer Goals — Soccer, Covered.')">
 <meta name="twitter:description" content="@yield('og_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the Premier League, La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')">
+<link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32.png') }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16.png') }}">
+<link rel="alternate icon" href="{{ asset('favicon.ico') }}">
+<link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/site.css') }}">
 </head>
 <body>
@@ -322,5 +327,21 @@
 </button>
 
 <script src="{{ asset('assets/js/site.js') }}" defer></script>
+@if($hasLiveMatch ?? false)
+<script>
+(function () {
+  document.querySelectorAll('link[rel~="icon"]').forEach(function (el) { el.remove(); });
+  var link = document.createElement('link');
+  link.rel = 'icon';
+  link.type = 'image/png';
+  document.head.appendChild(link);
+  var frames = ['{{ asset('favicon-live-on.png') }}', '{{ asset('favicon-live-off.png') }}'];
+  var i = 0;
+  function tick() { link.href = frames[i % frames.length]; i++; }
+  tick();
+  setInterval(tick, 700);
+})();
+</script>
+@endif
 </body>
 </html>
