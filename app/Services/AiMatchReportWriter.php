@@ -84,6 +84,8 @@ class AiMatchReportWriter
         Write two short paragraphs, around 90-130 words in total, covering how the game went and what the result means. Weave the numbers in naturally rather than listing them. Return only the two paragraphs, no title, no headings, no markdown formatting.
 
         Do not name any manager, player, coach, or other real person - not even ones you're confident about from general knowledge, since names change and may already be outdated. Refer to the teams and squads only, never named individuals who weren't provided above.
+
+        Write like a real person on deadline, not like an AI trying to sound human: vary sentence length noticeably rather than settling into a smooth even rhythm, never use "not only X but also Y", and avoid these words entirely: moreover, furthermore, delve, tapestry, boasts, showcases, underscores, testament to, realm, seamless, landscape, in today's world, it's worth noting, in conclusion, overall.
         PROMPT;
     }
 }

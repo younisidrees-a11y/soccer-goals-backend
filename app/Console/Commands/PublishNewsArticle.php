@@ -100,6 +100,8 @@ class PublishNewsArticle extends Command
 
         The body is REQUIRED to contain at least {$minParagraphs} separate paragraphs, each a genuine paragraph of multiple sentences, separated by a blank line (two \\n characters). A response with fewer paragraphs than that is incorrect - check your own draft against this count before responding.
 
+        Write like a real person on deadline, not like an AI trying to sound human. Concretely: vary sentence length a lot - mix short, blunt sentences with longer, winding ones, the way people actually talk, instead of settling into a smooth medium-length rhythm. Never use "not only X but also Y". Avoid neatly matched three-item lists. Do not use any of these words or phrases anywhere: moreover, furthermore, delve, tapestry, boasts, showcases, underscores, testament to, realm, seamless, ever-evolving, landscape, game-changer, in today's world, it's worth noting, at the end of the day, in conclusion, overall. If a sentence sounds like it belongs in a press release, rewrite it plainer.
+
         Respond with ONLY valid JSON (no markdown fences, no commentary before or after) in exactly this shape:
         {"title": "...", "dek": "...", "body": "paragraph one\\n\\nparagraph two\\n\\nparagraph three", "meta_title": "...", "meta_description": "...", "meta_keywords": "comma, separated, keywords"}
         The title should be attractive, simple, and sleek - not clickbait. The dek is a single-sentence subtitle.
