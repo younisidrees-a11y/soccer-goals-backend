@@ -29,6 +29,8 @@ class PublishNewsArticle extends Command
 {
     private const CATEGORIES = ['club-news', 'transfers', 'match-report'];
 
+    private const AUTHORS = ['Marcus Ferreira', 'Elena Whitfield', 'Tom Bracewell', 'Priya Nair'];
+
     public function handle(): int
     {
         $category = $this->argument('category');
@@ -82,7 +84,7 @@ class PublishNewsArticle extends Command
             'match_id' => $context['match_id'] ?? null,
             'source' => 'ai',
             'status' => 'pending_review',
-            'author' => 'Marcus Ferreira',
+            'author' => $this->pickAuthor(),
             'meta_title' => $written['meta_title'] ?? $written['title'],
             'meta_description' => $written['meta_description'] ?? $written['dek'],
             'meta_keywords' => $written['meta_keywords'] ?? '',
@@ -91,6 +93,15 @@ class PublishNewsArticle extends Command
         $this->info("Created \"{$article->title}\" ({$category}) - pending review in the admin panel.");
 
         return self::SUCCESS;
+    }
+
+    /** Picks a byline at random, excluding whoever wrote the most recent article, so the same author never publishes twice in a row. */
+    private function pickAuthor(): string
+    {
+        $lastAuthor = NewsArticle::orderByDesc('created_at')->value('author');
+        $candidates = array_diff(self::AUTHORS, [$lastAuthor]);
+
+        return $candidates[array_rand($candidates)] ?? self::AUTHORS[array_rand(self::AUTHORS)];
     }
 
     private function jsonInstructions(int $minParagraphs): string
