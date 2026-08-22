@@ -254,7 +254,8 @@
           $homeAheadIntro = $aheadIntros[$aheadSeed % count($aheadIntros)];
           $awayAheadIntro = $aheadIntros[($aheadSeed + 1) % count($aheadIntros)];
 
-          $nextLinkText = fn ($next) => "{$next->homeTeam->name} vs {$next->awayTeam->name} going to play at {$next->kickoff_at->format('j F Y')} in {$next->league->name} {$next->league->season}";
+          $nextLinkText = fn ($next) => "{$next->homeTeam->name} vs {$next->awayTeam->name}";
+          $nextDetails = fn ($next) => "going to play at {$next->kickoff_at->format('j F Y')} in {$next->league->name} {$next->league->season}";
         @endphp
 
         <section aria-labelledby="ahead-heading" style="margin-top:32px;">
@@ -263,7 +264,7 @@
             @if($homeNext)
             <p>
               {{ $match->homeTeam->name }} {{ $homeAheadIntro }}. Their next test comes {{ $homeNext->home_team_id === $match->homeTeam->id ? 'at home to' : 'away at' }} {{ $homeNext->home_team_id === $match->homeTeam->id ? $homeNext->awayTeam->name : $homeNext->homeTeam->name }}, and how they respond after this result will be worth watching. You can follow the build-up and everything you need to know when
-              <a href="{{ route('matches.show', $homeNext->id) }}" style="color:var(--accent);text-decoration:underline;">{{ $nextLinkText($homeNext) }}</a>.
+              <a href="{{ route('matches.show', $homeNext->id) }}" style="color:var(--accent);text-decoration:underline;">{{ $nextLinkText($homeNext) }}</a> {{ $nextDetails($homeNext) }}.
             </p>
             @else
             <p>{{ $match->homeTeam->name }} do not have a fixture confirmed yet, so their next test is still to be set.</p>
@@ -271,7 +272,7 @@
             @if($awayNext)
             <p>
               {{ $match->awayTeam->name }}, meanwhile, {{ $awayAheadIntro }}. They are next in action {{ $awayNext->home_team_id === $match->awayTeam->id ? 'at home to' : 'away at' }} {{ $awayNext->home_team_id === $match->awayTeam->id ? $awayNext->awayTeam->name : $awayNext->homeTeam->name }}, a game that will give an early sense of how they carry this result forward. Full details are here:
-              <a href="{{ route('matches.show', $awayNext->id) }}" style="color:var(--accent);text-decoration:underline;">{{ $nextLinkText($awayNext) }}</a>.
+              <a href="{{ route('matches.show', $awayNext->id) }}" style="color:var(--accent);text-decoration:underline;">{{ $nextLinkText($awayNext) }}</a> {{ $nextDetails($awayNext) }}.
             </p>
             @else
             <p>{{ $match->awayTeam->name }} do not have a fixture confirmed yet, so their next test is still to be set.</p>
