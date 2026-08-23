@@ -113,6 +113,27 @@
         @endif
       </section>
 
+      @if($team->manager)
+      <section aria-labelledby="coach-heading" class="essay-block" style="margin-top:28px;">
+        <h2 id="coach-heading">Head Coach</h2>
+        <div style="display:flex;align-items:flex-start;gap:16px;">
+          @if($team->manager_photo_url)
+            <img src="{{ $team->manager_photo_url }}" alt="{{ $team->manager }}" width="72" height="72" style="width:72px;height:72px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid var(--team-color);">
+          @else
+            <div style="width:72px;height:72px;border-radius:50%;background:var(--team-color);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;">{{ Str::of($team->manager)->explode(' ')->map(fn($w) => mb_substr($w,0,1))->join('') }}</div>
+          @endif
+          <div>
+            <p style="font-weight:600;margin:0 0 6px;">{{ $team->manager }}</p>
+            @if($team->manager_bio)
+              <p style="margin:0;">{{ $team->manager_bio }}</p>
+            @else
+              <p style="margin:0;color:var(--ink-muted);">Head coach of {{ $team->name }}.</p>
+            @endif
+          </div>
+        </div>
+      </section>
+      @endif
+
       @if($team->honours_facts)
       <section aria-labelledby="honours-heading" class="essay-block" style="margin-top:28px;">
         <h2 id="honours-heading">Trophies &amp; Honours</h2>

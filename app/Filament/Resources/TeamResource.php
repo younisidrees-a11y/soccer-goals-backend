@@ -49,7 +49,26 @@ class TeamResource extends Resource
                 Forms\Components\TextInput::make('stadium_capacity')
                     ->maxLength(20),
                 Forms\Components\TextInput::make('manager')
+                    ->label('Head coach name')
                     ->maxLength(255),
+                Forms\Components\FileUpload::make('manager_photo_path')
+                    ->label('Head coach photo (front-facing)')
+                    ->image()
+                    ->disk('public')
+                    ->directory('manager-photos')
+                    ->visibility('public')
+                    ->imageEditor()
+                    ->helperText('Use a real, correctly-identified photo of this specific person - a source like Wikipedia/Wikimedia Commons is a safe bet since those photos are usually free-licensed and tied to the right individual.'),
+                Forms\Components\Textarea::make('manager_facts')
+                    ->label('Head coach facts (real, verified facts only)')
+                    ->helperText('Short verified facts only - e.g. nationality, when appointed, one or two notable achievements. Leave blank for a minimal, safe bio with just the name and club. This is what the AI writer below is allowed to state as fact about a real, currently-employed person.')
+                    ->rows(3)
+                    ->columnSpanFull(),
+                Forms\Components\Textarea::make('manager_bio')
+                    ->label('Head coach bio (written from the facts above)')
+                    ->helperText('Run "php artisan teams:write-history {slug}" to generate this from the name and facts above - or write it by hand.')
+                    ->rows(3)
+                    ->columnSpanFull(),
                 Forms\Components\TextInput::make('founded_year')
                     ->numeric(),
                 Forms\Components\Textarea::make('honours_facts')

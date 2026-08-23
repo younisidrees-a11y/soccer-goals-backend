@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Team extends Model
 {
@@ -13,7 +15,8 @@ class Team extends Model
 
     protected $fillable = [
         'league_id', 'name', 'full_name', 'slug', 'crest_code', 'color_hex',
-        'stadium', 'stadium_capacity', 'manager', 'founded_year', 'history_essay', 'honours_facts',
+        'stadium', 'stadium_capacity', 'manager', 'manager_facts', 'manager_bio', 'manager_photo_path',
+        'founded_year', 'history_essay', 'honours_facts',
         'meta_title', 'meta_description', 'meta_keywords',
         'is_published',
     ];
@@ -21,6 +24,24 @@ class Team extends Model
     protected $casts = [
         'is_published' => 'boolean',
     ];
+
+    /** Resolves manager_photo_path to a real URL whether it's a static asset path or a Filament storage-disk upload. */
+    public function getManagerPhotoUrlAttribute(): ?string
+    {
+        if (! $this->manager_photo_path) {
+            return null;
+        }
+
+        if (Str::startsWith($this->manager_photo_path, ['http://', 'https://', '/'])) {
+            return $this->manager_photo_path;
+        }
+
+        if (Storage::disk('public')->exists($this->manager_photo_path)) {
+            return Storage::disk('public')->url($this->manager_photo_path);
+        }
+
+        return asset($this->manager_photo_path);
+    }
 
     public function scopePublished($query)
     {

@@ -9,15 +9,16 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
 /**
- * Writes the "About" prose for a club's page from facts an admin has
- * already entered and verified in the Filament panel (founded_year,
- * honours_facts). Deliberately refuses to run if those facts are missing -
- * this is real content about a real organisation, so there is no safe
- * fallback to "just make something up" the way there is for simulated
- * match content.
+ * Writes the "About" prose and head coach introduction for a club's page,
+ * from facts an admin has already entered and verified in the Filament
+ * panel (founded_year, honours_facts, manager_facts). Deliberately refuses
+ * to run either part if its facts are missing - this is real content about
+ * a real organisation and a real, currently-employed person, so there is
+ * no safe fallback to "just make something up" the way there is for
+ * simulated match content.
  */
 #[Signature('teams:write-history {team : Team slug, e.g. manchester-city}')]
-#[Description('Write a club history from admin-verified facts (founded year, honours) - refuses to run until those facts are filled in')]
+#[Description('Write a club history and head coach bio from admin-verified facts - refuses to run until those facts are filled in')]
 class WriteClubHistory extends Command
 {
     public function handle(): int
@@ -30,24 +31,37 @@ class WriteClubHistory extends Command
             return self::FAILURE;
         }
 
-        if (! $team->founded_year && ! $team->honours_facts) {
-            $this->error("{$team->name} has no founded_year or honours_facts filled in yet. Add verified facts in the admin panel first - see Teams > {$team->name} > Trophies & honours.");
+        $writer = app(AiClubHistoryWriter::class);
+        $wroteAnything = false;
 
-            return self::FAILURE;
+        if ($team->founded_year || $team->honours_facts) {
+            $history = $writer->write($team);
+
+            if ($history) {
+                $team->update(['history_essay' => $history]);
+                $this->info("Wrote club history for {$team->name}.");
+                $wroteAnything = true;
+            } else {
+                $this->error('Club history generation failed - check storage/logs/laravel.log.');
+            }
+        } else {
+            $this->warn("Skipped club history: no founded_year or honours_facts filled in yet.");
         }
 
-        $written = app(AiClubHistoryWriter::class)->write($team);
+        if ($team->manager) {
+            $bio = $writer->writeManagerBio($team);
 
-        if (! $written) {
-            $this->error('AI generation failed - check storage/logs/laravel.log. history_essay was not changed.');
-
-            return self::FAILURE;
+            if ($bio) {
+                $team->update(['manager_bio' => $bio]);
+                $this->info("Wrote head coach bio for {$team->manager}.");
+                $wroteAnything = true;
+            } else {
+                $this->error('Head coach bio generation failed - check storage/logs/laravel.log.');
+            }
+        } else {
+            $this->warn("Skipped head coach bio: no manager name set for {$team->name}.");
         }
 
-        $team->update(['history_essay' => $written]);
-
-        $this->info("Wrote history for {$team->name}.");
-
-        return self::SUCCESS;
+        return $wroteAnything ? self::SUCCESS : self::FAILURE;
     }
 }
