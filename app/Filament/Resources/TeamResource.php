@@ -52,7 +52,15 @@ class TeamResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('founded_year')
                     ->numeric(),
+                Forms\Components\Textarea::make('honours_facts')
+                    ->label('Trophies & honours (real, verified facts only)')
+                    ->helperText('Plain factual lines, one per competition - e.g. "Premier League: 6 (2011-12, 2013-14, 2017-18, 2018-19, 2020-21, 2021-22)" and "FA Cup: 7". Verify against a reliable source before saving - this is what the AI writer below is allowed to state as fact, so an error here becomes a false claim on the live site.')
+                    ->rows(6)
+                    ->columnSpanFull(),
                 Forms\Components\Textarea::make('history_essay')
+                    ->label('Club history (written from the facts above)')
+                    ->helperText('Fill in Founded and Trophies & honours above, then run "php artisan teams:write-history {slug}" to generate this automatically - or write it by hand.')
+                    ->rows(6)
                     ->columnSpanFull(),
                 Forms\Components\Toggle::make('is_published')
                     ->label('Published (visible on live site)')

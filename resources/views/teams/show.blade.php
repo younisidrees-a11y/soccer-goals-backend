@@ -96,7 +96,10 @@
       <section aria-labelledby="about-heading" class="essay-block">
         <h2 id="about-heading">About {{ $team->full_name }}</h2>
         @if($team->history_essay)
-          <p>{{ $team->history_essay }}</p>
+          @foreach (explode("\n", $team->history_essay) as $paragraph)
+            @continue(trim($paragraph) === '')
+            <p>{{ trim($paragraph) }}</p>
+          @endforeach
         @else
           @php
             $about = $team->full_name . ' compete in the ' . $team->league->name;
@@ -109,6 +112,22 @@
           <p class="lede">{{ $about }}</p>
         @endif
       </section>
+
+      @if($team->honours_facts)
+      <section aria-labelledby="honours-heading" class="essay-block" style="margin-top:28px;">
+        <h2 id="honours-heading">Trophies &amp; Honours</h2>
+        <ul style="list-style:none;padding:0;margin:0;display:grid;gap:10px;">
+          @foreach (explode("\n", $team->honours_facts) as $line)
+            @continue(trim($line) === '')
+            @php [$competition, $detail] = array_pad(explode(':', trim($line), 2), 2, ''); @endphp
+            <li style="display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--border);">
+              <span style="font-weight:600;">{{ trim($competition) }}</span>
+              <span style="color:var(--ink-muted);text-align:right;">{{ trim($detail) }}</span>
+            </li>
+          @endforeach
+        </ul>
+      </section>
+      @endif
 
       @if($topScorers->isNotEmpty())
       <section aria-labelledby="scorers-heading" id="scorers" style="--team-color:{{ $team->color_hex }};">

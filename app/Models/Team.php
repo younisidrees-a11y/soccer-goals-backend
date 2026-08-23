@@ -13,7 +13,7 @@ class Team extends Model
 
     protected $fillable = [
         'league_id', 'name', 'full_name', 'slug', 'crest_code', 'color_hex',
-        'stadium', 'stadium_capacity', 'manager', 'founded_year', 'history_essay',
+        'stadium', 'stadium_capacity', 'manager', 'founded_year', 'history_essay', 'honours_facts',
         'meta_title', 'meta_description', 'meta_keywords',
         'is_published',
     ];
