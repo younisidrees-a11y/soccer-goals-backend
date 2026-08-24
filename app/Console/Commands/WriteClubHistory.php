@@ -16,13 +16,26 @@ use Illuminate\Console\Command;
  * a real organisation and a real, currently-employed person, so there is
  * no safe fallback to "just make something up" the way there is for
  * simulated match content.
+ *
+ * Pass a specific team slug for one club, or --all to process every
+ * published team that has at least one of the required fact fields set.
  */
-#[Signature('teams:write-history {team : Team slug, e.g. manchester-city}')]
-#[Description('Write a club history and head coach bio from admin-verified facts - refuses to run until those facts are filled in')]
+#[Signature('teams:write-history {team? : Team slug, e.g. manchester-city} {--all : Process every published team with facts filled in}')]
+#[Description('Write club history and head coach bios from admin-verified facts - refuses to run until those facts are filled in')]
 class WriteClubHistory extends Command
 {
     public function handle(): int
     {
+        if ($this->option('all')) {
+            return $this->handleAll();
+        }
+
+        if (! $this->argument('team')) {
+            $this->error('Pass a team slug, or use --all to process every team.');
+
+            return self::FAILURE;
+        }
+
         $team = Team::where('slug', $this->argument('team'))->first();
 
         if (! $team) {
@@ -31,6 +44,30 @@ class WriteClubHistory extends Command
             return self::FAILURE;
         }
 
+        return $this->processTeam($team) ? self::SUCCESS : self::FAILURE;
+    }
+
+    private function handleAll(): int
+    {
+        $teams = Team::published()
+            ->where(function ($query) {
+                $query->whereNotNull('founded_year')
+                    ->orWhereNotNull('honours_facts')
+                    ->orWhereNotNull('manager');
+            })
+            ->get();
+
+        $this->info("Processing {$teams->count()} team(s)...");
+
+        foreach ($teams as $team) {
+            $this->processTeam($team);
+        }
+
+        return self::SUCCESS;
+    }
+
+    private function processTeam(Team $team): bool
+    {
         $writer = app(AiClubHistoryWriter::class);
         $wroteAnything = false;
 
@@ -42,10 +79,10 @@ class WriteClubHistory extends Command
                 $this->info("Wrote club history for {$team->name}.");
                 $wroteAnything = true;
             } else {
-                $this->error('Club history generation failed - check storage/logs/laravel.log.');
+                $this->error("Club history generation failed for {$team->name} - check storage/logs/laravel.log.");
             }
         } else {
-            $this->warn("Skipped club history: no founded_year or honours_facts filled in yet.");
+            $this->warn("Skipped club history for {$team->name}: no founded_year or honours_facts filled in yet.");
         }
 
         if ($team->manager) {
@@ -53,15 +90,15 @@ class WriteClubHistory extends Command
 
             if ($bio) {
                 $team->update(['manager_bio' => $bio]);
-                $this->info("Wrote head coach bio for {$team->manager}.");
+                $this->info("Wrote head coach bio for {$team->manager} ({$team->name}).");
                 $wroteAnything = true;
             } else {
-                $this->error('Head coach bio generation failed - check storage/logs/laravel.log.');
+                $this->error("Head coach bio generation failed for {$team->name} - check storage/logs/laravel.log.");
             }
         } else {
-            $this->warn("Skipped head coach bio: no manager name set for {$team->name}.");
+            $this->warn("Skipped head coach bio for {$team->name}: no manager name set.");
         }
 
-        return $wroteAnything ? self::SUCCESS : self::FAILURE;
+        return $wroteAnything;
     }
 }
