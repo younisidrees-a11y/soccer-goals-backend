@@ -53,7 +53,7 @@
 
 <div class="top-bar">
   <div class="wrap top-bar-inner">
-    <div class="top-bar-date">Thursday, 13 August 2026 <span class="tb-hide-mobile">&nbsp;&middot;&nbsp;Matchday 1 across Europe</span></div>
+    <div class="top-bar-date">{{ now()->format('l j F Y') }} <span class="tb-hide-mobile">&nbsp;&middot;&nbsp;Matchday {{ $currentMatchday }} across Europe</span></div>
     <div class="top-bar-links">
       <a href="#" class="tb-hide-mobile">Advertise</a>
       <a href="#" class="tb-hide-mobile">Help Center</a>

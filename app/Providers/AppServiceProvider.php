@@ -25,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
         View::composer('layouts.site', function ($view) {
             $view->with('hasLiveMatch', MatchFixture::where('status', 'live')->where('is_published', true)->exists());
             $view->with('siteSettings', SiteSetting::current());
+            $view->with('currentMatchday', MatchFixture::published()->where('status', 'final')->max('matchday') ?? 1);
         });
     }
 }
