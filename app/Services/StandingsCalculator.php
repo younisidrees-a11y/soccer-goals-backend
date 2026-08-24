@@ -24,6 +24,7 @@ class StandingsCalculator
         ]])->all();
 
         $finalMatches = MatchFixture::where('league_id', $league->id)
+            ->published()
             ->where('status', 'final')
             ->get(['home_team_id', 'away_team_id', 'home_score', 'away_score']);
 
