@@ -16,7 +16,13 @@ class StandingsCalculator
 {
     public static function recalculate(League $league): void
     {
-        $teamIds = $league->teams()->pluck('id');
+        $teamIds = $league->teams()->published()->pluck('id');
+
+        // Remove standings rows left over from teams no longer published in
+        // this league (e.g. after a relegation/promotion roster correction)
+        // - updateOrCreate below only ever touches currently-published teams,
+        // it never removes rows for teams that have since dropped out.
+        Standing::where('league_id', $league->id)->whereNotIn('team_id', $teamIds)->delete();
 
         $stats = $teamIds->mapWithKeys(fn ($id) => [$id => [
             'played' => 0, 'won' => 0, 'drawn' => 0, 'lost' => 0,
