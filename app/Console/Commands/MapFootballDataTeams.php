@@ -31,6 +31,12 @@ class MapFootballDataTeams extends Command
         }
 
         $code = strtoupper($this->argument('code'));
+
+        if ($this->option('apply') && $league->external_code !== $code) {
+            $league->update(['external_code' => $code]);
+            $this->info("Set {$league->name}'s external_code to {$code}.");
+        }
+
         $response = app(FootballDataClient::class)->getTeams($code);
 
         if (! $response || empty($response['teams'])) {
