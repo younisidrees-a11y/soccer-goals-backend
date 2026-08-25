@@ -9,11 +9,11 @@ use Illuminate\Support\Facades\Log;
 /**
  * Thin wrapper around API-Football (api-sports.io) v3 - real match
  * statistics, lineups, event timelines, and per-player ratings that
- * football-data.org's tier doesn't provide. Self-throttled to 10
- * requests/minute regardless of plan (an explicit, deliberately
- * conservative cap - not the account's actual limit), and to the
- * account's real daily quota (read from /status and cached, rather than
- * a hardcoded number that would go stale the moment the plan changes).
+ * football-data.org's tier doesn't provide. Throttled to the account's
+ * real limits only - both the per-minute and daily figures are read
+ * live from the API (the response headers and /status) and cached,
+ * rather than a hardcoded number that would either waste a paid plan or
+ * go stale the moment the plan changes.
  *
  * Every method returns null on any failure (no key, request over quota,
  * network error, bad response) so callers skip a sync cycle instead of
@@ -22,8 +22,6 @@ use Illuminate\Support\Facades\Log;
 class ApiFootballClient
 {
     private const BASE_URL = 'https://v3.football.api-sports.io';
-
-    private const PER_MINUTE_LIMIT = 10;
 
     public function getTeams(int $leagueId, int $season): ?array
     {
@@ -83,6 +81,10 @@ class ApiFootballClient
                 return null;
             }
 
+            if ($response->hasHeader('x-ratelimit-limit')) {
+                Cache::put('api_football:per_minute_limit', (int) $response->header('x-ratelimit-limit'), now()->addHours(6));
+            }
+
             $body = $response->json();
 
             if (! empty($body['errors'])) {
@@ -114,8 +116,9 @@ class ApiFootballClient
 
         $minuteKey = 'api_football:calls_minute:'.intdiv(time(), 60);
         $minuteCount = Cache::get($minuteKey, 0);
+        $perMinuteLimit = Cache::get('api_football:per_minute_limit', 300);
 
-        if ($minuteCount >= self::PER_MINUTE_LIMIT) {
+        if ($minuteCount >= $perMinuteLimit) {
             sleep(max(1, 61 - (time() % 60)));
         }
 

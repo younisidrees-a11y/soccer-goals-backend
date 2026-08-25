@@ -211,90 +211,128 @@
           <p style="font-size:15px;line-height:1.7;color:var(--ink);max-width:68ch;">{{ $bridgeParagraph }}</p>
         </section>
 
-        @if($match->stats)
-        <section aria-labelledby="stats-heading" style="margin-top:32px;">
-          <div class="section-head"><h2 id="stats-heading">Match Statistics</h2></div>
-          <p style="font-size:12.5px;color:var(--ink-faint);margin-top:-8px;margin-bottom:16px;">{{ $match->homeTeam->name }} (home) vs {{ $match->awayTeam->name }} (away)</p>
-          <div class="stat-bullets">
-            @php $poss = $match->stats['possession'] ?? null; @endphp
-            @if($poss)
-            <div class="stat-bullet-row">
-              <span class="stat-bullet-label">Possession</span>
-              <span class="stat-bullet-track"><span class="stat-bullet-fill" style="width:{{ $poss['home'] }}%;"></span></span>
-              <span class="stat-bullet-value">{{ $poss['home'] }}%</span>
-            </div>
-            @endif
-            @foreach (['shots' => 'Shots', 'shots_on_target' => 'Shots on Target', 'corners' => 'Corners', 'fouls' => 'Fouls', 'yellow_cards' => 'Yellow Cards'] as $key => $label)
-              @if(isset($match->stats[$key]))
-              @php
-                $homeVal = $match->stats[$key]['home'];
-                $awayVal = $match->stats[$key]['away'];
-                $total = $homeVal + $awayVal ?: 1;
-              @endphp
-              <div class="stat-bullet-row">
-                <span class="stat-bullet-label">{{ $label }}</span>
-                <span class="stat-bullet-track"><span class="stat-bullet-fill" style="width:{{ round($homeVal / $total * 100) }}%;"></span></span>
-                <span class="stat-bullet-value">{{ $homeVal }}&ndash;{{ $awayVal }}</span>
-              </div>
-              @endif
-            @endforeach
-          </div>
-        </section>
-        @endif
+        @php
+          $contrastColor = function (?string $hex) {
+              $hex = ltrim($hex ?: '#1552C0', '#');
+              if (strlen($hex) === 3) { $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2]; }
+              if (strlen($hex) !== 6) { return '#FFFFFF'; }
+              [$r, $g, $b] = array_map(fn ($h) => hexdec($h), str_split($hex, 2));
+              $luminance = (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
+
+              return $luminance > 0.6 ? '#0E2233' : '#FFFFFF';
+          };
+          $safeColor = fn (?string $hex) => $hex && preg_match('/^#[0-9a-fA-F]{3,6}$/', $hex) ? $hex : '#1552C0';
+        @endphp
 
         @if($match->motm)
+        @php $motmColor = $safeColor($match->motm['team_id'] === $match->homeTeam->api_football_id ? $match->homeTeam->color_hex : $match->awayTeam->color_hex); @endphp
         <section aria-labelledby="motm-heading" style="margin-top:32px;">
           <div class="section-head"><h2 id="motm-heading">Man of the Match</h2></div>
-          <div class="motm-card">
-            <img class="motm-photo" src="{{ $match->motm['photo'] }}" alt="{{ $match->motm['name'] }}" loading="lazy">
-            <div class="motm-body">
-              <div class="motm-eyebrow">Highest-Rated Player</div>
-              <div class="motm-name">{{ $match->motm['name'] }}</div>
-              <div class="motm-meta">{{ $match->motm['team_name'] }}@if($match->motm['position']) &middot; {{ $match->motm['position'] }}@endif</div>
+          <div class="motm-card" style="--motm-color:{{ $motmColor }};">
+            <div class="motm-photo-wrap">
+              <img class="motm-photo" src="{{ $match->motm['photo'] }}" alt="{{ $match->motm['name'] }}" loading="lazy">
+              <span class="motm-rating-badge">{{ number_format($match->motm['rating'], 1) }}</span>
             </div>
-            <div class="motm-rating">{{ number_format($match->motm['rating'], 1) }}</div>
+            <div class="motm-body">
+              <div class="motm-eyebrow">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.6 6.6 7.1.5-5.5 4.5 1.9 6.9L12 16.7 5.9 20.5l1.9-6.9-5.5-4.5 7.1-.5z"/></svg>
+                Man of the Match
+              </div>
+              <div class="motm-name">{{ $match->motm['name'] }}</div>
+              <div class="motm-meta">{{ $match->motm['team_name'] }}@if($match->motm['position']) &middot; {{ $match->motm['position'] }}@endif &middot; highest-rated player on the pitch</div>
+            </div>
           </div>
         </section>
         @endif
 
-        @if($match->events && count($match->events))
-        <section aria-labelledby="timeline-heading" style="margin-top:32px;">
-          <div class="section-head"><h2 id="timeline-heading">Match Events</h2></div>
-          <p style="font-size:12.5px;color:var(--ink-faint);margin-top:-8px;margin-bottom:12px;">{{ $match->homeTeam->name }} &middot; {{ $match->awayTeam->name }}</p>
-          <div class="timeline">
-            @foreach($match->events as $event)
-              @continue(!in_array($event['type'], ['Goal', 'Card']))
-              @php $isHome = $event['team_id'] === $match->homeTeam->api_football_id; @endphp
-              <div class="timeline-item">
-                <div class="timeline-side{{ $isHome ? '' : ' away' }}">
-                  @if($isHome)
-                    @if($event['type'] === 'Goal')
-                      <svg class="timeline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v4M12 17v4M5 8l3 2M16 14l3 2M5 16l3-2M16 10l3-2"/></svg>
-                    @else
-                      <span class="{{ str_contains($event['detail'], 'Red') ? 'timeline-card-red' : 'timeline-card-yellow' }}"></span>
-                    @endif
-                    <span>
-                      <span class="timeline-player">{{ $event['player'] }}</span>
-                      @if($event['assist'])<br><span class="timeline-assist">assist: {{ $event['assist'] }}</span>@endif
-                    </span>
-                  @endif
-                </div>
-                <span class="timeline-minute">{{ $event['minute'] }}'</span>
-                <div class="timeline-side{{ $isHome ? '' : ' away' }}">
-                  @unless($isHome)
-                    @if($event['type'] === 'Goal')
-                      <svg class="timeline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v4M12 17v4M5 8l3 2M16 14l3 2M5 16l3-2M16 10l3-2"/></svg>
-                    @else
-                      <span class="{{ str_contains($event['detail'], 'Red') ? 'timeline-card-red' : 'timeline-card-yellow' }}"></span>
-                    @endif
-                    <span>
-                      <span class="timeline-player">{{ $event['player'] }}</span>
-                      @if($event['assist'])<br><span class="timeline-assist">assist: {{ $event['assist'] }}</span>@endif
-                    </span>
-                  @endif
+        @if($match->stats)
+        @php
+          $statsHomeColor = $safeColor($match->homeTeam->color_hex);
+          $statsAwayColor = $safeColor($match->awayTeam->color_hex);
+          $statRows = [];
+          if ($poss = $match->stats['possession'] ?? null) {
+              $statRows[] = ['label' => 'Possession', 'home' => $poss['home'], 'away' => $poss['away'], 'homePct' => $poss['home'], 'suffix' => '%'];
+          }
+          foreach (['shots' => 'Shots', 'shots_on_target' => 'Shots on Target', 'corners' => 'Corners', 'fouls' => 'Fouls', 'yellow_cards' => 'Yellow Cards'] as $key => $label) {
+              if (! isset($match->stats[$key])) {
+                  continue;
+              }
+              $homeVal = $match->stats[$key]['home'];
+              $awayVal = $match->stats[$key]['away'];
+              $total = ($homeVal + $awayVal) ?: 1;
+              $statRows[] = ['label' => $label, 'home' => $homeVal, 'away' => $awayVal, 'homePct' => round($homeVal / $total * 100), 'suffix' => ''];
+          }
+        @endphp
+        <section aria-labelledby="stats-heading" style="margin-top:32px;">
+          <div class="section-head"><h2 id="stats-heading">Match Statistics</h2></div>
+          <div class="stats-compare">
+            <div class="stats-compare-head">
+              <div class="stats-compare-team" style="--side-color:{{ $statsHomeColor }};"><span class="crest crest-{{ $match->homeTeam->crest_code }}" role="img" aria-label="{{ $match->homeTeam->full_name }} badge"></span>{{ $match->homeTeam->name }}</div>
+              <div class="stats-compare-team away" style="--side-color:{{ $statsAwayColor }};">{{ $match->awayTeam->name }}<span class="crest crest-{{ $match->awayTeam->crest_code }}" role="img" aria-label="{{ $match->awayTeam->full_name }} badge"></span></div>
+            </div>
+            @foreach($statRows as $row)
+            <div class="stat-compare-row">
+              <span class="stat-compare-val" style="color:{{ $statsHomeColor }};">{{ $row['home'] }}{{ $row['suffix'] }}</span>
+              <div class="stat-compare-mid">
+                <div class="stat-compare-label">{{ $row['label'] }}</div>
+                <div class="stat-compare-track">
+                  <span class="stat-compare-fill" style="width:{{ $row['homePct'] }}%;background:{{ $statsHomeColor }};"></span>
+                  <span class="stat-compare-fill" style="width:{{ 100 - $row['homePct'] }}%;background:{{ $statsAwayColor }};"></span>
                 </div>
               </div>
+              <span class="stat-compare-val away" style="color:{{ $statsAwayColor }};">{{ $row['away'] }}{{ $row['suffix'] }}</span>
+            </div>
             @endforeach
+          </div>
+        </section>
+        @endif
+
+        @php
+          $shownTypes = ['Goal', 'Card', 'subst'];
+          $shownEvents = $match->events ? array_values(array_filter($match->events, fn ($e) => in_array($e['type'], $shownTypes))) : [];
+        @endphp
+        @if(count($shownEvents))
+        @php
+          $runningHome = 0;
+          $runningAway = 0;
+        @endphp
+        <section aria-labelledby="timeline-heading" style="margin-top:32px;">
+          <div class="section-head"><h2 id="timeline-heading">Match Events</h2></div>
+          <div class="table-scroll">
+            <table class="standings">
+              <thead><tr><th>Min</th><th class="th-team">Team</th><th>Card</th><th class="th-team">Event</th><th>Score</th></tr></thead>
+              <tbody>
+                @foreach($shownEvents as $event)
+                  @php
+                    $isHome = $event['team_id'] === $match->homeTeam->api_football_id;
+                    $team = $isHome ? $match->homeTeam : $match->awayTeam;
+                    $isRed = str_contains($event['detail'], 'Red');
+                    $isGoal = $event['type'] === 'Goal';
+                    $isSub = $event['type'] === 'subst';
+                    $isCard = $event['type'] === 'Card';
+
+                    if ($isGoal) {
+                        $isHome ? $runningHome++ : $runningAway++;
+                    }
+
+                    if ($isSub) {
+                        $description = "Substitution — {$event['player']} on" . ($event['assist'] ? ", {$event['assist']} off" : '');
+                    } elseif ($isCard) {
+                        $description = $event['player'];
+                    } else {
+                        $description = "Goal — {$event['player']}" . ($event['assist'] ? " (assist: {$event['assist']})" : '');
+                    }
+                  @endphp
+                  <tr>
+                    <td>{{ $event['minute'] }}'</td>
+                    <td class="team-td"><span class="crest crest-{{ $team->crest_code }}" role="img" aria-label="{{ $team->full_name }} badge" style="width:18px;height:20px;"></span> {{ $team->name }}</td>
+                    <td>@if($isCard)<span class="card-chip {{ $isRed ? 'card-chip-red' : 'card-chip-yellow' }}" aria-label="{{ $isRed ? 'Red card' : 'Yellow card' }}"></span>@endif</td>
+                    <td style="text-align:left;">{{ $description }}</td>
+                    <td class="pts">{{ $runningHome }}-{{ $runningAway }}</td>
+                  </tr>
+                @endforeach
+              </tbody>
+            </table>
           </div>
         </section>
         @endif
@@ -304,17 +342,21 @@
           <div class="section-head"><h2 id="lineups-heading">Starting Lineups</h2></div>
           <div class="lineup-grid">
             @foreach($match->lineups as $team)
+            @php
+              $teamColor = $safeColor($team['team_id'] === $match->homeTeam->api_football_id ? $match->homeTeam->color_hex : $match->awayTeam->color_hex);
+              $shirtText = $contrastColor($teamColor);
+            @endphp
             <div class="widget">
               <div class="lineup-team-head">
                 <strong>{{ $team['team'] }}</strong>
                 <span class="lineup-formation">{{ $team['formation'] }}</span>
               </div>
-              <div class="lineup-players">
+              <div class="jersey-grid">
                 @foreach($team['start_xi'] as $player)
-                <div class="lineup-player">
-                  <span class="lineup-number">{{ $player['number'] }}</span>
-                  <span>{{ $player['name'] }}</span>
-                  <span class="lineup-pos">{{ $player['position'] }}</span>
+                <div class="jersey-card">
+                  @include('partials.jersey', ['color' => $teamColor, 'number' => $player['number'], 'textColor' => $shirtText])
+                  <span class="jersey-name">{{ $player['name'] }}</span>
+                  <span class="jersey-pos">{{ $player['position'] }}</span>
                 </div>
                 @endforeach
               </div>
