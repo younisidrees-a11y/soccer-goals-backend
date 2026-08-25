@@ -42,7 +42,7 @@
       <span class="selector-card-flag"><svg viewBox="{{ $flagVb }}"><use href="#flag-{{ $league->flag_code }}"></use></svg></span>
       <span class="selector-card-body">
         <span class="selector-card-name">{{ $league->name }}</span>
-        <span class="selector-card-meta">{{ $league->country }} &middot; {{ $league->teams->count() }} clubs &middot; {{ $ctaLabel }}</span>
+        <span class="selector-card-meta">{{ $league->country }} &middot; {{ $league->teams_count }} clubs &middot; {{ $ctaLabel }}</span>
       </span>
       <svg class="selector-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>

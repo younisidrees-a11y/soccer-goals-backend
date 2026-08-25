@@ -1,7 +1,7 @@
 @extends('layouts.site')
 
 @section('title', $label . ' | The Soccer Goals')
-@section('meta_description', 'The latest ' . strtolower($label) . ' from the Premier League, La Liga, Serie A, Bundesliga and Ligue 1.')
+@section('meta_description', 'The latest ' . strtolower($label) . ' from the Premier League, Spanish La Liga, Serie A, Bundesliga and Ligue 1.')
 @section('meta_keywords', strtolower($label) . ', football news, soccer news')
 @section('canonical', route('news.category', $category))
 @section('og_title', $label . ' | The Soccer Goals')

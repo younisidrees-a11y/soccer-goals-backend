@@ -1,11 +1,11 @@
 @extends('layouts.site')
 
 @section('title', 'The Soccer Goals — Soccer, Covered.')
-@section('meta_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the Premier League, La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')
-@section('meta_keywords', 'soccer news, football news, Premier League, La Liga, Serie A, Bundesliga, Ligue 1, fixtures, results, points table, football scores')
+@section('meta_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the Premier League, Spanish La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')
+@section('meta_keywords', 'soccer news, football news, Premier League, Spanish La Liga, Serie A, Bundesliga, Ligue 1, fixtures, results, points table, football scores')
 @section('canonical', route('home'))
 @section('og_title', 'The Soccer Goals — Soccer, Covered.')
-@section('og_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the Premier League, La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')
+@section('og_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the Premier League, Spanish La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')
 
 @section('content')
 
@@ -163,7 +163,7 @@
           <h2>Points Table</h2>
           <div class="table-tabs" role="tablist" aria-label="Select league table">
             <button class="ttab is-active" data-table="pl" aria-selected="true"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>PL</button>
-            <button class="ttab" data-table="laliga" aria-selected="false"><svg class="flag" role="img" aria-label="Spain flag"><use href="#flag-esp"></use></svg>La Liga</button>
+            <button class="ttab" data-table="laliga" aria-selected="false"><svg class="flag" role="img" aria-label="Spain flag"><use href="#flag-esp"></use></svg>Spanish La Liga</button>
           </div>
         </div>
 

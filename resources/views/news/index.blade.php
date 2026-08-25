@@ -1,7 +1,7 @@
 @extends('layouts.site')
 
 @section('title', 'News — The Soccer Goals')
-@section('meta_description', 'The latest football news across match reports, transfers, analysis, injury updates and club news for the Premier League, La Liga, Serie A, Bundesliga and Ligue 1.')
+@section('meta_description', 'The latest football news across match reports, transfers, analysis, injury updates and club news for the Premier League, Spanish La Liga, Serie A, Bundesliga and Ligue 1.')
 @section('meta_keywords', 'football news, soccer news, match reports, transfer news, football analysis, injury updates')
 @section('canonical', route('news.index'))
 @section('og_title', 'News — The Soccer Goals')
