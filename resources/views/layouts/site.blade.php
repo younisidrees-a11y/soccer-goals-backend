@@ -4,17 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>@yield('title', 'The Soccer Goals — Soccer, Covered.')</title>
-<meta name="description" content="@yield('meta_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the Premier League, Spanish La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')">
-<meta name="keywords" content="@yield('meta_keywords', 'soccer news, football news, Premier League, Spanish La Liga, Serie A, Bundesliga, Ligue 1, fixtures, results, points table, football scores')">
+<meta name="description" content="@yield('meta_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the English Premier League, Spanish La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')">
+<meta name="keywords" content="@yield('meta_keywords', 'soccer news, football news, English Premier League, Spanish La Liga, Serie A, Bundesliga, Ligue 1, fixtures, results, points table, football scores')">
 <link rel="canonical" href="@yield('canonical', url()->current())">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="The Soccer Goals">
 <meta property="og:title" content="@yield('og_title', 'The Soccer Goals — Soccer, Covered.')">
-<meta property="og:description" content="@yield('og_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the Premier League, Spanish La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')">
+<meta property="og:description" content="@yield('og_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the English Premier League, Spanish La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')">
 <meta property="og:url" content="@yield('canonical', url()->current())">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="@yield('og_title', 'The Soccer Goals — Soccer, Covered.')">
-<meta name="twitter:description" content="@yield('og_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the Premier League, Spanish La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')">
+<meta name="twitter:description" content="@yield('og_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the English Premier League, Spanish La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')">
 <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
 <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32.png') }}">
 <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16.png') }}">
@@ -90,7 +90,7 @@
             <div class="mega-col">
               <div class="mega-col-title">Top 5 Leagues</div>
               <ul>
-                <li><a href="{{ route('leagues.show', 'premier-league') }}"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>Premier League</a></li>
+                <li><a href="{{ route('leagues.show', 'premier-league') }}"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>English Premier League</a></li>
                 <li><a href="{{ route('leagues.show', 'la-liga') }}"><svg class="flag" role="img" aria-label="Spain flag"><use href="#flag-esp"></use></svg>Spanish La Liga</a></li>
                 <li><a href="{{ route('leagues.show', 'serie-a') }}"><svg class="flag" role="img" aria-label="Italy flag"><use href="#flag-ita"></use></svg>Serie A</a></li>
                 <li><a href="{{ route('leagues.show', 'bundesliga') }}"><svg class="flag" role="img" aria-label="Germany flag"><use href="#flag-deu"></use></svg>Bundesliga</a></li>
@@ -144,7 +144,7 @@
             <div class="mega-col">
               <div class="mega-col-title">By League</div>
               <ul>
-                <li><a href="{{ route('leagues.show', 'premier-league') }}">Premier League News</a></li>
+                <li><a href="{{ route('leagues.show', 'premier-league') }}">English Premier League News</a></li>
                 <li><a href="{{ route('leagues.show', 'la-liga') }}">Spanish La Liga News</a></li>
                 <li><a href="{{ route('leagues.show', 'serie-a') }}">Serie A News</a></li>
                 <li><a href="{{ route('leagues.show', 'bundesliga') }}">Bundesliga News</a></li>
@@ -160,7 +160,7 @@
             </div>
             <div class="mega-feature">
               <span class="eyebrow">Editor's Pick</span>
-              <h4>The Evolution of the Premier League</h4>
+              <h4>The Evolution of the English Premier League</h4>
               <p>From first whistle to global game &mdash; the long read.</p>
               <a href="#" class="btn btn-accent btn-sm">Read Feature</a>
             </div>
@@ -205,7 +205,7 @@
       <details class="drawer-group">
         <summary>Leagues <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 4l4 4 4-4"/></svg></summary>
         <div class="drawer-sublist">
-          <a href="{{ route('leagues.show', 'premier-league') }}"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>Premier League</a>
+          <a href="{{ route('leagues.show', 'premier-league') }}"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>English Premier League</a>
           <a href="{{ route('leagues.show', 'la-liga') }}"><svg class="flag" role="img" aria-label="Spain flag"><use href="#flag-esp"></use></svg>Spanish La Liga</a>
           <a href="{{ route('leagues.show', 'serie-a') }}"><svg class="flag" role="img" aria-label="Italy flag"><use href="#flag-ita"></use></svg>Serie A</a>
           <a href="{{ route('leagues.show', 'bundesliga') }}"><svg class="flag" role="img" aria-label="Germany flag"><use href="#flag-deu"></use></svg>Bundesliga</a>
@@ -272,7 +272,7 @@
     <div class="footer-col">
       <h3>Leagues</h3>
       <ul>
-        <li><a href="{{ route('leagues.show', 'premier-league') }}"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>Premier League</a></li>
+        <li><a href="{{ route('leagues.show', 'premier-league') }}"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>English Premier League</a></li>
         <li><a href="{{ route('leagues.show', 'la-liga') }}"><svg class="flag" role="img" aria-label="Spain flag"><use href="#flag-esp"></use></svg>Spanish La Liga</a></li>
         <li><a href="{{ route('leagues.show', 'serie-a') }}"><svg class="flag" role="img" aria-label="Italy flag"><use href="#flag-ita"></use></svg>Serie A</a></li>
         <li><a href="{{ route('leagues.show', 'bundesliga') }}"><svg class="flag" role="img" aria-label="Germany flag"><use href="#flag-deu"></use></svg>Bundesliga</a></li>

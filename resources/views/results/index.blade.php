@@ -3,7 +3,7 @@
 @php $leagueCount = $leagues->count(); @endphp
 @section('title', "Results — All {$leagueCount} Leagues | The Soccer Goals")
 @section('meta_description', "Latest results across all {$leagueCount} leagues covered by The Soccer Goals. Pick a league to see every final score.")
-@section('meta_keywords', 'football results, final scores, match results, Premier League results, Spanish La Liga results, Serie A results, Bundesliga results, Ligue 1 results')
+@section('meta_keywords', 'football results, final scores, match results, English Premier League results, Spanish La Liga results, Serie A results, Bundesliga results, Ligue 1 results')
 @section('canonical', route('results.index'))
 @section('og_title', "Results — All {$leagueCount} Leagues | The Soccer Goals")
 @section('og_description', "Latest results across all {$leagueCount} leagues covered by The Soccer Goals.")

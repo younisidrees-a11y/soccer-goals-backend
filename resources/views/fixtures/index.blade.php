@@ -3,7 +3,7 @@
 @php $leagueCount = $leagues->count(); @endphp
 @section('title', "Fixtures — All {$leagueCount} Leagues | The Soccer Goals")
 @section('meta_description', "Upcoming fixtures across all {$leagueCount} leagues covered by The Soccer Goals. Pick a league to see its full match schedule.")
-@section('meta_keywords', 'football fixtures, upcoming matches, match schedule, Premier League fixtures, Spanish La Liga fixtures, Serie A fixtures, Bundesliga fixtures, Ligue 1 fixtures')
+@section('meta_keywords', 'football fixtures, upcoming matches, match schedule, English Premier League fixtures, Spanish La Liga fixtures, Serie A fixtures, Bundesliga fixtures, Ligue 1 fixtures')
 @section('canonical', route('fixtures.index'))
 @section('og_title', "Fixtures — All {$leagueCount} Leagues | The Soccer Goals")
 @section('og_description', "Upcoming fixtures across all {$leagueCount} leagues covered by The Soccer Goals.")

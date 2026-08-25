@@ -1,11 +1,11 @@
 @extends('layouts.site')
 
 @section('title', 'The Soccer Goals — Soccer, Covered.')
-@section('meta_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the Premier League, Spanish La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')
-@section('meta_keywords', 'soccer news, football news, Premier League, Spanish La Liga, Serie A, Bundesliga, Ligue 1, fixtures, results, points table, football scores')
+@section('meta_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the English Premier League, Spanish La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')
+@section('meta_keywords', 'soccer news, football news, English Premier League, Spanish La Liga, Serie A, Bundesliga, Ligue 1, fixtures, results, points table, football scores')
 @section('canonical', route('home'))
 @section('og_title', 'The Soccer Goals — Soccer, Covered.')
-@section('og_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the Premier League, Spanish La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')
+@section('og_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the English Premier League, Spanish La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')
 
 @section('content')
 
@@ -68,7 +68,7 @@
 
       <section aria-labelledby="matches-heading" id="fixtures">
         <div class="section-head">
-          <h2 id="matches-heading">Premier League &middot; Matchday 1 Results</h2>
+          <h2 id="matches-heading">English Premier League &middot; Matchday 1 Results</h2>
         </div>
 
         <div class="match-grid">
@@ -147,7 +147,7 @@
           </div>
           <div>
             <div class="eyebrow">Long Read</div>
-            <h2 id="history-heading" style="font-size:clamp(1.4rem,1.15rem + 1vw,1.9rem);margin-top:8px;">The Evolution of the Premier League</h2>
+            <h2 id="history-heading" style="font-size:clamp(1.4rem,1.15rem + 1vw,1.9rem);margin-top:8px;">The Evolution of the English Premier League</h2>
             <p class="pull-quote">From a single satellite broadcast deal to the most-watched domestic league on the planet &mdash; the story of how English football rebuilt itself.</p>
             <p style="color:var(--ink-muted);font-size:14.5px;line-height:1.65;max-width:58ch;">Three decades on, the competition's global footprint, revenue and quality of play have transformed beyond recognition. We trace the rule changes, broadcast deals and iconic seasons that built the modern game.</p>
             <a href="{{ route('leagues.show', 'premier-league') }}" class="btn btn-ghost" style="margin-top:18px;">Read the Full Feature</a>
