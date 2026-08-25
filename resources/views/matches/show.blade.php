@@ -71,21 +71,22 @@
 
       <div class="stat-strip">
         <div class="stat-item">
-          <div class="stat-label">Date</div>
-          <div class="stat-value">{{ $match->kickoff_at->format('D j M Y') }}</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">{{ $isFinal ? 'Status' : ($isLive ? 'Status' : 'Kick-off') }}</div>
-          <div class="stat-value">
-            @if($isFinal) Full-Time
-            @elseif($isLive) <span class="dot-waiting" aria-hidden="true"></span> LIVE
-            @else <span class="dot-waiting" aria-hidden="true"></span>{{ $match->kickoff_at->format('H:i') }}
+          <div class="stat-label">Kick-off</div>
+          <div class="stat-value" style="font-size:15px;">
+            {{ $match->kickoff_at->format('D j M Y') }}
+            @if($isFinal) &middot; Full-Time
+            @elseif($isLive) &middot; <span class="dot-waiting" aria-hidden="true"></span> LIVE
+            @else &middot; {{ $match->kickoff_at->format('H:i') }} UTC
             @endif
           </div>
         </div>
         <div class="stat-item">
           <div class="stat-label">Venue</div>
           <div class="stat-value" style="font-size:15px;">{{ $match->venue ?? 'TBC' }}</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Referee</div>
+          <div class="stat-value" style="font-size:15px;">{{ $match->referee ?? 'TBC' }}</div>
         </div>
         <div class="stat-item">
           <div class="stat-label">Result</div>
@@ -121,7 +122,7 @@
       @if($isFinal)
 
         <section aria-label="Match Report">
-          <p style="font-size:15px;line-height:1.7;color:var(--ink);max-width:68ch;">{{ $match->match_report }}</p>
+          <p style="font-size:15px;line-height:1.7;color:var(--ink);">{{ $match->match_report }}</p>
         </section>
 
       @else
@@ -206,7 +207,7 @@
         @endphp
 
         <section aria-label="Match Summary" style="margin-top:32px;">
-          <p style="font-size:15px;line-height:1.7;color:var(--ink);max-width:68ch;">{{ $bridgeParagraph }}</p>
+          <p style="font-size:15px;line-height:1.7;color:var(--ink);">{{ $bridgeParagraph }}</p>
         </section>
 
         @php
@@ -385,7 +386,7 @@
 
         <section aria-labelledby="ahead-heading" style="margin-top:32px;">
           <div class="section-head"><h2 id="ahead-heading">Looking Ahead</h2></div>
-          <div style="font-size:15px;line-height:1.7;color:var(--ink);max-width:68ch;">
+          <div style="font-size:15px;line-height:1.7;color:var(--ink);">
             @if($homeNext)
             <p>
               {{ $match->homeTeam->name }} {{ $homeAheadIntro }}. Their next test comes {{ $homeNext->home_team_id === $match->homeTeam->id ? 'at home to' : 'away at' }} {{ $homeNext->home_team_id === $match->homeTeam->id ? $homeNext->awayTeam->name : $homeNext->homeTeam->name }}, and how they respond after this result will be worth watching. You can follow the build-up and everything you need to know when
