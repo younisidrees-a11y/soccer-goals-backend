@@ -13,10 +13,10 @@ class MatchFixture extends Model
     protected $table = 'matches';
 
     protected $fillable = [
-        'league_id', 'external_id', 'home_team_id', 'away_team_id', 'matchday', 'kickoff_at',
+        'league_id', 'external_id', 'api_football_fixture_id', 'home_team_id', 'away_team_id', 'matchday', 'kickoff_at',
         'venue', 'home_preview_note', 'away_preview_note', 'preview_published_at',
         'status', 'home_score', 'away_score', 'home_score_ht', 'away_score_ht',
-        'match_report', 'halftime_report', 'halftime_published_at', 'stats',
+        'match_report', 'halftime_report', 'halftime_published_at', 'stats', 'events', 'lineups', 'motm',
         'meta_title', 'meta_description', 'meta_keywords',
         'is_published',
     ];
@@ -26,6 +26,9 @@ class MatchFixture extends Model
         'preview_published_at' => 'datetime',
         'halftime_published_at' => 'datetime',
         'stats' => 'array',
+        'events' => 'array',
+        'lineups' => 'array',
+        'motm' => 'array',
         'is_published' => 'boolean',
     ];
 

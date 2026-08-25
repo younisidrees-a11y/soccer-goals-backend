@@ -14,7 +14,7 @@ class Team extends Model
     use HasFactory;
 
     protected $fillable = [
-        'league_id', 'name', 'full_name', 'slug', 'external_id', 'crest_code', 'color_hex',
+        'league_id', 'name', 'full_name', 'slug', 'external_id', 'api_football_id', 'crest_code', 'color_hex',
         'stadium', 'stadium_capacity', 'manager', 'manager_facts', 'manager_bio', 'manager_photo_path',
         'founded_year', 'history_essay', 'honours_facts',
         'meta_title', 'meta_description', 'meta_keywords',

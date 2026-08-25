@@ -224,7 +224,7 @@
               <span class="stat-bullet-value">{{ $poss['home'] }}%</span>
             </div>
             @endif
-            @foreach (['shots' => 'Shots', 'shots_on_target' => 'Shots on Target', 'corners' => 'Corners', 'fouls' => 'Fouls'] as $key => $label)
+            @foreach (['shots' => 'Shots', 'shots_on_target' => 'Shots on Target', 'corners' => 'Corners', 'fouls' => 'Fouls', 'yellow_cards' => 'Yellow Cards'] as $key => $label)
               @if(isset($match->stats[$key]))
               @php
                 $homeVal = $match->stats[$key]['home'];
@@ -237,6 +237,91 @@
                 <span class="stat-bullet-value">{{ $homeVal }}&ndash;{{ $awayVal }}</span>
               </div>
               @endif
+            @endforeach
+          </div>
+        </section>
+        @endif
+
+        @if($match->motm)
+        <section aria-labelledby="motm-heading" style="margin-top:32px;">
+          <div class="section-head"><h2 id="motm-heading">Man of the Match</h2></div>
+          <div class="motm-card">
+            <img class="motm-photo" src="{{ $match->motm['photo'] }}" alt="{{ $match->motm['name'] }}" loading="lazy">
+            <div class="motm-body">
+              <div class="motm-eyebrow">Highest-Rated Player</div>
+              <div class="motm-name">{{ $match->motm['name'] }}</div>
+              <div class="motm-meta">{{ $match->motm['team_name'] }}@if($match->motm['position']) &middot; {{ $match->motm['position'] }}@endif</div>
+            </div>
+            <div class="motm-rating">{{ number_format($match->motm['rating'], 1) }}</div>
+          </div>
+        </section>
+        @endif
+
+        @if($match->events && count($match->events))
+        <section aria-labelledby="timeline-heading" style="margin-top:32px;">
+          <div class="section-head"><h2 id="timeline-heading">Match Events</h2></div>
+          <p style="font-size:12.5px;color:var(--ink-faint);margin-top:-8px;margin-bottom:12px;">{{ $match->homeTeam->name }} &middot; {{ $match->awayTeam->name }}</p>
+          <div class="timeline">
+            @foreach($match->events as $event)
+              @continue(!in_array($event['type'], ['Goal', 'Card']))
+              @php $isHome = $event['team_id'] === $match->homeTeam->api_football_id; @endphp
+              <div class="timeline-item">
+                <div class="timeline-side{{ $isHome ? '' : ' away' }}">
+                  @if($isHome)
+                    @if($event['type'] === 'Goal')
+                      <svg class="timeline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v4M12 17v4M5 8l3 2M16 14l3 2M5 16l3-2M16 10l3-2"/></svg>
+                    @else
+                      <span class="{{ str_contains($event['detail'], 'Red') ? 'timeline-card-red' : 'timeline-card-yellow' }}"></span>
+                    @endif
+                    <span>
+                      <span class="timeline-player">{{ $event['player'] }}</span>
+                      @if($event['assist'])<br><span class="timeline-assist">assist: {{ $event['assist'] }}</span>@endif
+                    </span>
+                  @endif
+                </div>
+                <span class="timeline-minute">{{ $event['minute'] }}'</span>
+                <div class="timeline-side{{ $isHome ? '' : ' away' }}">
+                  @unless($isHome)
+                    @if($event['type'] === 'Goal')
+                      <svg class="timeline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v4M12 17v4M5 8l3 2M16 14l3 2M5 16l3-2M16 10l3-2"/></svg>
+                    @else
+                      <span class="{{ str_contains($event['detail'], 'Red') ? 'timeline-card-red' : 'timeline-card-yellow' }}"></span>
+                    @endif
+                    <span>
+                      <span class="timeline-player">{{ $event['player'] }}</span>
+                      @if($event['assist'])<br><span class="timeline-assist">assist: {{ $event['assist'] }}</span>@endif
+                    </span>
+                  @endif
+                </div>
+              </div>
+            @endforeach
+          </div>
+        </section>
+        @endif
+
+        @if($match->lineups && count($match->lineups) === 2)
+        <section aria-labelledby="lineups-heading" style="margin-top:32px;">
+          <div class="section-head"><h2 id="lineups-heading">Starting Lineups</h2></div>
+          <div class="lineup-grid">
+            @foreach($match->lineups as $team)
+            <div class="widget">
+              <div class="lineup-team-head">
+                <strong>{{ $team['team'] }}</strong>
+                <span class="lineup-formation">{{ $team['formation'] }}</span>
+              </div>
+              <div class="lineup-players">
+                @foreach($team['start_xi'] as $player)
+                <div class="lineup-player">
+                  <span class="lineup-number">{{ $player['number'] }}</span>
+                  <span>{{ $player['name'] }}</span>
+                  <span class="lineup-pos">{{ $player['position'] }}</span>
+                </div>
+                @endforeach
+              </div>
+              @if($team['coach'])
+              <div class="lineup-coach">Coach: {{ $team['coach'] }}</div>
+              @endif
+            </div>
             @endforeach
           </div>
         </section>

@@ -17,6 +17,15 @@ Artisan::command('inspire', function () {
 Schedule::command('football-data:sync premier-league')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('football-data:sync la-liga')->everyFiveMinutes()->withoutOverlapping();
 
+// Real statistics, event timelines, lineups, and a ratings-based Man of
+// the Match from API-Football - football-data.org's tier has none of
+// this. Runs a few minutes after the sync above so a match is already
+// marked final (and its teams already resolved) before this looks for
+// it; only touches matches that don't have real stats yet, so it's cheap
+// to run often.
+Schedule::command('api-football:sync-stats premier-league')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-stats la-liga')->everyFiveMinutes()->withoutOverlapping();
+
 // Each of these already skips itself when there's nothing new to cover
 // (same match/team not re-covered), so running on a schedule never spams
 // the review queue - it just writes fresh content when there's genuinely

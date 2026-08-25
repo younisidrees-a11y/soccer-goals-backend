@@ -11,7 +11,7 @@ class League extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'slug', 'external_code', 'country', 'flag_code', 'season', 'total_matchdays',
+        'name', 'slug', 'external_code', 'api_football_id', 'country', 'flag_code', 'season', 'total_matchdays',
         'about_text', 'table_intro', 'table_closing',
         'meta_title', 'meta_description', 'meta_keywords',
         'is_published',
