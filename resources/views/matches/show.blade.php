@@ -120,8 +120,8 @@
 
       @if($isFinal)
 
-        <section class="detail-closing" aria-label="Match Report">
-          <p>{{ $match->match_report }}</p>
+        <section aria-label="Match Report">
+          <p style="font-size:15px;line-height:1.7;color:var(--ink);max-width:68ch;">{{ $match->match_report }}</p>
         </section>
 
       @else

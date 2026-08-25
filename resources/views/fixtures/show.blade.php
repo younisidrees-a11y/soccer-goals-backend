@@ -52,7 +52,7 @@
           <div class="match-team"><div class="team-id"><span class="crest crest-{{ $fx->homeTeam->crest_code }}" role="img" aria-label="{{ $fx->homeTeam->full_name }} badge"></span><span class="team-name">{{ $fx->homeTeam->name }}</span></div></div>
           <div class="match-team"><div class="team-id"><span class="crest crest-{{ $fx->awayTeam->crest_code }}" role="img" aria-label="{{ $fx->awayTeam->full_name }} badge"></span><span class="team-name">{{ $fx->awayTeam->name }}</span></div></div>
         </div>
-        <div class="match-venue">{{ $fx->venue }}</div>
+        <div class="match-venue">{{ $fx->homeTeam->name }} play {{ $fx->awayTeam->name }} at {{ $fx->venue }}@if($fx->referee), referee {{ $fx->referee }}@endif, kicking off {{ $fx->kickoff_at->format('j F Y') }} at {{ $fx->kickoff_at->format('H:i') }} UTC.</div>
       </a>
       @empty
       <p style="color:var(--ink-faint);">No upcoming fixtures scheduled.</p>

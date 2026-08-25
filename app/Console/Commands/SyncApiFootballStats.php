@@ -99,7 +99,10 @@ class SyncApiFootballStats extends Command
                 }
 
                 $fixtureId = $fixture['fixture']['id'];
-                $match->update(['api_football_fixture_id' => $fixtureId]);
+                $match->update([
+                    'api_football_fixture_id' => $fixtureId,
+                    'referee' => $fixture['fixture']['referee'] ?? $match->referee,
+                ]);
                 $resolved++;
 
                 if ($this->enrichMatch($match, $fixtureId, $client, $teamsByApiId)) {

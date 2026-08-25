@@ -52,7 +52,7 @@
           <div class="match-team"><div class="team-id"><span class="crest crest-{{ $r->homeTeam->crest_code }}" role="img" aria-label="{{ $r->homeTeam->full_name }} badge"></span><span class="team-name">{{ $r->homeTeam->name }}</span></div><span class="team-score{{ $r->home_score > $r->away_score ? ' winning' : '' }}">{{ $r->home_score }}</span></div>
           <div class="match-team"><div class="team-id"><span class="crest crest-{{ $r->awayTeam->crest_code }}" role="img" aria-label="{{ $r->awayTeam->full_name }} badge"></span><span class="team-name">{{ $r->awayTeam->name }}</span></div><span class="team-score{{ $r->away_score > $r->home_score ? ' winning' : '' }}">{{ $r->away_score }}</span></div>
         </div>
-        <div class="match-venue">{{ $r->kickoff_at->format('D j M Y') }} &middot; {{ $r->venue }}</div>
+        <div class="match-venue">{{ $r->homeTeam->name }} played {{ $r->awayTeam->name }} at {{ $r->venue }}@if($r->referee), referee {{ $r->referee }}@endif, on {{ $r->kickoff_at->format('j F Y') }}.</div>
       </a>
       @empty
       <p style="color:var(--ink-faint);">No results yet.</p>
