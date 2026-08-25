@@ -120,8 +120,7 @@
 
       @if($isFinal)
 
-        <section class="detail-closing" aria-labelledby="report-heading">
-          <h2 id="report-heading">Match Report</h2>
+        <section class="detail-closing" aria-label="Match Report">
           <p>{{ $match->match_report }}</p>
         </section>
 
