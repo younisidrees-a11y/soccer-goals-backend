@@ -67,19 +67,36 @@ class AiMatchReportWriter
         $venue = $fixture->venue;
         $league = $fixture->league->name;
 
-        $possessionHome = $stats['possession']['home'] ?? 50;
-        $possessionAway = $stats['possession']['away'] ?? 50;
-        $shotsHome = $stats['shots']['home'] ?? '-';
-        $shotsAway = $stats['shots']['away'] ?? '-';
+        $facts = ["Match: {$home} {$homeScore}-{$awayScore} {$away}"];
+
+        if ($venue) {
+            $facts[] = "Venue: {$venue}";
+        }
+
+        $facts[] = "Competition: {$league}";
+
+        if (isset($fixture->home_score_ht, $fixture->away_score_ht)) {
+            $facts[] = "Half-time score: {$home} {$fixture->home_score_ht}-{$fixture->away_score_ht} {$away}";
+        }
+
+        // Only include possession/shots when we actually have them - never
+        // invent a 50/50 default, since that would misrepresent a real match.
+        if (isset($stats['possession']['home'], $stats['possession']['away'])) {
+            $facts[] = "Possession: {$home} {$stats['possession']['home']}% - {$stats['possession']['away']}% {$away}";
+        }
+
+        if (isset($stats['shots']['home'], $stats['shots']['away'])) {
+            $facts[] = "Shots: {$home} {$stats['shots']['home']} - {$stats['shots']['away']} {$away}";
+        }
+
+        $factsBlock = implode("\n        ", $facts);
 
         return <<<PROMPT
         Write a short football match report for a sports news website, in plain, natural, human English - the kind a real local sports journalist would write for a matchday roundup. Avoid robotic or corporate phrasing (no "furthermore", "it is important to note", "in conclusion"), avoid bullet points, and do not repeat the scoreline as a heading.
 
-        Match: {$home} {$homeScore}-{$awayScore} {$away}
-        Venue: {$venue}
-        Competition: {$league}
-        Possession: {$home} {$possessionHome}% - {$possessionAway}% {$away}
-        Shots: {$home} {$shotsHome} - {$shotsAway} {$away}
+        {$factsBlock}
+
+        Only use the facts given above - if possession or shot counts aren't listed, don't mention or estimate them at all, just describe the match in terms of the score and any half-time score given.
 
         Write two short paragraphs, around 90-130 words in total, covering how the game went and what the result means. Weave the numbers in naturally rather than listing them. Return only the two paragraphs, no title, no headings, no markdown formatting.
 

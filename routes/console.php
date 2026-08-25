@@ -8,7 +8,14 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::command('matches:progress')->everyFiveMinutes()->withoutOverlapping();
+// Real fixtures/results/standings from football-data.org - replaced the
+// old fictional match simulator (matches:progress) once the site switched
+// to tracking real results for these two leagues. Deliberately NOT
+// running matches:progress alongside this: if the real sync ever lagged,
+// the old simulator could "helpfully" fabricate a fictional score for a
+// match that's actually just waiting on real data.
+Schedule::command('football-data:sync premier-league')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('football-data:sync la-liga')->everyFiveMinutes()->withoutOverlapping();
 
 // Each of these already skips itself when there's nothing new to cover
 // (same match/team not re-covered), so running on a schedule never spams

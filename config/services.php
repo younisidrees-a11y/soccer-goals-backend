@@ -40,4 +40,8 @@ return [
         'model' => env('ANTHROPIC_MODEL', 'claude-haiku-4-5-20251001'),
     ],
 
+    'football_data' => [
+        'key' => env('FOOTBALL_DATA_API_KEY'),
+    ],
+
 ];
