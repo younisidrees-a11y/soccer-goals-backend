@@ -151,7 +151,7 @@
 
       @endif
 
-      <section aria-labelledby="matchup-heading" style="margin-top:20px;">
+      <section aria-labelledby="matchup-heading" style="margin-top:0;">
         <div class="section-head"><h2 id="matchup-heading">The Matchup</h2></div>
         <div class="match-grid{{ $isFinal ? ' celebrate-match' : '' }}">
           <div class="match-card" style="grid-column:1/-1;">
@@ -206,7 +206,7 @@
           $bridgeParagraph = trim(preg_replace('/\s+/', ' ', $bridgeTemplates[$bridgeSeed % count($bridgeTemplates)]));
         @endphp
 
-        <section aria-label="Match Summary" style="margin-top:20px;">
+        <section aria-label="Match Summary" style="margin-top:0;">
           <p style="font-size:15px;line-height:1.7;color:var(--ink);">{{ $bridgeParagraph }}</p>
         </section>
 
@@ -225,7 +225,7 @@
 
         @if($match->motm)
         @php $motmColor = $safeColor($match->motm['team_id'] === $match->homeTeam->api_football_id ? $match->homeTeam->color_hex : $match->awayTeam->color_hex); @endphp
-        <section aria-labelledby="motm-heading" style="margin-top:20px;">
+        <section aria-labelledby="motm-heading" style="margin-top:0;">
           <div class="section-head"><h2 id="motm-heading">Man of the Match</h2></div>
           <div class="motm-card" style="--motm-color:{{ $motmColor }};">
             <div class="motm-photo-wrap">
@@ -262,7 +262,7 @@
               $statRows[] = ['label' => $label, 'home' => $homeVal, 'away' => $awayVal, 'homePct' => round($homeVal / $total * 100), 'suffix' => ''];
           }
         @endphp
-        <section aria-labelledby="stats-heading" style="margin-top:20px;">
+        <section aria-labelledby="stats-heading" style="margin-top:0;">
           <div class="section-head"><h2 id="stats-heading">Match Statistics</h2></div>
           <div class="stats-compare">
             <div class="stats-compare-head">
@@ -295,7 +295,7 @@
           $runningHome = 0;
           $runningAway = 0;
         @endphp
-        <section aria-labelledby="timeline-heading" style="margin-top:20px;">
+        <section aria-labelledby="timeline-heading" style="margin-top:0;">
           <div class="section-head"><h2 id="timeline-heading">Match Events</h2></div>
           <div class="table-scroll">
             <table class="standings">
@@ -337,7 +337,7 @@
         @endif
 
         @if($match->lineups && count($match->lineups) === 2)
-        <section aria-labelledby="lineups-heading" style="margin-top:20px;">
+        <section aria-labelledby="lineups-heading" style="margin-top:0;">
           <div class="section-head"><h2 id="lineups-heading">{{ $match->homeTeam->name }} vs {{ $match->awayTeam->name }} Lineups</h2></div>
           <div class="lineup-grid">
             @foreach($match->lineups as $team)
@@ -384,7 +384,7 @@
           $nextDetails = fn ($next) => "going to play at {$next->kickoff_at->format('j F Y')} in {$next->league->name} {$next->league->season}";
         @endphp
 
-        <section aria-labelledby="ahead-heading" style="margin-top:20px;">
+        <section aria-labelledby="ahead-heading" style="margin-top:0;">
           <div class="section-head"><h2 id="ahead-heading">Looking Ahead</h2></div>
           <div style="font-size:15px;line-height:1.7;color:var(--ink);">
             @if($homeNext)
@@ -407,7 +407,7 @@
         </section>
         @endif
 
-        <section aria-labelledby="next-heading" style="margin-top:20px;">
+        <section aria-labelledby="next-heading" style="margin-top:0;">
           <div class="section-head"><h2 id="next-heading">What's Next</h2></div>
           <div style="display:grid;gap:14px;grid-template-columns:1fr;">
             @foreach ([[$match->homeTeam, $homeNext], [$match->awayTeam, $awayNext]] as [$team, $next])
