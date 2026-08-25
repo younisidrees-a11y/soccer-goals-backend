@@ -205,8 +205,7 @@
           $bridgeParagraph = trim(preg_replace('/\s+/', ' ', $bridgeTemplates[$bridgeSeed % count($bridgeTemplates)]));
         @endphp
 
-        <section aria-labelledby="summary-heading" style="margin-top:32px;">
-          <div class="section-head"><h2 id="summary-heading">Match Summary</h2></div>
+        <section aria-label="Match Summary" style="margin-top:32px;">
           <p style="font-size:15px;line-height:1.7;color:var(--ink);max-width:68ch;">{{ $bridgeParagraph }}</p>
         </section>
 
@@ -338,7 +337,7 @@
 
         @if($match->lineups && count($match->lineups) === 2)
         <section aria-labelledby="lineups-heading" style="margin-top:32px;">
-          <div class="section-head"><h2 id="lineups-heading">Starting Lineups</h2></div>
+          <div class="section-head"><h2 id="lineups-heading">{{ $match->homeTeam->name }} vs {{ $match->awayTeam->name }} Lineups</h2></div>
           <div class="lineup-grid">
             @foreach($match->lineups as $team)
             @php
