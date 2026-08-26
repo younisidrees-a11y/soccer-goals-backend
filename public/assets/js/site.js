@@ -54,6 +54,27 @@
   drawerOverlay.addEventListener('click', closeDrawer);
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeDrawer(); });
 
+  // Theme toggle. The blocking script in <head> already applied a saved
+  // preference (or left the attribute unset, meaning "follow the OS")
+  // before this file loads, so this just has to figure out which mode is
+  // actually showing right now and keep the button's aria state in sync.
+  var themeToggle = document.getElementById('themeToggle');
+  function currentTheme(){
+    var explicit = document.documentElement.getAttribute('data-theme');
+    if (explicit === 'dark' || explicit === 'light') return explicit;
+    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+  function applyTheme(theme){
+    document.documentElement.setAttribute('data-theme', theme);
+    try { localStorage.setItem('theme', theme); } catch (e) {}
+    themeToggle.setAttribute('aria-pressed', String(theme === 'dark'));
+    themeToggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  applyTheme(currentTheme());
+  themeToggle.addEventListener('click', function(){
+    applyTheme(currentTheme() === 'dark' ? 'light' : 'dark');
+  });
+
   // League tabs (match center) - purely presentational toggle
   var leagueTabs = document.querySelectorAll('.league-tabs .tab-btn');
   leagueTabs.forEach(function(tab){

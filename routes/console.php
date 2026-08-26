@@ -18,6 +18,7 @@ Schedule::command('football-data:sync premier-league')->everyFiveMinutes()->with
 Schedule::command('football-data:sync la-liga')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('football-data:sync serie-a')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('football-data:sync ligue-1')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('football-data:sync bundesliga')->everyFiveMinutes()->withoutOverlapping();
 
 // Saudi Pro League, Liga MX, Süper Lig and MLS aren't covered by
 // football-data.org at all, so API-Football is the primary fixture
@@ -37,6 +38,7 @@ Schedule::command('api-football:sync-stats premier-league')->everyFiveMinutes()-
 Schedule::command('api-football:sync-stats la-liga')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('api-football:sync-stats serie-a')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('api-football:sync-stats ligue-1')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-stats bundesliga')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('api-football:sync-stats saudi-pro-league')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('api-football:sync-stats liga-mx')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('api-football:sync-stats super-lig')->everyFiveMinutes()->withoutOverlapping();
@@ -52,6 +54,7 @@ Schedule::command('api-football:sync-previews premier-league')->everyFiveMinutes
 Schedule::command('api-football:sync-previews la-liga')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('api-football:sync-previews serie-a')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('api-football:sync-previews ligue-1')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-previews bundesliga')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('api-football:sync-previews saudi-pro-league')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('api-football:sync-previews liga-mx')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('api-football:sync-previews super-lig')->everyFiveMinutes()->withoutOverlapping();

@@ -202,6 +202,20 @@
   .icon-btn:hover{background:var(--surface-2);color:var(--accent);}
   .icon-btn svg{width:19px;height:19px;}
 
+  /* Theme toggle: shows the icon for the mode you'd switch TO. Default
+     (light) shows the moon; dark mode - whether from an explicit choice
+     or the OS default - shows the sun. Mirrors the same
+     :not([data-theme="light"]) / [data-theme="dark"] guard pattern used
+     for the color tokens above, so system dark mode and the manual
+     toggle agree on which icon is showing. */
+  .theme-icon-sun{display:none;}
+  :root[data-theme="dark"] .theme-icon-sun{display:block;}
+  :root[data-theme="dark"] .theme-icon-moon{display:none;}
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]) .theme-icon-sun{display:block;}
+    :root:not([data-theme="light"]) .theme-icon-moon{display:none;}
+  }
+
   /* ---------- Top bar ---------- */
   .top-bar{background:var(--topbar-bg);color:var(--topbar-ink);font-size:12.5px;}
   .top-bar-inner{display:flex;align-items:center;justify-content:space-between;height:38px;gap:16px;}
@@ -1100,6 +1114,14 @@
   .crest-clt{background-image:url("../img/crests/clt.png");}
   .crest-stl{background-image:url("../img/crests/stl.png");}
   .crest-sdg{background-image:url("../img/crests/sdg.png");}
+
+  /* Bundesliga real promoted clubs (Schalke, Hamburger SV, Paderborn,
+     Köln, Elversberg) replacing outdated relegated/fictional roster */
+  .crest-s04{background-image:url("../img/crests/s04.png");}
+  .crest-hsv{background-image:url("../img/crests/hsv.png");}
+  .crest-scp{background-image:url("../img/crests/scp.png");}
+  .crest-koe{background-image:url("../img/crests/koe.png");}
+  .crest-sve{background-image:url("../img/crests/sve.png");}
 
   /* Match Statistics: head-to-head comparison bars in each team's real
      colour, matching the same team-colour language used by the jerseys,
