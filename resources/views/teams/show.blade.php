@@ -222,7 +222,14 @@
         <div class="squad-position-title">{{ $label }}</div>
         <div class="squad-grid">
           @foreach ($players as $p)
-          <div class="player-card{{ $p->is_captain ? ' is-captain' : '' }}"><span class="player-number">{{ $p->shirt_number }}</span><div><div class="player-name">{{ $p->name }}@if($p->is_captain) <span class="cap-tag">(C)</span>@endif</div><div class="player-role">{{ $p->position }}</div></div></div>
+          <div class="player-card{{ $p->is_captain ? ' is-captain' : '' }}">
+            @if($p->photo_url)
+              <img src="{{ $p->photo_url }}" alt="{{ $p->name }}" class="player-photo" loading="lazy">
+            @else
+              <span class="player-photo player-photo-fallback">{{ $p->shirt_number ?? '?' }}</span>
+            @endif
+            <div><div class="player-name">{{ $p->name }}@if($p->is_captain) <span class="cap-tag">(C)</span>@endif</div><div class="player-role">{{ $p->position }}@if($p->shirt_number) &middot; #{{ $p->shirt_number }}@endif</div></div>
+          </div>
           @endforeach
         </div>
         @endif

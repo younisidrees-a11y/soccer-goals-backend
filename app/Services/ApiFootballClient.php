@@ -28,6 +28,12 @@ class ApiFootballClient
         return $this->request('/teams', ['league' => $leagueId, 'season' => $season]);
     }
 
+    /** A team's real squad, one page (20 players) at a time - paginate via $page until response.paging.current === response.paging.total. */
+    public function getPlayersByTeam(int $teamId, int $season, int $page = 1): ?array
+    {
+        return $this->request('/players', ['team' => $teamId, 'season' => $season, 'page' => $page]);
+    }
+
     public function getFixturesByRound(int $leagueId, int $season, string $round): ?array
     {
         return $this->request('/fixtures', ['league' => $leagueId, 'season' => $season, 'round' => $round]);
