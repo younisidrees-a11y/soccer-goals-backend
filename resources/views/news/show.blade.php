@@ -112,6 +112,25 @@
             <p style="margin-bottom:16px;">{{ trim($paragraph) }}</p>
           @endforeach
         </div>
+
+        @if($article->match)
+        <a href="{{ $article->match->prettyUrl() }}" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:28px;padding:16px 20px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-lg);text-decoration:none;color:inherit;">
+          <span style="display:flex;align-items:center;gap:10px;font-size:14.5px;">
+            <span class="crest crest-{{ $article->match->homeTeam->crest_code }}" role="img" aria-label="{{ $article->match->homeTeam->full_name }} badge"></span>
+            <strong>{{ $article->match->homeTeam->name }}</strong>
+            @if($article->match->isFinal())
+              <span style="font-weight:800;font-variant-numeric:tabular-nums;">{{ $article->match->home_score }}&ndash;{{ $article->match->away_score }}</span>
+            @else
+              <span style="color:var(--ink-faint);">vs</span>
+            @endif
+            <strong>{{ $article->match->awayTeam->name }}</strong>
+            <span class="crest crest-{{ $article->match->awayTeam->crest_code }}" role="img" aria-label="{{ $article->match->awayTeam->full_name }} badge"></span>
+          </span>
+          <span class="btn btn-accent btn-sm">Full Match Report &amp; Stats
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+        </a>
+        @endif
       </article>
 
       @if($related->isNotEmpty())

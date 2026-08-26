@@ -53,7 +53,7 @@ class NewsController extends Controller
 
     public function show(string $slug)
     {
-        $article = NewsArticle::with(['league', 'team'])
+        $article = NewsArticle::with(['league', 'team', 'match.homeTeam', 'match.awayTeam'])
             ->published()
             ->where('slug', $slug)
             ->firstOrFail();
