@@ -32,7 +32,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16.png') }}">
 <link rel="alternate icon" href="{{ asset('favicon.ico') }}">
 <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
-<link rel="stylesheet" href="{{ asset('assets/css/site.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/site.css') }}?v={{ @filemtime(public_path('assets/css/site.css')) ?: '1' }}">
 @php
   $orgSchema = [
       '@context' => 'https://schema.org',
@@ -394,7 +394,7 @@
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
-<script src="{{ asset('assets/js/site.js') }}" defer></script>
+<script src="{{ asset('assets/js/site.js') }}?v={{ @filemtime(public_path('assets/js/site.js')) ?: '1' }}" defer></script>
 @if($hasLiveMatch ?? false)
 <script>
 (function () {
