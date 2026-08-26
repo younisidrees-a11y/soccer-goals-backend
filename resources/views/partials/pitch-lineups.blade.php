@@ -34,8 +34,8 @@
           $depth = $maxRow > 1 ? ($row - 1) / ($maxRow - 1) : 0;
 
           foreach ($sorted as $i => $p) {
-              $xPct = ($i + 1) / ($count + 1) * 100;
-              $yPct = $isHomeSide ? (92 - $depth * 40) : (8 + $depth * 40);
+              $yPct = ($i + 1) / ($count + 1) * 100;
+              $xPct = $isHomeSide ? (8 + $depth * 40) : (92 - $depth * 40);
               $positioned[] = ['player' => $p, 'x' => $xPct, 'y' => $yPct];
           }
       }
@@ -67,8 +67,8 @@
 <div class="pitch-wrap">
   <div class="pitch-halfway"></div>
   <div class="pitch-circle"></div>
-  <div class="pitch-box pitch-box-top"></div>
-  <div class="pitch-box pitch-box-bottom"></div>
+  <div class="pitch-box pitch-box-left"></div>
+  <div class="pitch-box pitch-box-right"></div>
 
   @foreach($sides as $side)
     @foreach($side['players'] as $p)

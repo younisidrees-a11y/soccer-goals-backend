@@ -29,13 +29,6 @@ class MatchController extends Controller
             ->orderBy('kickoff_at')
             ->first();
 
-        $tickerMatches = MatchFixture::with(['homeTeam', 'awayTeam'])
-            ->published()
-            ->where('status', 'final')
-            ->orderByDesc('kickoff_at')
-            ->take(7)
-            ->get();
-
         $lastMatchFor = fn (int $teamId) => MatchFixture::with(['homeTeam', 'awayTeam'])
             ->published()
             ->where('status', 'final')
@@ -58,7 +51,7 @@ class MatchController extends Controller
         $awayNextTwo = $nextTwoFor($match->away_team_id);
 
         return view('matches.show', compact(
-            'match', 'homeStanding', 'awayStanding', 'homeNext', 'awayNext', 'tickerMatches',
+            'match', 'homeStanding', 'awayStanding', 'homeNext', 'awayNext',
             'homeLastMatch', 'awayLastMatch', 'homeNextTwo', 'awayNextTwo'
         ));
     }

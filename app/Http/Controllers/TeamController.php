@@ -58,13 +58,6 @@ class TeamController extends Controller
             ->orderByDesc('published_at')
             ->get();
 
-        $tickerMatches = MatchFixture::with(['homeTeam', 'awayTeam'])
-            ->published()
-            ->where('status', 'final')
-            ->orderByDesc('kickoff_at')
-            ->take(7)
-            ->get();
-
         return view('teams.show', compact(
             'team',
             'leagueStandings',
@@ -75,7 +68,6 @@ class TeamController extends Controller
             'squadByPosition',
             'topScorers',
             'news',
-            'tickerMatches',
         ));
     }
 }

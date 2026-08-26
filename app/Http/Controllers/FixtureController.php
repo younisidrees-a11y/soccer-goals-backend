@@ -28,13 +28,6 @@ class FixtureController extends Controller
             ->orderBy('kickoff_at')
             ->paginate(20);
 
-        $tickerMatches = MatchFixture::with(['homeTeam', 'awayTeam'])
-            ->published()
-            ->where('status', 'final')
-            ->orderByDesc('kickoff_at')
-            ->take(7)
-            ->get();
-
-        return view('fixtures.show', compact('league', 'fixtures', 'tickerMatches'));
+        return view('fixtures.show', compact('league', 'fixtures'));
     }
 }

@@ -64,13 +64,6 @@ class HomeController extends Controller
             ? Standing::with('team')->where('league_id', $laLiga->id)->orderBy('position')->get()
             : collect();
 
-        $tickerMatches = MatchFixture::with(['homeTeam', 'awayTeam'])
-            ->published()
-            ->where('status', 'final')
-            ->orderByDesc('kickoff_at')
-            ->take(7)
-            ->get();
-
         return view('home', compact(
             'todaysMatches',
             'latestNews',
@@ -79,7 +72,6 @@ class HomeController extends Controller
             'recentResults',
             'plStandings',
             'laLigaStandings',
-            'tickerMatches',
         ));
     }
 }

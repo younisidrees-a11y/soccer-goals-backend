@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MatchFixture;
 use App\Models\NewsArticle;
 
 class NewsController extends Controller
@@ -71,13 +70,7 @@ class NewsController extends Controller
             ->take(3)
             ->get();
 
-        $tickerMatches = MatchFixture::with(['homeTeam', 'awayTeam'])
-            ->where('status', 'final')
-            ->orderByDesc('kickoff_at')
-            ->take(7)
-            ->get();
-
-        return view('news.show', compact('article', 'categoryLabel', 'related', 'tickerMatches'));
+        return view('news.show', compact('article', 'categoryLabel', 'related'));
     }
 
     public static function categories(): array

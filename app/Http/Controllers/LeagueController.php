@@ -40,13 +40,6 @@ class LeagueController extends Controller
             ->orderByDesc('published_at')
             ->get();
 
-        $tickerMatches = MatchFixture::with(['homeTeam', 'awayTeam'])
-            ->published()
-            ->where('status', 'final')
-            ->orderByDesc('kickoff_at')
-            ->take(7)
-            ->get();
-
         return view('leagues.show', compact(
             'league',
             'standings',
@@ -54,7 +47,6 @@ class LeagueController extends Controller
             'matchdayOneResults',
             'nextFixture',
             'news',
-            'tickerMatches',
         ));
     }
 }

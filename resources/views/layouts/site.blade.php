@@ -263,7 +263,23 @@
     <span class="ticker-label"><span class="dot-live" aria-hidden="true"></span>LIVE</span>
     <div class="ticker-track" tabindex="0">
       @foreach ($tickerMatches ?? [] as $tm)
-      <a href="{{ route('matches.show', $tm->id) }}" class="ticker-chip"><span class="ticker-status">FT</span><span class="ticker-teams"><span class="crest crest-{{ $tm->homeTeam->crest_code }}" role="img" aria-label="{{ $tm->homeTeam->full_name }} badge" style="width:15px;height:17px;"></span> <span class="ticker-score">{{ $tm->home_score }}</span>&ndash;<span class="ticker-score">{{ $tm->away_score }}</span> <span class="crest crest-{{ $tm->awayTeam->crest_code }}" role="img" aria-label="{{ $tm->awayTeam->full_name }} badge" style="width:15px;height:17px;"></span></span></a>
+      <a href="{{ route('matches.show', $tm->id) }}" class="ticker-chip">
+        <span class="ticker-status{{ $tm->status === 'live' ? ' is-live' : '' }}">
+          @if($tm->status === 'live') LIVE
+          @elseif($tm->status === 'final') FT
+          @else {{ $tm->kickoff_at->format('H:i') }}
+          @endif
+        </span>
+        <span class="ticker-teams">
+          <span class="crest crest-{{ $tm->homeTeam->crest_code }}" role="img" aria-label="{{ $tm->homeTeam->full_name }} badge" style="width:15px;height:17px;"></span>
+          @if($tm->status === 'scheduled')
+            <span class="ticker-vs">{{ $tm->homeTeam->name }} v {{ $tm->awayTeam->name }}</span>
+          @else
+            <span class="ticker-score">{{ $tm->home_score }}</span>&ndash;<span class="ticker-score">{{ $tm->away_score }}</span>
+          @endif
+          <span class="crest crest-{{ $tm->awayTeam->crest_code }}" role="img" aria-label="{{ $tm->awayTeam->full_name }} badge" style="width:15px;height:17px;"></span>
+        </span>
+      </a>
       @endforeach
     </div>
   </div>
