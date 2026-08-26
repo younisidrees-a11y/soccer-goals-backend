@@ -12,7 +12,10 @@ class LeagueController extends Controller
 {
     public function show(Request $request, string $slug)
     {
-        $league = League::published()->where('slug', $slug)->firstOrFail();
+        $league = League::published()
+            ->withCount(['teams' => fn ($q) => $q->published()])
+            ->where('slug', $slug)
+            ->firstOrFail();
 
         $standings = Standing::with('team')
             ->where('league_id', $league->id)

@@ -33,6 +33,12 @@ class ApiFootballClient
         return $this->request('/fixtures', ['league' => $leagueId, 'season' => $season, 'round' => $round]);
     }
 
+    /** The whole season's fixtures in one call - for leagues football-data.org doesn't cover, where API-Football is the primary source, not just enrichment. */
+    public function getSeasonFixtures(int $leagueId, int $season): ?array
+    {
+        return $this->request('/fixtures', ['league' => $leagueId, 'season' => $season]);
+    }
+
     public function getStatistics(int $fixtureId): ?array
     {
         return $this->request('/fixtures/statistics', ['fixture' => $fixtureId]);

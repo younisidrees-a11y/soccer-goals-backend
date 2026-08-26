@@ -1018,6 +1018,17 @@
   .crest-elc{background-image:url("../img/crests/elc.svg");}
   .crest-mal{background-image:url("../img/crests/mal.svg");}
 
+  /* Real promoted clubs replacing outdated Serie A / Ligue 1 / Saudi Pro League rosters */
+  .crest-fro{background-image:url("../img/crests/fro.png");}
+  .crest-mnz{background-image:url("../img/crests/mnz.png");}
+  .crest-lor{background-image:url("../img/crests/lor.png");}
+  .crest-tro{background-image:url("../img/crests/tro.png");}
+  .crest-pfc{background-image:url("../img/crests/pfc.png");}
+  .crest-lem{background-image:url("../img/crests/lem.png");}
+  .crest-fai{background-image:url("../img/crests/fai.png");}
+  .crest-abh{background-image:url("../img/crests/abh.png");}
+  .crest-dir{background-image:url("../img/crests/dir.png");}
+
   /* Match Statistics: head-to-head comparison bars in each team's real
      colour, matching the same team-colour language used by the jerseys,
      Match Events table, and Man of the Match card below. */

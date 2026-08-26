@@ -23,7 +23,7 @@
         <div>
           <div class="league-hero-eyebrow eyebrow" style="color:#8FB8FF;">{{ $league->country }} &middot; {{ $league->season }} Season</div>
           <h1 class="league-hero-title">{{ $league->name }}</h1>
-          <div class="league-hero-meta">{{ $league->teams->count() }} clubs &middot; {{ $league->season }} season &middot; Live from the database</div>
+          <div class="league-hero-meta">{{ $league->teams_count }} clubs &middot; {{ $league->season }} season &middot; Live from the database</div>
         </div>
       </div>
 
@@ -159,7 +159,7 @@
       <section aria-labelledby="history-heading-1" class="essay-block">
         <div class="essay-part-tag">League History</div>
         <h2 id="history-heading-1">About the {{ $league->name }}</h2>
-        <p class="lede">The {{ $league->name }} is {{ $league->country }}'s top professional football division, contested by {{ $league->teams->count() }} clubs across {{ $league->total_matchdays }} matchdays every season.</p>
+        <p class="lede">The {{ $league->name }} is {{ $league->country }}'s top professional football division, contested by {{ $league->teams_count }} clubs across {{ $league->total_matchdays }} matchdays every season.</p>
         @if($league->about_text)
           @foreach (explode("\n", $league->about_text) as $paragraph)
             @continue(trim($paragraph) === '')
