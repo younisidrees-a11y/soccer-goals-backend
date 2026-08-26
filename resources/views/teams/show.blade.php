@@ -75,8 +75,8 @@
           <div class="stat-value">@if($form)<span class="form-chip {{ $form }}" style="width:22px;height:22px;">{{ strtoupper($form) }}</span>@else &mdash; @endif</div>
         </div>
         <div class="stat-item">
-          <div class="stat-label">Next Fixture</div>
-          <div class="stat-value" style="font-size:15px;">{{ $nextFixture?->kickoff_at->format('D, j M') ?? 'TBC' }}</div>
+          <div class="stat-label">{{ $nextFixture?->isLive() ? 'Playing Now' : 'Next Fixture' }}</div>
+          <div class="stat-value" style="font-size:15px;">@if($nextFixture?->isLive())<span style="color:var(--live);">LIVE</span>@else{{ $nextFixture?->kickoff_at->format('D, j M') ?? 'TBC' }}@endif</div>
         </div>
       </div>
       @endif
@@ -180,7 +180,7 @@
             <h3>Upcoming</h3>
             @forelse ($upcomingMatches as $fx)
             @php $isHome = $fx->home_team_id === $team->id; $opponent = $isHome ? $fx->awayTeam : $fx->homeTeam; @endphp
-            <a href="{{ route('matches.show', $fx->id) }}" class="fixture-row"><span class="fx-date">{{ strtoupper($fx->kickoff_at->format('D')) }}<br>{{ $fx->kickoff_at->format('j M') }}</span><span class="fx-teams">@if($isHome)<span class="fx-team">{{ $team->name }}</span><span class="vs">vs</span><span class="fx-team"><span class="crest crest-{{ $opponent->crest_code }}" role="img" aria-label="{{ $opponent->full_name }} badge"></span>{{ $opponent->name }}</span>@else<span class="fx-team"><span class="crest crest-{{ $opponent->crest_code }}" role="img" aria-label="{{ $opponent->full_name }} badge"></span>{{ $opponent->name }}</span><span class="vs">vs</span><span class="fx-team">{{ $team->name }}</span>@endif</span><span class="fx-time"><span class="dot-waiting" aria-hidden="true"></span>{{ $fx->kickoff_at->format('H:i') }}</span></a>
+            <a href="{{ route('matches.show', $fx->id) }}" class="fixture-row"><span class="fx-date">{{ strtoupper($fx->kickoff_at->format('D')) }}<br>{{ $fx->kickoff_at->format('j M') }}</span><span class="fx-teams">@if($isHome)<span class="fx-team">{{ $team->name }}</span><span class="vs">vs</span><span class="fx-team"><span class="crest crest-{{ $opponent->crest_code }}" role="img" aria-label="{{ $opponent->full_name }} badge"></span>{{ $opponent->name }}</span>@else<span class="fx-team"><span class="crest crest-{{ $opponent->crest_code }}" role="img" aria-label="{{ $opponent->full_name }} badge"></span>{{ $opponent->name }}</span><span class="vs">vs</span><span class="fx-team">{{ $team->name }}</span>@endif</span>@if($fx->isLive())<span class="fx-time" style="color:var(--live);">{{ $fx->home_score !== null ? "{$fx->home_score}\u{2013}{$fx->away_score} " : '' }}LIVE</span>@else<span class="fx-time"><span class="dot-waiting" aria-hidden="true"></span>{{ $fx->kickoff_at->format('H:i') }}</span>@endif</a>
             @empty
             <p style="font-size:13.5px;color:var(--ink-faint);">No upcoming fixtures scheduled yet.</p>
             @endforelse

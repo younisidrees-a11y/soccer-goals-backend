@@ -30,7 +30,7 @@ class TeamController extends Controller
         $upcomingMatches = MatchFixture::with(['homeTeam', 'awayTeam'])
             ->published()
             ->where(fn ($q) => $q->where('home_team_id', $team->id)->orWhere('away_team_id', $team->id))
-            ->where('status', 'scheduled')
+            ->whereIn('status', ['scheduled', 'live'])
             ->orderBy('kickoff_at')
             ->get();
 
