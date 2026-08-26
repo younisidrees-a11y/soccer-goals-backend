@@ -251,6 +251,7 @@ class SyncApiFootballStats extends Command
                 'name' => $p['player']['name'],
                 'number' => $p['player']['number'],
                 'position' => $p['player']['pos'],
+                'grid' => $p['player']['grid'],
             ])->values()->all(),
         ])->values()->all();
     }

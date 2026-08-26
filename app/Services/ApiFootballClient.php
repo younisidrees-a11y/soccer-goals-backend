@@ -53,6 +53,16 @@ class ApiFootballClient
         return $this->request('/fixtures/players', ['fixture' => $fixtureId]);
     }
 
+    public function getPredictions(int $fixtureId): ?array
+    {
+        return $this->request('/predictions', ['fixture' => $fixtureId]);
+    }
+
+    public function getCoach(int $teamId): ?array
+    {
+        return $this->request('/coachs', ['team' => $teamId]);
+    }
+
     private function request(string $path, array $query = []): ?array
     {
         $key = config('services.api_football.key');

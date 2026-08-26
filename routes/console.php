@@ -26,6 +26,15 @@ Schedule::command('football-data:sync la-liga')->everyFiveMinutes()->withoutOver
 Schedule::command('api-football:sync-stats premier-league')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('api-football:sync-stats la-liga')->everyFiveMinutes()->withoutOverlapping();
 
+// Referee, prediction, coach and (once confirmed, usually ~1h before
+// kick-off) lineups for fixtures in the next 7 days - powers the match
+// preview page. Only fetches lineups/predictions once per match (checks
+// the column is still null first), so running every 5 minutes just
+// means a confirmed lineup shows up quickly once it exists, not that
+// we re-spend calls on matches already enriched.
+Schedule::command('api-football:sync-previews premier-league')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-previews la-liga')->everyFiveMinutes()->withoutOverlapping();
+
 // Each of these already skips itself when there's nothing new to cover
 // (same match/team not re-covered), so running on a schedule never spams
 // the review queue - it just writes fresh content when there's genuinely

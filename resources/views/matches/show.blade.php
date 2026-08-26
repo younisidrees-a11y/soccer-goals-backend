@@ -127,6 +127,13 @@
 
       @else
 
+        @php
+          $previewSafeColor = fn (?string $hex) => $hex && preg_match('/^#[0-9a-fA-F]{3,6}$/', $hex) ? $hex : '#1552C0';
+          $previewHomeColor = $previewSafeColor($match->homeTeam->color_hex);
+          $previewAwayColor = $previewSafeColor($match->awayTeam->color_hex);
+          $ordinal = fn ($n) => $n.(in_array($n % 100, [11, 12, 13]) ? 'th' : (['th', 'st', 'nd', 'rd'][$n % 10] ?? 'th'));
+        @endphp
+
         <section aria-labelledby="preview-heading">
           <div class="section-head"><h2 id="preview-heading">Match Preview</h2></div>
           <div style="display:grid;gap:14px;grid-template-columns:1fr;">
@@ -134,7 +141,7 @@
               <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
                 <span class="crest crest-{{ $match->homeTeam->crest_code }}" role="img" aria-label="{{ $match->homeTeam->full_name }} badge" style="width:28px;height:31px;"></span>
                 <strong>{{ $match->homeTeam->name }}</strong>
-                @if($homeStanding)<span style="font-size:12.5px;color:var(--ink-faint);">&middot; {{ $homeStanding->position }}{{ match(true){ in_array($homeStanding->position % 100, [11,12,13]) => 'th', $homeStanding->position % 10 === 1 => 'st', $homeStanding->position % 10 === 2 => 'nd', $homeStanding->position % 10 === 3 => 'rd', default => 'th' } }} &middot; {{ $homeStanding->points }} pts</span>@endif
+                @if($homeStanding)<span style="font-size:12.5px;color:var(--ink-faint);">&middot; {{ $ordinal($homeStanding->position) }} &middot; {{ $homeStanding->points }} pts</span>@endif
               </div>
               <p style="font-size:14px;color:var(--ink-muted);line-height:1.6;margin:0;">{{ $match->home_preview_note }}</p>
             </div>
@@ -142,12 +149,124 @@
               <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
                 <span class="crest crest-{{ $match->awayTeam->crest_code }}" role="img" aria-label="{{ $match->awayTeam->full_name }} badge" style="width:28px;height:31px;"></span>
                 <strong>{{ $match->awayTeam->name }}</strong>
-                @if($awayStanding)<span style="font-size:12.5px;color:var(--ink-faint);">&middot; {{ $awayStanding->position }}{{ match(true){ in_array($awayStanding->position % 100, [11,12,13]) => 'th', $awayStanding->position % 10 === 1 => 'st', $awayStanding->position % 10 === 2 => 'nd', $awayStanding->position % 10 === 3 => 'rd', default => 'th' } }} &middot; {{ $awayStanding->points }} pts</span>@endif
+                @if($awayStanding)<span style="font-size:12.5px;color:var(--ink-faint);">&middot; {{ $ordinal($awayStanding->position) }} &middot; {{ $awayStanding->points }} pts</span>@endif
               </div>
               <p style="font-size:14px;color:var(--ink-muted);line-height:1.6;margin:0;">{{ $match->away_preview_note }}</p>
             </div>
           </div>
         </section>
+
+        @if($match->prediction)
+        <section aria-labelledby="prediction-heading">
+          <div class="section-head"><h2 id="prediction-heading">Who Will Win?</h2></div>
+          <div class="widget">
+            <div class="stat-compare-row" style="grid-template-columns:44px 1fr 44px;">
+              <span class="stat-compare-val" style="color:{{ $previewHomeColor }};">{{ $match->prediction['home_pct'] }}%</span>
+              <div class="stat-compare-mid">
+                <div class="stat-compare-label">Home &middot; Draw ({{ $match->prediction['draw_pct'] }}%) &middot; Away</div>
+                <div class="stat-compare-track">
+                  <span class="stat-compare-fill" style="width:{{ $match->prediction['home_pct'] }}%;background:{{ $previewHomeColor }};"></span>
+                  <span class="stat-compare-fill" style="width:{{ $match->prediction['draw_pct'] }}%;background:var(--ink-faint);"></span>
+                  <span class="stat-compare-fill" style="width:{{ $match->prediction['away_pct'] }}%;background:{{ $previewAwayColor }};"></span>
+                </div>
+              </div>
+              <span class="stat-compare-val" style="color:{{ $previewAwayColor }};">{{ $match->prediction['away_pct'] }}%</span>
+            </div>
+            <p style="font-size:12.5px;color:var(--ink-faint);margin-top:14px;line-height:1.6;">
+              This is our view based on both teams' recent form and head-to-head history — not a guarantee, and not betting advice.
+            </p>
+          </div>
+        </section>
+        @endif
+
+        @if($homeLastMatch || $awayLastMatch)
+        <section aria-labelledby="lastgame-heading">
+          <div class="section-head"><h2 id="lastgame-heading">Last Time Out</h2></div>
+          <div class="lineup-grid">
+            @foreach ([[$match->homeTeam, $homeLastMatch, $previewHomeColor], [$match->awayTeam, $awayLastMatch, $previewAwayColor]] as [$team, $last, $sideColor])
+            <div class="widget">
+              <div class="events-team-head" style="--side-color:{{ $sideColor }};margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid var(--side-color);display:flex;align-items:center;gap:9px;">
+                <span class="crest crest-{{ $team->crest_code }}" role="img" aria-label="{{ $team->full_name }} badge" style="width:24px;height:26px;"></span>
+                <strong>{{ $team->name }}</strong>
+              </div>
+              @if($last)
+                @php
+                  $wasHome = $last->home_team_id === $team->id;
+                  $opponent = $wasHome ? $last->awayTeam : $last->homeTeam;
+                  $ownScore = $wasHome ? $last->home_score : $last->away_score;
+                  $oppScore = $wasHome ? $last->away_score : $last->home_score;
+                  $resultWord = $ownScore > $oppScore ? 'Won' : ($ownScore < $oppScore ? 'Lost' : 'Drew');
+                @endphp
+                <a href="{{ route('matches.show', $last->id) }}" style="color:inherit;text-decoration:none;">
+                  <strong>{{ $resultWord }}</strong> {{ $ownScore }}-{{ $oppScore }} {{ $wasHome ? 'vs' : 'at' }} {{ $opponent->name }}
+                </a>
+                @if($last->stats)
+                <div style="margin-top:10px;font-size:12.5px;color:var(--ink-faint);display:flex;gap:14px;flex-wrap:wrap;">
+                  @if(isset($last->stats['possession']))<span>Possession: {{ $wasHome ? $last->stats['possession']['home'] : $last->stats['possession']['away'] }}%</span>@endif
+                  @if(isset($last->stats['shots']))<span>Shots: {{ $wasHome ? $last->stats['shots']['home'] : $last->stats['shots']['away'] }}</span>@endif
+                </div>
+                @endif
+              @else
+              <p style="font-size:13px;color:var(--ink-faint);">No previous match on record yet.</p>
+              @endif
+            </div>
+            @endforeach
+          </div>
+        </section>
+        @endif
+
+        <section aria-labelledby="coaches-heading">
+          <div class="section-head"><h2 id="coaches-heading">The Coaches</h2></div>
+          <div class="lineup-grid">
+            @foreach ([[$match->homeTeam, $previewHomeColor], [$match->awayTeam, $previewAwayColor]] as [$team, $sideColor])
+            <div class="widget" style="display:flex;align-items:center;gap:14px;">
+              <img src="{{ $team->manager_photo_url ?? asset('apple-touch-icon.png') }}" alt="{{ $team->manager ?? 'Coach' }}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid {{ $sideColor }};flex-shrink:0;">
+              <div>
+                <div style="font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--ink);">{{ $team->manager ?: 'Not yet confirmed' }}</div>
+                <div style="font-size:12.5px;color:var(--ink-faint);margin-top:2px;">
+                  {{ $team->name }}
+                  @if($team->coach_nationality) &middot; {{ $team->coach_nationality }} @endif
+                  @if($team->coach_age) &middot; {{ $team->coach_age }} yrs @endif
+                </div>
+              </div>
+            </div>
+            @endforeach
+          </div>
+        </section>
+
+        <section aria-labelledby="lineups-preview-heading">
+          <div class="section-head"><h2 id="lineups-preview-heading">{{ $match->homeTeam->name }} vs {{ $match->awayTeam->name }} Lineups</h2></div>
+          @if($match->lineups && count($match->lineups) === 2)
+            @include('partials.pitch-lineups', ['lineups' => $match->lineups, 'homeTeam' => $match->homeTeam, 'awayTeam' => $match->awayTeam])
+          @else
+            <div class="lineups-unavailable">Lineups haven't been confirmed yet — teams usually announce their starting XI shortly before kick-off. Check back closer to {{ $match->kickoff_at->format('H:i') }} UTC on {{ $match->kickoff_at->format('j F') }}.</div>
+          @endif
+        </section>
+
+        @if($homeNextTwo->isNotEmpty() || $awayNextTwo->isNotEmpty())
+        <section aria-labelledby="upcoming-heading">
+          <div class="section-head"><h2 id="upcoming-heading">Coming Up Next</h2></div>
+          <div class="lineup-grid">
+            @foreach ([[$match->homeTeam, $homeNextTwo, $previewHomeColor], [$match->awayTeam, $awayNextTwo, $previewAwayColor]] as [$team, $upcoming, $sideColor])
+            <div class="widget">
+              <div style="display:flex;align-items:center;gap:9px;margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid {{ $sideColor }};">
+                <span class="crest crest-{{ $team->crest_code }}" role="img" aria-label="{{ $team->full_name }} badge" style="width:24px;height:26px;"></span>
+                <strong>{{ $team->name }}</strong>
+              </div>
+              @forelse ($upcoming as $fx)
+                @php $opp = $fx->home_team_id === $team->id ? $fx->awayTeam : $fx->homeTeam; @endphp
+                <a href="{{ route('matches.show', $fx->id) }}" style="display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--ink);text-decoration:none;">
+                  <span>{{ $fx->home_team_id === $team->id ? 'vs' : 'at' }} {{ $opp->name }}</span>
+                  <span style="color:var(--ink-faint);">{{ $fx->kickoff_at->format('j M, H:i') }}</span>
+                </a>
+              @empty
+                <p style="font-size:13px;color:var(--ink-faint);">No further fixtures scheduled yet.</p>
+              @endforelse
+            </div>
+            @endforeach
+          </div>
+        </section>
+        @endif
 
       @endif
 

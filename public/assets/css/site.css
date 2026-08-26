@@ -1063,4 +1063,24 @@
   .jersey-name{font-size:11px;font-weight:600;color:var(--ink);line-height:1.25;max-width:76px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .jersey-pos{font-size:9.5px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.03em;}
   .lineup-coach{margin-top:16px;padding-top:12px;border-top:1px dashed var(--border);font-size:12.5px;color:var(--ink-faint);}
+
+  /* Interactive pitch lineup - real formation positions from API-Football's grid field */
+  .pitch-legend{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;}
+  .pitch-legend-item{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--side-color);}
+  .pitch-legend-item .crest{width:22px;height:24px;}
+  .pitch-formation{font-size:11px;font-weight:600;color:var(--ink-faint);background:var(--surface-2);padding:2px 7px;border-radius:var(--radius-pill);}
+  .pitch-wrap{position:relative;width:100%;aspect-ratio:2/3;max-width:420px;margin:0 auto;background:repeating-linear-gradient(0deg,#2E8B4F,#2E8B4F 11%,#347F49 11%,#347F49 22%);border-radius:var(--radius-md);overflow:hidden;border:1px solid var(--border);}
+  .pitch-halfway{position:absolute;top:50%;left:0;right:0;height:2px;background:rgba(255,255,255,.55);}
+  .pitch-circle{position:absolute;top:50%;left:50%;width:26%;aspect-ratio:1;border:2px solid rgba(255,255,255,.55);border-radius:50%;transform:translate(-50%,-50%);}
+  .pitch-box{position:absolute;left:50%;width:46%;height:12%;border:2px solid rgba(255,255,255,.5);transform:translateX(-50%);}
+  .pitch-box-top{top:0;border-top:none;}
+  .pitch-box-bottom{bottom:0;border-bottom:none;}
+  .pitch-player{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;z-index:1;}
+  .pitch-player .jersey-svg{width:30px;height:33px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35));}
+  .pitch-player-tooltip{position:absolute;bottom:100%;margin-bottom:4px;background:var(--ink);color:#fff;padding:4px 8px;border-radius:4px;font-size:11px;font-weight:600;white-space:nowrap;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .15s ease;z-index:5;}
+  .pitch-player:hover .pitch-player-tooltip,
+  .pitch-player:focus-within .pitch-player-tooltip{opacity:1;visibility:visible;}
+  .pitch-coach-line{font-size:12.5px;color:var(--ink-faint);margin-top:8px;}
+  .lineups-unavailable{background:var(--surface-2);border:1px dashed var(--border-strong);border-radius:var(--radius-md);padding:20px;text-align:center;color:var(--ink-muted);font-size:14px;}
+
   .crest-lev{background-image:url("../img/crests/lev.svg");}
