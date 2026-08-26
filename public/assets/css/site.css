@@ -1168,6 +1168,85 @@
   .crest-koe{background-image:url("../img/crests/koe.png");}
   .crest-sve{background-image:url("../img/crests/sve.png");}
 
+  /* English Championship (Wolves/Burnley/West Ham reuse their existing
+     wol/bur/whu codes from the original Premier League build - refreshed
+     with freshly-verified real crests, not new codes) */
+  .crest-wat{background-image:url("../img/crests/wat.png");}
+  .crest-sou{background-image:url("../img/crests/sou.png");}
+  .crest-car{background-image:url("../img/crests/car.png");}
+  .crest-brm{background-image:url("../img/crests/brm.png");}
+  .crest-brc{background-image:url("../img/crests/brc.png");}
+  .crest-mlw{background-image:url("../img/crests/mlw.png");}
+  .crest-pne{background-image:url("../img/crests/pne.png");}
+  .crest-wba{background-image:url("../img/crests/wba.png");}
+  .crest-shu{background-image:url("../img/crests/shu.png");}
+  .crest-blb{background-image:url("../img/crests/blb.png");}
+  .crest-blt{background-image:url("../img/crests/blt.png");}
+  .crest-drb{background-image:url("../img/crests/drb.png");}
+  .crest-mid{background-image:url("../img/crests/mid.png");}
+  .crest-nor{background-image:url("../img/crests/nor.png");}
+  .crest-qpr{background-image:url("../img/crests/qpr.png");}
+  .crest-sto{background-image:url("../img/crests/sto.png");}
+  .crest-swa{background-image:url("../img/crests/swa.png");}
+  .crest-cha{background-image:url("../img/crests/cha.png");}
+  .crest-pom{background-image:url("../img/crests/pom.png");}
+  .crest-lin{background-image:url("../img/crests/lin.png");}
+  .crest-wxm{background-image:url("../img/crests/wxm.png");}
+
+  /* Scottish Premiership */
+  .crest-ctc{background-image:url("../img/crests/ctc.png");}
+  .crest-hib{background-image:url("../img/crests/hib.png");}
+  .crest-kil{background-image:url("../img/crests/kil.png");}
+  .crest-stm{background-image:url("../img/crests/stm.png");}
+  .crest-abd{background-image:url("../img/crests/abd.png");}
+  .crest-dun{background-image:url("../img/crests/dun.png");}
+  .crest-hea{background-image:url("../img/crests/hea.png");}
+  .crest-mow{background-image:url("../img/crests/mow.png");}
+  .crest-rfc{background-image:url("../img/crests/rfc.png");}
+  .crest-stj{background-image:url("../img/crests/stj.png");}
+  .crest-dnu{background-image:url("../img/crests/dnu.png");}
+  .crest-flk{background-image:url("../img/crests/flk.png");}
+
+  /* Eredivisie */
+  .crest-pec{background-image:url("../img/crests/pec.png");}
+  .crest-ajx{background-image:url("../img/crests/ajx.png");}
+  .crest-wlm{background-image:url("../img/crests/wlm.png");}
+  .crest-exc{background-image:url("../img/crests/exc.png");}
+  .crest-psv{background-image:url("../img/crests/psv.png");}
+  .crest-adh{background-image:url("../img/crests/adh.png");}
+  .crest-azk{background-image:url("../img/crests/azk.png");}
+  .crest-gro{background-image:url("../img/crests/gro.png");}
+  .crest-frs{background-image:url("../img/crests/frs.png");}
+  .crest-utr{background-image:url("../img/crests/utr.png");}
+  .crest-fey{background-image:url("../img/crests/fey.png");}
+  .crest-hee{background-image:url("../img/crests/hee.png");}
+  .crest-gae{background-image:url("../img/crests/gae.png");}
+  .crest-nym{background-image:url("../img/crests/nym.png");}
+  .crest-twe{background-image:url("../img/crests/twe.png");}
+  .crest-cam{background-image:url("../img/crests/cam.png");}
+  .crest-spr{background-image:url("../img/crests/spr.png");}
+  .crest-tel{background-image:url("../img/crests/tel.png");}
+
+  /* Primeira Liga */
+  .crest-ben{background-image:url("../img/crests/ben.png");}
+  .crest-por{background-image:url("../img/crests/por.png");}
+  .crest-mar{background-image:url("../img/crests/mar.png");}
+  .crest-mor{background-image:url("../img/crests/mor.png");}
+  .crest-bra{background-image:url("../img/crests/bra.png");}
+  .crest-vit{background-image:url("../img/crests/vit.png");}
+  .crest-nac{background-image:url("../img/crests/nac.png");}
+  .crest-riv{background-image:url("../img/crests/riv.png");}
+  .crest-stc{background-image:url("../img/crests/stc.png");}
+  .crest-spo{background-image:url("../img/crests/spo.png");}
+  .crest-est{background-image:url("../img/crests/est.png");}
+  .crest-acv{background-image:url("../img/crests/acv.png");}
+  .crest-aro{background-image:url("../img/crests/aro.png");}
+  .crest-fam{background-image:url("../img/crests/fam.png");}
+  .crest-gvc{background-image:url("../img/crests/gvc.png");}
+  .crest-csp{background-image:url("../img/crests/csp.png");}
+  .crest-alv{background-image:url("../img/crests/alv.png");}
+  .crest-etr{background-image:url("../img/crests/etr.png");}
+
   /* Match Statistics: head-to-head comparison bars in each team's real
      colour, matching the same team-colour language used by the jerseys,
      Match Events table, and Man of the Match card below. */

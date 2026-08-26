@@ -71,6 +71,9 @@
 <symbol id="flag-mex" viewBox="0 0 3 2"><path fill="#006847" d="M0 0h1v2H0z"/><path fill="#fff" d="M1 0h1v2H1z"/><path fill="#CE1126" d="M2 0h1v2H2z"/></symbol>
 <symbol id="flag-tur" viewBox="0 0 3 2"><rect width="3" height="2" fill="#E30A17"/><circle cx="1.1" cy="1" r="0.5" fill="#FFF"/><circle cx="1.25" cy="1" r="0.4" fill="#E30A17"/><path d="M1.5 0.65l0.15 0.46-0.4-0.28h0.5l-0.4 0.28z" fill="#FFF"/></symbol>
 <symbol id="flag-usa" viewBox="0 0 3 2"><rect width="3" height="2" fill="#FFF"/><g fill="#B22234"><rect width="3" height="0.154"/><rect y="0.308" width="3" height="0.154"/><rect y="0.615" width="3" height="0.154"/><rect y="0.923" width="3" height="0.154"/><rect y="1.231" width="3" height="0.154"/><rect y="1.538" width="3" height="0.154"/><rect y="1.846" width="3" height="0.154"/></g><rect width="1.2" height="1.077" fill="#3C3B6E"/></symbol>
+<symbol id="flag-sct" viewBox="0 0 3 2"><rect width="3" height="2" fill="#0065BD"/><path d="M0 0l3 2M3 0L0 2" stroke="#FFF" stroke-width="0.4"/></symbol>
+<symbol id="flag-nld" viewBox="0 0 3 2"><rect width="3" height="2" fill="#21468B"/><rect width="3" height="1.333" fill="#FFF"/><rect width="3" height="0.667" fill="#AE1C28"/></symbol>
+<symbol id="flag-prt" viewBox="0 0 3 2"><path fill="#046A38" d="M0 0h1.2v2H0z"/><path fill="#DA291C" d="M1.2 0h1.8v2H1.2z"/><circle cx="1.2" cy="1" r="0.35" fill="#FFCC29" stroke="#046A38" stroke-width="0.05"/></symbol>
 </defs>
 </svg>
 
@@ -133,6 +136,10 @@
                 <li><a href="{{ route('leagues.show', 'liga-mx') }}"><svg class="flag" role="img" aria-label="Mexico flag"><use href="#flag-mex"></use></svg>Liga MX</a></li>
                 <li><a href="{{ route('leagues.show', 'super-lig') }}"><svg class="flag" role="img" aria-label="Turkey flag"><use href="#flag-tur"></use></svg>Süper Lig</a></li>
                 <li><a href="{{ route('leagues.show', 'mls') }}"><svg class="flag" role="img" aria-label="United States flag"><use href="#flag-usa"></use></svg>Major League Soccer</a></li>
+                <li><a href="{{ route('leagues.show', 'championship') }}"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>English Championship</a></li>
+                <li><a href="{{ route('leagues.show', 'scottish-premiership') }}"><svg class="flag" role="img" aria-label="Scotland flag"><use href="#flag-sct"></use></svg>Scottish Premiership</a></li>
+                <li><a href="{{ route('leagues.show', 'eredivisie') }}"><svg class="flag" role="img" aria-label="Netherlands flag"><use href="#flag-nld"></use></svg>Eredivisie</a></li>
+                <li><a href="{{ route('leagues.show', 'primeira-liga') }}"><svg class="flag" role="img" aria-label="Portugal flag"><use href="#flag-prt"></use></svg>Primeira Liga</a></li>
               </ul>
             </div>
             <div class="mega-col">
@@ -256,6 +263,10 @@
           <a href="{{ route('leagues.show', 'liga-mx') }}"><svg class="flag" role="img" aria-label="Mexico flag"><use href="#flag-mex"></use></svg>Liga MX</a>
           <a href="{{ route('leagues.show', 'super-lig') }}"><svg class="flag" role="img" aria-label="Turkey flag"><use href="#flag-tur"></use></svg>Süper Lig</a>
           <a href="{{ route('leagues.show', 'mls') }}"><svg class="flag" role="img" aria-label="United States flag"><use href="#flag-usa"></use></svg>Major League Soccer</a>
+          <a href="{{ route('leagues.show', 'championship') }}"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>English Championship</a>
+          <a href="{{ route('leagues.show', 'scottish-premiership') }}"><svg class="flag" role="img" aria-label="Scotland flag"><use href="#flag-sct"></use></svg>Scottish Premiership</a>
+          <a href="{{ route('leagues.show', 'eredivisie') }}"><svg class="flag" role="img" aria-label="Netherlands flag"><use href="#flag-nld"></use></svg>Eredivisie</a>
+          <a href="{{ route('leagues.show', 'primeira-liga') }}"><svg class="flag" role="img" aria-label="Portugal flag"><use href="#flag-prt"></use></svg>Primeira Liga</a>
           <a href="#">Champions League</a>
         </div>
       </details>
@@ -345,6 +356,10 @@
         <li><a href="{{ route('leagues.show', 'liga-mx') }}"><svg class="flag" role="img" aria-label="Mexico flag"><use href="#flag-mex"></use></svg>Liga MX</a></li>
         <li><a href="{{ route('leagues.show', 'super-lig') }}"><svg class="flag" role="img" aria-label="Turkey flag"><use href="#flag-tur"></use></svg>Süper Lig</a></li>
         <li><a href="{{ route('leagues.show', 'mls') }}"><svg class="flag" role="img" aria-label="United States flag"><use href="#flag-usa"></use></svg>Major League Soccer</a></li>
+        <li><a href="{{ route('leagues.show', 'championship') }}"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>English Championship</a></li>
+        <li><a href="{{ route('leagues.show', 'scottish-premiership') }}"><svg class="flag" role="img" aria-label="Scotland flag"><use href="#flag-sct"></use></svg>Scottish Premiership</a></li>
+        <li><a href="{{ route('leagues.show', 'eredivisie') }}"><svg class="flag" role="img" aria-label="Netherlands flag"><use href="#flag-nld"></use></svg>Eredivisie</a></li>
+        <li><a href="{{ route('leagues.show', 'primeira-liga') }}"><svg class="flag" role="img" aria-label="Portugal flag"><use href="#flag-prt"></use></svg>Primeira Liga</a></li>
         <li><a href="#">Champions League</a></li>
       </ul>
     </div>
