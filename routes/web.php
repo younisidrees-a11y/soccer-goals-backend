@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeagueController;
 use App\Http\Controllers\MatchController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TableController;
@@ -19,6 +20,7 @@ Route::view('/about', 'about')->name('about');
 Route::get('/leagues', [LeagueController::class, 'index'])->name('leagues.index');
 Route::get('/leagues/{slug}', [LeagueController::class, 'show'])->name('leagues.show');
 Route::get('/teams/{slug}', [TeamController::class, 'show'])->name('teams.show');
+Route::get('/players/{player}/{slug?}', [PlayerController::class, 'show'])->name('players.show');
 Route::get('/matches/{match}/{month?}/{slug?}', [MatchController::class, 'show'])->name('matches.show');
 
 Route::get('/fixtures', [FixtureController::class, 'index'])->name('fixtures.index');

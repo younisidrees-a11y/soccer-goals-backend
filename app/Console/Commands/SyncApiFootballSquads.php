@@ -121,17 +121,27 @@ class SyncApiFootballSquads extends Command
                     continue;
                 }
 
+                $player = $entry['player'];
+                $birthDate = $player['birth']['date'] ?? null;
+
                 Player::updateOrCreate(
-                    ['team_id' => $team->id, 'api_football_id' => $entry['player']['id']],
+                    ['team_id' => $team->id, 'api_football_id' => $player['id']],
                     [
-                        'name' => $entry['player']['name'],
+                        'name' => $player['name'],
                         'position' => $position,
                         'shirt_number' => $stat['games']['number'] ?? null,
-                        'nationality' => $entry['player']['nationality'] ?? null,
-                        'photo_url' => $entry['player']['photo'] ?? null,
+                        'nationality' => $player['nationality'] ?? null,
+                        'birth_date' => (is_string($birthDate) && $birthDate !== '') ? $birthDate : null,
+                        'birth_place' => $player['birth']['place'] ?? null,
+                        'birth_country' => $player['birth']['country'] ?? null,
+                        'height' => $player['height'] ?? null,
+                        'weight' => $player['weight'] ?? null,
+                        'injured' => (bool) ($player['injured'] ?? false),
+                        'photo_url' => $player['photo'] ?? null,
                         'is_captain' => (bool) ($stat['games']['captain'] ?? false),
                         'goals' => $stat['goals']['total'] ?? 0,
                         'assists' => $stat['goals']['assists'] ?? 0,
+                        'stats' => $this->parseStats($stat),
                     ]
                 );
                 $synced++;
@@ -142,5 +152,55 @@ class SyncApiFootballSquads extends Command
         } while ($page <= $totalPages);
 
         return $synced;
+    }
+
+    /** All of this comes from the same statistics block already fetched for goals/assists/position - no extra API call. */
+    private function parseStats(array $stat): array
+    {
+        $out = [];
+
+        if (isset($stat['games']['appearences'])) {
+            $out['appearances'] = $stat['games']['appearences'];
+        }
+        if (isset($stat['games']['minutes'])) {
+            $out['minutes'] = $stat['games']['minutes'];
+        }
+        if (isset($stat['games']['rating']) && $stat['games']['rating'] !== null) {
+            $out['rating'] = round((float) $stat['games']['rating'], 2);
+        }
+        if (isset($stat['shots']['total'])) {
+            $out['shots_total'] = $stat['shots']['total'];
+            $out['shots_on_target'] = $stat['shots']['on'] ?? null;
+        }
+        if (isset($stat['passes']['total'])) {
+            $out['passes_total'] = $stat['passes']['total'];
+            $out['passes_key'] = $stat['passes']['key'] ?? null;
+            $out['passes_accuracy'] = $stat['passes']['accuracy'] ?? null;
+        }
+        if (isset($stat['tackles']['total'])) {
+            $out['tackles_total'] = $stat['tackles']['total'];
+            $out['interceptions'] = $stat['tackles']['interceptions'] ?? null;
+        }
+        if (isset($stat['duels']['total'])) {
+            $out['duels_total'] = $stat['duels']['total'];
+            $out['duels_won'] = $stat['duels']['won'] ?? null;
+        }
+        if (isset($stat['dribbles']['attempts'])) {
+            $out['dribbles_attempts'] = $stat['dribbles']['attempts'];
+            $out['dribbles_success'] = $stat['dribbles']['success'] ?? null;
+        }
+        if (isset($stat['fouls']['drawn'])) {
+            $out['fouls_drawn'] = $stat['fouls']['drawn'];
+            $out['fouls_committed'] = $stat['fouls']['committed'] ?? null;
+        }
+        if (isset($stat['cards']['yellow'])) {
+            $out['yellow_cards'] = $stat['cards']['yellow'];
+            $out['red_cards'] = $stat['cards']['red'] ?? 0;
+        }
+        if (isset($stat['goals']['saves'])) {
+            $out['saves'] = $stat['goals']['saves'];
+        }
+
+        return $out;
     }
 }

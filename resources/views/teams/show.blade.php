@@ -174,7 +174,7 @@
           <tbody>
             @foreach ($topScorers as $i => $p)
             <tr>
-              <td><div class="player-cell"><span class="player-rank">{{ $i + 1 }}</span>{{ $p->name }}</div></td>
+              <td><div class="player-cell"><span class="player-rank">{{ $i + 1 }}</span><a href="{{ $p->prettyUrl() }}" style="color:inherit;">{{ $p->name }}</a></div></td>
               <td style="color:var(--ink-faint);font-size:12.5px;">{{ $p->position }}</td>
               <td class="num">{{ $p->goals }}</td>
               <td class="num">{{ $p->assists }}</td>
@@ -222,14 +222,14 @@
         <div class="squad-position-title">{{ $label }}</div>
         <div class="squad-grid">
           @foreach ($players as $p)
-          <div class="player-card{{ $p->is_captain ? ' is-captain' : '' }}">
+          <a href="{{ $p->prettyUrl() }}" class="player-card{{ $p->is_captain ? ' is-captain' : '' }}" style="text-decoration:none;color:inherit;">
             @if($p->photo_url)
               <img src="{{ $p->photo_url }}" alt="{{ $p->name }}" class="player-photo" loading="lazy">
             @else
               <span class="player-photo player-photo-fallback">{{ $p->shirt_number ?? '?' }}</span>
             @endif
             <div><div class="player-name">{{ $p->name }}@if($p->is_captain) <span class="cap-tag">(C)</span>@endif</div><div class="player-role">{{ $p->position }}@if($p->shirt_number) &middot; #{{ $p->shirt_number }}@endif</div></div>
-          </div>
+          </a>
           @endforeach
         </div>
         @endif

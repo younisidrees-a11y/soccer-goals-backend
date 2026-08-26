@@ -81,6 +81,18 @@ class ApiFootballClient
         return $this->request('/coachs', ['team' => $teamId]);
     }
 
+    /** A player's real trophy history (competitions won/runner-up, by season) - empty response is common for squad players without major honours, not an error. */
+    public function getPlayerTrophies(int $playerId): ?array
+    {
+        return $this->request('/trophies', ['player' => $playerId]);
+    }
+
+    /** A player's real transfer history between real clubs, with dates. */
+    public function getPlayerTransfers(int $playerId): ?array
+    {
+        return $this->request('/transfers', ['player' => $playerId]);
+    }
+
     private function request(string $path, array $query = []): ?array
     {
         $key = config('services.api_football.key');
