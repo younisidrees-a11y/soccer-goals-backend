@@ -61,8 +61,8 @@
           <div class="league-hero-meta">
             {{ $match->kickoff_at->format('D j M Y') }} &middot;
             @if($isFinal) Full-Time
-            @elseif($isLive && $match->halftime_published_at) LIVE &middot; {{ $match->home_score_ht }}-{{ $match->away_score_ht }} at half-time
-            @elseif($isLive) LIVE &middot; first half underway
+            @elseif($isLive && $match->home_score !== null) LIVE &middot; {{ $match->home_score }}-{{ $match->away_score }}
+            @elseif($isLive) LIVE &middot; just underway
             @else {{ $match->kickoff_at->format('H:i') }} kick-off
             @endif
           </div>
@@ -92,7 +92,7 @@
           <div class="stat-label">Result</div>
           <div class="stat-value">
             @if($isFinal) {{ $match->home_score }}-{{ $match->away_score }}
-            @elseif($isLive && $match->halftime_published_at) {{ $match->home_score_ht }}-{{ $match->away_score_ht }} (HT)
+            @elseif($isLive && $match->home_score !== null) {{ $match->home_score }}-{{ $match->away_score }} (LIVE)
             @elseif($isLive) In progress
             @else Not yet played
             @endif
@@ -274,10 +274,11 @@
         <div class="section-head"><h2 id="matchup-heading">The Matchup</h2></div>
         <div class="match-grid{{ $isFinal ? ' celebrate-match' : '' }}">
           <div class="match-card" style="grid-column:1/-1;">
-            <div class="match-meta"><span class="match-comp">{{ $match->league->name }}@if($match->venue) &middot; {{ $match->venue }}@endif</span><span class="match-status">{{ $isFinal ? 'Full-Time' : '' }}@unless($isFinal)<span class="dot-waiting" aria-hidden="true"></span>{{ $match->kickoff_at->format('D j M Y, H:i') }}@endunless</span></div>
+            <div class="match-meta"><span class="match-comp">{{ $match->league->name }}@if($match->venue) &middot; {{ $match->venue }}@endif</span><span class="match-status{{ $isLive ? ' is-live' : '' }}">@if($isFinal)Full-Time@elseif($isLive)LIVE@else<span class="dot-waiting" aria-hidden="true"></span>{{ $match->kickoff_at->format('D j M Y, H:i') }}@endif</span></div>
             <div class="match-teams">
-              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $match->homeTeam->crest_code }}" role="img" aria-label="{{ $match->homeTeam->full_name }} badge"></span><span class="team-name">{{ $match->homeTeam->name }} <span style="color:var(--ink-faint);font-weight:500;">(Home)</span></span></div>@if($isFinal)<span class="team-score{{ $match->home_score > $match->away_score ? ' winning' : '' }}">{{ $match->home_score }}</span>@endif</div>
-              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $match->awayTeam->crest_code }}" role="img" aria-label="{{ $match->awayTeam->full_name }} badge"></span><span class="team-name">{{ $match->awayTeam->name }} <span style="color:var(--ink-faint);font-weight:500;">(Away)</span></span></div>@if($isFinal)<span class="team-score{{ $match->away_score > $match->home_score ? ' winning' : '' }}">{{ $match->away_score }}</span>@endif</div>
+              @php $showLiveScore = $isLive && $match->home_score !== null; @endphp
+              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $match->homeTeam->crest_code }}" role="img" aria-label="{{ $match->homeTeam->full_name }} badge"></span><span class="team-name">{{ $match->homeTeam->name }} <span style="color:var(--ink-faint);font-weight:500;">(Home)</span></span></div>@if($isFinal)<span class="team-score{{ $match->home_score > $match->away_score ? ' winning' : '' }}">{{ $match->home_score }}</span>@elseif($showLiveScore)<span class="team-score">{{ $match->home_score }}</span>@endif</div>
+              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $match->awayTeam->crest_code }}" role="img" aria-label="{{ $match->awayTeam->full_name }} badge"></span><span class="team-name">{{ $match->awayTeam->name }} <span style="color:var(--ink-faint);font-weight:500;">(Away)</span></span></div>@if($isFinal)<span class="team-score{{ $match->away_score > $match->home_score ? ' winning' : '' }}">{{ $match->away_score }}</span>@elseif($showLiveScore)<span class="team-score">{{ $match->away_score }}</span>@endif</div>
             </div>
           </div>
         </div>

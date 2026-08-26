@@ -145,10 +145,11 @@
         <div class="match-grid">
           @foreach ($matchdayOneResults as $m)
           <a href="{{ route('matches.show', $m->id) }}" class="match-card">
-            <div class="match-meta"><span class="match-comp">{{ $league->name }} &middot; {{ $m->venue }}</span><span class="match-status">{{ $m->isFinal() ? 'Full-Time' : $m->kickoff_at->format('D j M, H:i') }}</span></div>
+            <div class="match-meta"><span class="match-comp">{{ $league->name }} &middot; {{ $m->venue }}</span><span class="match-status{{ $m->isLive() ? ' is-live' : '' }}">{{ $m->isFinal() ? 'Full-Time' : ($m->isLive() ? 'LIVE' : $m->kickoff_at->format('D j M, H:i')) }}</span></div>
             <div class="match-teams">
-              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->homeTeam->crest_code }}" role="img" aria-label="{{ $m->homeTeam->full_name }} badge"></span><span class="team-name">{{ $m->homeTeam->name }}</span></div>@if($m->isFinal())<span class="team-score{{ $m->home_score > $m->away_score ? ' winning' : '' }}">{{ $m->home_score }}</span>@endif</div>
-              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->awayTeam->crest_code }}" role="img" aria-label="{{ $m->awayTeam->full_name }} badge"></span><span class="team-name">{{ $m->awayTeam->name }}</span></div>@if($m->isFinal())<span class="team-score{{ $m->away_score > $m->home_score ? ' winning' : '' }}">{{ $m->away_score }}</span>@endif</div>
+              @php $mShowLiveScore = $m->isLive() && $m->home_score !== null; @endphp
+              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->homeTeam->crest_code }}" role="img" aria-label="{{ $m->homeTeam->full_name }} badge"></span><span class="team-name">{{ $m->homeTeam->name }}</span></div>@if($m->isFinal())<span class="team-score{{ $m->home_score > $m->away_score ? ' winning' : '' }}">{{ $m->home_score }}</span>@elseif($mShowLiveScore)<span class="team-score">{{ $m->home_score }}</span>@endif</div>
+              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->awayTeam->crest_code }}" role="img" aria-label="{{ $m->awayTeam->full_name }} badge"></span><span class="team-name">{{ $m->awayTeam->name }}</span></div>@if($m->isFinal())<span class="team-score{{ $m->away_score > $m->home_score ? ' winning' : '' }}">{{ $m->away_score }}</span>@elseif($mShowLiveScore)<span class="team-score">{{ $m->away_score }}</span>@endif</div>
             </div>
             <div class="match-venue">{{ $m->venue }}</div>
           </a>

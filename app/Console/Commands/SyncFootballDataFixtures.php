@@ -103,7 +103,7 @@ class SyncFootballDataFixtures extends Command
                 'is_published' => true,
             ];
 
-            if ($status === 'final' && $match['score']['fullTime']['home'] !== null) {
+            if ($match['score']['fullTime']['home'] !== null) {
                 $data['home_score'] = $match['score']['fullTime']['home'];
                 $data['away_score'] = $match['score']['fullTime']['away'];
             }

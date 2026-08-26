@@ -97,7 +97,7 @@ class SyncApiFootballFixtures extends Command
                 'is_published' => true,
             ];
 
-            if ($status === 'final' && $fixture['goals']['home'] !== null) {
+            if ($fixture['goals']['home'] !== null) {
                 $data['home_score'] = $fixture['goals']['home'];
                 $data['away_score'] = $fixture['goals']['away'];
             }

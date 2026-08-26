@@ -47,10 +47,11 @@
     <div class="match-grid">
       @forelse ($fixtures as $fx)
       <a href="{{ route('matches.show', $fx->id) }}" class="match-card">
-        <div class="match-meta"><span class="match-comp">{{ $league->name }} &middot; {{ $fx->venue }}</span><span class="match-status"><span class="dot-waiting" aria-hidden="true"></span>{{ $fx->kickoff_at->format('D j M, H:i') }}</span></div>
+        <div class="match-meta"><span class="match-comp">{{ $league->name }} &middot; {{ $fx->venue }}</span><span class="match-status{{ $fx->isLive() ? ' is-live' : '' }}">@if($fx->isLive())LIVE@else<span class="dot-waiting" aria-hidden="true"></span>{{ $fx->kickoff_at->format('D j M, H:i') }}@endif</span></div>
         <div class="match-teams">
-          <div class="match-team"><div class="team-id"><span class="crest crest-{{ $fx->homeTeam->crest_code }}" role="img" aria-label="{{ $fx->homeTeam->full_name }} badge"></span><span class="team-name">{{ $fx->homeTeam->name }}</span></div></div>
-          <div class="match-team"><div class="team-id"><span class="crest crest-{{ $fx->awayTeam->crest_code }}" role="img" aria-label="{{ $fx->awayTeam->full_name }} badge"></span><span class="team-name">{{ $fx->awayTeam->name }}</span></div></div>
+          @php $fxShowLiveScore = $fx->isLive() && $fx->home_score !== null; @endphp
+          <div class="match-team"><div class="team-id"><span class="crest crest-{{ $fx->homeTeam->crest_code }}" role="img" aria-label="{{ $fx->homeTeam->full_name }} badge"></span><span class="team-name">{{ $fx->homeTeam->name }}</span></div>@if($fxShowLiveScore)<span class="team-score">{{ $fx->home_score }}</span>@endif</div>
+          <div class="match-team"><div class="team-id"><span class="crest crest-{{ $fx->awayTeam->crest_code }}" role="img" aria-label="{{ $fx->awayTeam->full_name }} badge"></span><span class="team-name">{{ $fx->awayTeam->name }}</span></div>@if($fxShowLiveScore)<span class="team-score">{{ $fx->away_score }}</span>@endif</div>
         </div>
         <div class="match-venue">{{ $fx->homeTeam->name }} play {{ $fx->awayTeam->name }} at {{ $fx->venue }}@if($fx->referee), referee {{ $fx->referee }}@endif, kicking off {{ $fx->kickoff_at->format('j F Y') }} at {{ $fx->kickoff_at->format('H:i') }} UTC.</div>
       </a>
