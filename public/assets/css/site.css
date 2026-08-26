@@ -1029,6 +1029,26 @@
   .crest-abh{background-image:url("../img/crests/abh.png");}
   .crest-dir{background-image:url("../img/crests/dir.png");}
 
+  /* Liga MX */
+  .crest-chi{background-image:url("../img/crests/chi.png");}
+  .crest-tig{background-image:url("../img/crests/tig.png");}
+  .crest-tij{background-image:url("../img/crests/tij.png");}
+  .crest-tol{background-image:url("../img/crests/tol.png");}
+  .crest-mty{background-image:url("../img/crests/mty.png");}
+  .crest-atl{background-image:url("../img/crests/atl.png");}
+  .crest-san{background-image:url("../img/crests/san.png");}
+  .crest-pum{background-image:url("../img/crests/pum.png");}
+  .crest-ame{background-image:url("../img/crests/ame.png");}
+  .crest-nec{background-image:url("../img/crests/nec.png");}
+  .crest-leo{background-image:url("../img/crests/leo.png");}
+  .crest-que{background-image:url("../img/crests/que.png");}
+  .crest-pue{background-image:url("../img/crests/pue.png");}
+  .crest-pac{background-image:url("../img/crests/pac.png");}
+  .crest-cru{background-image:url("../img/crests/cru.png");}
+  .crest-jua{background-image:url("../img/crests/jua.png");}
+  .crest-atn{background-image:url("../img/crests/atn.png");}
+  .crest-asl{background-image:url("../img/crests/asl.png");}
+
   /* Match Statistics: head-to-head comparison bars in each team's real
      colour, matching the same team-colour language used by the jerseys,
      Match Events table, and Man of the Match card below. */

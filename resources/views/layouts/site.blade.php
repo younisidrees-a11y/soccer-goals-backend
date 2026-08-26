@@ -60,6 +60,7 @@
 <symbol id="flag-deu" viewBox="0 0 5 3"><path d="M0 0h5v3H0z"/><path fill="#D00" d="M0 1h5v2H0z"/><path fill="#FFCE00" d="M0 2h5v1H0z"/></symbol>
 <symbol id="flag-fra" viewBox="0 0 3 2"><path fill="#EC1920" d="M0 0h3v2H0z"/><path fill="#fff" d="M0 0h2v2H0z"/><path fill="#051440" d="M0 0h1v2H0z"/></symbol>
 <symbol id="flag-sau" viewBox="0 0 3 2"><rect width="3" height="2" fill="#006C35"/><rect x="0.55" y="1.35" width="1.4" height="0.16" fill="#FFF"/><path d="M1.95 1.43l0.18-0.1-0.05 0.1 0.05 0.1z" fill="#FFF"/></symbol>
+<symbol id="flag-mex" viewBox="0 0 3 2"><path fill="#006847" d="M0 0h1v2H0z"/><path fill="#fff" d="M1 0h1v2H1z"/><path fill="#CE1126" d="M2 0h1v2H2z"/></symbol>
 </defs>
 </svg>
 
@@ -110,7 +111,7 @@
           </button>
           <div class="mega-panel">
             <div class="mega-col">
-              <div class="mega-col-title">Top 5 Leagues</div>
+              <div class="mega-col-title">Leagues</div>
               <ul>
                 <li><a href="{{ route('leagues.show', 'premier-league') }}"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>English Premier League</a></li>
                 <li><a href="{{ route('leagues.show', 'la-liga') }}"><svg class="flag" role="img" aria-label="Spain flag"><use href="#flag-esp"></use></svg>Spanish La Liga</a></li>
@@ -118,6 +119,7 @@
                 <li><a href="{{ route('leagues.show', 'bundesliga') }}"><svg class="flag" role="img" aria-label="Germany flag"><use href="#flag-deu"></use></svg>Bundesliga</a></li>
                 <li><a href="{{ route('leagues.show', 'ligue-1') }}"><svg class="flag" role="img" aria-label="France flag"><use href="#flag-fra"></use></svg>Ligue 1</a></li>
                 <li><a href="{{ route('leagues.show', 'saudi-pro-league') }}"><svg class="flag" role="img" aria-label="Saudi Arabia flag"><use href="#flag-sau"></use></svg>Saudi Pro League</a></li>
+                <li><a href="{{ route('leagues.show', 'liga-mx') }}"><svg class="flag" role="img" aria-label="Mexico flag"><use href="#flag-mex"></use></svg>Liga MX</a></li>
               </ul>
             </div>
             <div class="mega-col">
@@ -233,6 +235,7 @@
           <a href="{{ route('leagues.show', 'bundesliga') }}"><svg class="flag" role="img" aria-label="Germany flag"><use href="#flag-deu"></use></svg>Bundesliga</a>
           <a href="{{ route('leagues.show', 'ligue-1') }}"><svg class="flag" role="img" aria-label="France flag"><use href="#flag-fra"></use></svg>Ligue 1</a>
           <a href="{{ route('leagues.show', 'saudi-pro-league') }}"><svg class="flag" role="img" aria-label="Saudi Arabia flag"><use href="#flag-sau"></use></svg>Saudi Pro League</a>
+          <a href="{{ route('leagues.show', 'liga-mx') }}"><svg class="flag" role="img" aria-label="Mexico flag"><use href="#flag-mex"></use></svg>Liga MX</a>
           <a href="#">Champions League</a>
         </div>
       </details>
@@ -316,6 +319,7 @@
         <li><a href="{{ route('leagues.show', 'bundesliga') }}"><svg class="flag" role="img" aria-label="Germany flag"><use href="#flag-deu"></use></svg>Bundesliga</a></li>
         <li><a href="{{ route('leagues.show', 'ligue-1') }}"><svg class="flag" role="img" aria-label="France flag"><use href="#flag-fra"></use></svg>Ligue 1</a></li>
         <li><a href="{{ route('leagues.show', 'saudi-pro-league') }}"><svg class="flag" role="img" aria-label="Saudi Arabia flag"><use href="#flag-sau"></use></svg>Saudi Pro League</a></li>
+        <li><a href="{{ route('leagues.show', 'liga-mx') }}"><svg class="flag" role="img" aria-label="Mexico flag"><use href="#flag-mex"></use></svg>Liga MX</a></li>
         <li><a href="#">Champions League</a></li>
       </ul>
     </div>
