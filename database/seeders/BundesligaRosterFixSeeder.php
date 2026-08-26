@@ -66,6 +66,7 @@ class BundesligaRosterFixSeeder extends Seeder
             'api_football_id' => 78,
             'table_intro' => null,
             'table_closing' => null,
+            'about_text' => "The Bundesliga is widely regarded as one of the best-attended and most competitively balanced top divisions in world football, built around a fan-first culture that keeps ticket prices low and terraces full. Eighteen clubs play a full home-and-away season, with Bayern Munich the division's most consistent force in recent decades and Bayer Leverkusen, Borussia Dortmund and RB Leipzig its most regular modern challengers.\nThe league's promotion and relegation link with the 2. Bundesliga is especially active - fixtures below and giant venues like Signal Iduna Park and the Allianz Arena, alongside the return of storied names such as Hamburger SV and Schalke 04 this season, are part of what keeps German football's pyramid so closely watched.",
         ]);
 
         foreach (self::KEEPERS as $slug => $apiId) {
