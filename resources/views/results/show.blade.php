@@ -46,7 +46,7 @@
 
     <div class="match-grid celebrate-results">
       @forelse ($results as $r)
-      <a href="{{ route('matches.show', $r->id) }}" class="match-card">
+      <a href="{{ $r->prettyUrl() }}" class="match-card">
         <div class="match-meta"><span class="match-comp">{{ $league->name }} &middot; {{ $r->venue }}</span><span class="match-status">Full-Time</span></div>
         <div class="match-teams">
           <div class="match-team"><div class="team-id"><span class="crest crest-{{ $r->homeTeam->crest_code }}" role="img" aria-label="{{ $r->homeTeam->full_name }} badge"></span><span class="team-name">{{ $r->homeTeam->name }}</span></div><span class="team-score{{ $r->home_score > $r->away_score ? ' winning' : '' }}">{{ $r->home_score }}</span></div>

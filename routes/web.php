@@ -19,7 +19,7 @@ Route::view('/about', 'about')->name('about');
 Route::get('/leagues', [LeagueController::class, 'index'])->name('leagues.index');
 Route::get('/leagues/{slug}', [LeagueController::class, 'show'])->name('leagues.show');
 Route::get('/teams/{slug}', [TeamController::class, 'show'])->name('teams.show');
-Route::get('/matches/{match}', [MatchController::class, 'show'])->name('matches.show');
+Route::get('/matches/{match}/{month?}/{slug?}', [MatchController::class, 'show'])->name('matches.show');
 
 Route::get('/fixtures', [FixtureController::class, 'index'])->name('fixtures.index');
 Route::get('/fixtures/{slug}', [FixtureController::class, 'show'])->name('fixtures.show');

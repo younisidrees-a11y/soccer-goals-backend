@@ -144,7 +144,7 @@
 
         <div class="match-grid">
           @foreach ($matchdayOneResults as $m)
-          <a href="{{ route('matches.show', $m->id) }}" class="match-card">
+          <a href="{{ $m->prettyUrl() }}" class="match-card">
             <div class="match-meta"><span class="match-comp">{{ $league->name }} &middot; {{ $m->venue }}</span><span class="match-status{{ $m->isLive() ? ' is-live' : '' }}">{{ $m->isFinal() ? 'Full-Time' : ($m->isLive() ? 'LIVE' : $m->kickoff_at->format('D j M, H:i')) }}</span></div>
             <div class="match-teams">
               @php $mShowLiveScore = $m->isLive() && $m->home_score !== null; @endphp

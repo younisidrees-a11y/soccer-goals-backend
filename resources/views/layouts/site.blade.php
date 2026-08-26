@@ -286,7 +286,7 @@
     <span class="ticker-label"><span class="dot-live" aria-hidden="true"></span>LIVE</span>
     <div class="ticker-track" tabindex="0">
       @foreach ($tickerMatches ?? [] as $tm)
-      <a href="{{ route('matches.show', $tm->id) }}" class="ticker-chip">
+      <a href="{{ $tm->prettyUrl() }}" class="ticker-chip">
         <span class="ticker-status{{ $tm->status === 'live' ? ' is-live' : '' }}">
           @if($tm->status === 'live') LIVE
           @elseif($tm->status === 'final') FT

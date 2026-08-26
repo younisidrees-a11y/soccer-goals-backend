@@ -46,7 +46,7 @@
 
     <div class="match-grid">
       @forelse ($fixtures as $fx)
-      <a href="{{ route('matches.show', $fx->id) }}" class="match-card">
+      <a href="{{ $fx->prettyUrl() }}" class="match-card">
         <div class="match-meta"><span class="match-comp">{{ $league->name }} &middot; {{ $fx->venue }}</span><span class="match-status{{ $fx->isLive() ? ' is-live' : '' }}">@if($fx->isLive())LIVE@else<span class="dot-waiting" aria-hidden="true"></span>{{ $fx->kickoff_at->format('D j M, H:i') }}@endif</span></div>
         <div class="match-teams">
           @php $fxShowLiveScore = $fx->isLive() && $fx->home_score !== null; @endphp

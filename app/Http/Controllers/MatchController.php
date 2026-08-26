@@ -3,14 +3,31 @@
 namespace App\Http\Controllers;
 
 use App\Models\MatchFixture;
+use Illuminate\Http\Request;
 
 class MatchController extends Controller
 {
-    public function show(MatchFixture $match)
+    public function show(Request $request, MatchFixture $match)
     {
         abort_unless($match->is_published, 404);
 
         $match->load(['league', 'homeTeam', 'awayTeam']);
+
+        // The bare /matches/{id} link (still what every other page on the
+        // site generates via route('matches.show', $id) - unchanged
+        // deliberately, so this redirect is the only place that needs to
+        // know about the pretty format) and any stale/wrong month or slug
+        // both 301 here, so there's exactly one indexable URL per match.
+        $canonicalMonth = $match->kickoff_at->format('m');
+        $canonicalSlug = $match->seoSlug();
+
+        if ($request->route('month') !== $canonicalMonth || $request->route('slug') !== $canonicalSlug) {
+            return redirect()->route('matches.show', [
+                'match' => $match->id,
+                'month' => $canonicalMonth,
+                'slug' => $canonicalSlug,
+            ], 301);
+        }
 
         $homeStanding = $match->homeTeam->standing()->where('league_id', $match->league_id)->first();
         $awayStanding = $match->awayTeam->standing()->where('league_id', $match->league_id)->first();

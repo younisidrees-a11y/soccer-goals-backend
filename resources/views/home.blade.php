@@ -73,7 +73,7 @@
 
         <div class="match-grid">
           @foreach ($todaysMatches as $m)
-          <a href="{{ route('matches.show', $m->id) }}" class="match-card">
+          <a href="{{ $m->prettyUrl() }}" class="match-card">
             <div class="match-meta"><span class="match-comp"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>{{ $m->venue }}</span><span class="match-status">Full-Time</span></div>
             <div class="match-teams">
               <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->homeTeam->crest_code }}" role="img" aria-label="{{ $m->homeTeam->full_name }} badge"></span><span class="team-name">{{ $m->homeTeam->name }}</span></div><span class="team-score{{ $m->home_score > $m->away_score ? ' winning' : '' }}">{{ $m->home_score }}</span></div>
@@ -118,13 +118,13 @@
           <div class="list-panel">
             <h3>Upcoming Fixtures</h3>
             @foreach ($upcomingFixtures as $fx)
-            <a href="{{ route('matches.show', $fx->id) }}" class="fixture-row"><span class="fx-date">{{ strtoupper($fx->kickoff_at->format('D')) }}<br>{{ $fx->kickoff_at->format('j M') }}</span><span class="fx-teams"><span class="fx-team"><span class="crest crest-{{ $fx->homeTeam->crest_code }}" role="img" aria-label="{{ $fx->homeTeam->full_name }} badge"></span>{{ $fx->homeTeam->name }}</span><span class="vs">vs</span><span class="fx-team"><span class="crest crest-{{ $fx->awayTeam->crest_code }}" role="img" aria-label="{{ $fx->awayTeam->full_name }} badge"></span>{{ $fx->awayTeam->name }}</span></span><span class="fx-time"><span class="dot-waiting" aria-hidden="true"></span>{{ $fx->kickoff_at->format('H:i') }}</span></a>
+            <a href="{{ $fx->prettyUrl() }}" class="fixture-row"><span class="fx-date">{{ strtoupper($fx->kickoff_at->format('D')) }}<br>{{ $fx->kickoff_at->format('j M') }}</span><span class="fx-teams"><span class="fx-team"><span class="crest crest-{{ $fx->homeTeam->crest_code }}" role="img" aria-label="{{ $fx->homeTeam->full_name }} badge"></span>{{ $fx->homeTeam->name }}</span><span class="vs">vs</span><span class="fx-team"><span class="crest crest-{{ $fx->awayTeam->crest_code }}" role="img" aria-label="{{ $fx->awayTeam->full_name }} badge"></span>{{ $fx->awayTeam->name }}</span></span><span class="fx-time"><span class="dot-waiting" aria-hidden="true"></span>{{ $fx->kickoff_at->format('H:i') }}</span></a>
             @endforeach
           </div>
           <div class="list-panel">
             <h3>Recent Results</h3>
             @foreach ($recentResults as $r)
-            <a href="{{ route('matches.show', $r->id) }}" class="result-row"><span class="fx-teams"><span class="fx-team"><span class="crest crest-{{ $r->homeTeam->crest_code }}" role="img" aria-label="{{ $r->homeTeam->full_name }} badge"></span>{{ $r->homeTeam->name }}</span><span class="vs">vs</span><span class="fx-team"><span class="crest crest-{{ $r->awayTeam->crest_code }}" role="img" aria-label="{{ $r->awayTeam->full_name }} badge"></span>{{ $r->awayTeam->name }}</span></span><span class="rs-score">{{ $r->home_score }}&ndash;{{ $r->away_score }}</span></a>
+            <a href="{{ $r->prettyUrl() }}" class="result-row"><span class="fx-teams"><span class="fx-team"><span class="crest crest-{{ $r->homeTeam->crest_code }}" role="img" aria-label="{{ $r->homeTeam->full_name }} badge"></span>{{ $r->homeTeam->name }}</span><span class="vs">vs</span><span class="fx-team"><span class="crest crest-{{ $r->awayTeam->crest_code }}" role="img" aria-label="{{ $r->awayTeam->full_name }} badge"></span>{{ $r->awayTeam->name }}</span></span><span class="rs-score">{{ $r->home_score }}&ndash;{{ $r->away_score }}</span></a>
             @endforeach
           </div>
         </div>

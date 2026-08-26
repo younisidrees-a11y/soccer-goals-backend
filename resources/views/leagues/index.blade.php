@@ -61,7 +61,7 @@
             $tmShowScore = $tm->isFinal() || ($tm->isLive() && $tm->home_score !== null);
             $tmStatusLabel = $tm->isFinal() ? 'Full-Time' : ($tm->isLive() ? 'LIVE' : $tm->kickoff_at->format('H:i').' UTC');
           @endphp
-          <a href="{{ route('matches.show', $tm->id) }}" class="match-card">
+          <a href="{{ $tm->prettyUrl() }}" class="match-card">
             <div class="match-meta"><span class="match-comp">{{ $tm->league->name }}@if($tm->venue) &middot; {{ $tm->venue }}@endif</span><span class="match-status{{ $tm->isLive() ? ' is-live' : '' }}">@unless($tm->isFinal() || $tm->isLive())<span class="dot-waiting" aria-hidden="true"></span>@endunless{{ $tmStatusLabel }}</span></div>
             <div class="match-teams">
               <div class="match-team"><div class="team-id"><span class="crest crest-{{ $tm->homeTeam->crest_code }}" role="img" aria-label="{{ $tm->homeTeam->full_name }} badge"></span><span class="team-name">{{ $tm->homeTeam->name }}</span></div>@if($tmShowScore)<span class="team-score{{ $tm->isFinal() && $tm->home_score > $tm->away_score ? ' winning' : '' }}">{{ $tm->home_score }}</span>@endif</div>

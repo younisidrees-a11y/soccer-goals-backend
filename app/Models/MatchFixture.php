@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class MatchFixture extends Model
 {
@@ -78,6 +79,22 @@ class MatchFixture extends Model
     public function scopeResults($query)
     {
         return $query->where('status', 'final');
+    }
+
+    /** The descriptive part of this match's pretty URL, e.g. "al-faisaly-vs-al-fateh-football-match". */
+    public function seoSlug(): string
+    {
+        return Str::slug("{$this->homeTeam->name}-vs-{$this->awayTeam->name}-football-match");
+    }
+
+    /** The canonical human-readable URL for this match: /matches/{id}/{month}/{home}-vs-{away}-football-match. The bare /matches/{id} form still works (see routes/web.php) and 301s here. */
+    public function prettyUrl(): string
+    {
+        return route('matches.show', [
+            'match' => $this->id,
+            'month' => $this->kickoff_at->format('m'),
+            'slug' => $this->seoSlug(),
+        ]);
     }
 
     /** Win/draw/loss from the home team's perspective, or null if not played. */

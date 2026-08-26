@@ -38,7 +38,7 @@
 @section('title', $match->meta_title ?: $defaultTitle)
 @section('meta_description', $match->meta_description ?: $defaultDescription)
 @section('meta_keywords', $match->meta_keywords ?: $defaultKeywords)
-@section('canonical', route('matches.show', $match->id))
+@section('canonical', $match->prettyUrl())
 @section('og_title', $match->meta_title ?: $defaultTitle)
 @section('og_description', $match->meta_description ?: $defaultDescription)
 
@@ -211,7 +211,7 @@
                   $oppScore = $wasHome ? $last->away_score : $last->home_score;
                   $resultWord = $ownScore > $oppScore ? 'Won' : ($ownScore < $oppScore ? 'Lost' : 'Drew');
                 @endphp
-                <a href="{{ route('matches.show', $last->id) }}" style="color:inherit;text-decoration:none;">
+                <a href="{{ $last->prettyUrl() }}" style="color:inherit;text-decoration:none;">
                   <strong>{{ $resultWord }}</strong> {{ $ownScore }}-{{ $oppScore }} {{ $wasHome ? 'vs' : 'at' }} {{ $opponent->name }}
                 </a>
                 @if($last->stats)
@@ -269,7 +269,7 @@
               </div>
               @forelse ($upcoming as $fx)
                 @php $opp = $fx->home_team_id === $team->id ? $fx->awayTeam : $fx->homeTeam; @endphp
-                <a href="{{ route('matches.show', $fx->id) }}" style="display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--ink);text-decoration:none;">
+                <a href="{{ $fx->prettyUrl() }}" style="display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--ink);text-decoration:none;">
                   <span>{{ $fx->home_team_id === $team->id ? 'vs' : 'at' }} {{ $opp->name }}</span>
                   <span style="color:var(--ink-faint);">{{ $fx->kickoff_at->format('j M, H:i') }}</span>
                 </a>
@@ -524,7 +524,7 @@
             @if($homeNext)
             <p>
               {{ $match->homeTeam->name }} {{ $homeAheadIntro }}. Their next test comes {{ $homeNext->home_team_id === $match->homeTeam->id ? 'at home to' : 'away at' }} {{ $homeNext->home_team_id === $match->homeTeam->id ? $homeNext->awayTeam->name : $homeNext->homeTeam->name }}, and how they respond after this result will be worth watching. You can follow the build-up and everything you need to know when
-              <a href="{{ route('matches.show', $homeNext->id) }}" style="color:var(--accent);text-decoration:underline;">{{ $nextLinkText($homeNext) }}</a> {{ $nextDetails($homeNext) }}.
+              <a href="{{ $homeNext->prettyUrl() }}" style="color:var(--accent);text-decoration:underline;">{{ $nextLinkText($homeNext) }}</a> {{ $nextDetails($homeNext) }}.
             </p>
             @else
             <p>{{ $match->homeTeam->name }} do not have a fixture confirmed yet, so their next test is still to be set.</p>
@@ -532,7 +532,7 @@
             @if($awayNext)
             <p>
               {{ $match->awayTeam->name }}, meanwhile, {{ $awayAheadIntro }}. They are next in action {{ $awayNext->home_team_id === $match->awayTeam->id ? 'at home to' : 'away at' }} {{ $awayNext->home_team_id === $match->awayTeam->id ? $awayNext->awayTeam->name : $awayNext->homeTeam->name }}, a game that will give an early sense of how they carry this result forward. Full details are here:
-              <a href="{{ route('matches.show', $awayNext->id) }}" style="color:var(--accent);text-decoration:underline;">{{ $nextLinkText($awayNext) }}</a> {{ $nextDetails($awayNext) }}.
+              <a href="{{ $awayNext->prettyUrl() }}" style="color:var(--accent);text-decoration:underline;">{{ $nextLinkText($awayNext) }}</a> {{ $nextDetails($awayNext) }}.
             </p>
             @else
             <p>{{ $match->awayTeam->name }} do not have a fixture confirmed yet, so their next test is still to be set.</p>
