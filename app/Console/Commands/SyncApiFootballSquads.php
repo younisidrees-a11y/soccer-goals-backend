@@ -77,12 +77,31 @@ class SyncApiFootballSquads extends Command
 
     private function syncTeam(Team $team, int $season, ApiFootballClient $client): int
     {
+        // A handful of clubs (seen on FC Cincinnati) haven't had their squad
+        // re-tagged to the current season yet on API-Football's side, even
+        // though the club, fixtures, and everything else is current - real
+        // player data just sits one season behind. Falling back to season-1
+        // only when the current season comes back completely empty (not as
+        // a general preference) keeps this from ever silently overwriting a
+        // team's real current-season squad with an older one.
+        $first = $client->getPlayersByTeam($team->api_football_id, $season, 1);
+
+        if (! $first || empty($first['response'])) {
+            $fallback = $client->getPlayersByTeam($team->api_football_id, $season - 1, 1);
+
+            if ($fallback && ! empty($fallback['response'])) {
+                $this->warn("{$team->name}: no squad tagged to season {$season} yet - using season ".($season - 1).' instead.');
+                $season--;
+                $first = $fallback;
+            }
+        }
+
         $synced = 0;
         $page = 1;
         $totalPages = 1;
 
         do {
-            $response = $client->getPlayersByTeam($team->api_football_id, $season, $page);
+            $response = $page === 1 ? $first : $client->getPlayersByTeam($team->api_football_id, $season, $page);
 
             if (! $response || empty($response['response'])) {
                 break;
