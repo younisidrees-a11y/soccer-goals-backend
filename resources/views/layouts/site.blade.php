@@ -319,11 +319,11 @@
     <div class="footer-col">
       <h3>Company</h3>
       <ul>
-        <li><a href="#">About Us</a></li>
+        <li><a href="{{ route('about') }}">About Us</a></li>
         <li><a href="#">Careers</a></li>
         <li><a href="#">Advertise With Us</a></li>
-        <li><a href="#">Editorial Standards</a></li>
-        <li><a href="#">Contact</a></li>
+        <li><a href="{{ route('about') }}#editorial-process">Editorial Standards</a></li>
+        <li><a href="{{ route('about') }}#contact">Contact</a></li>
       </ul>
     </div>
 

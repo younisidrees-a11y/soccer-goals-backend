@@ -15,6 +15,7 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.i
 Route::get('/sitemap-news.xml', [SitemapController::class, 'news'])->name('sitemap.news');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::view('/about', 'about')->name('about');
 Route::get('/leagues/{slug}', [LeagueController::class, 'show'])->name('leagues.show');
 Route::get('/teams/{slug}', [TeamController::class, 'show'])->name('teams.show');
 Route::get('/matches/{match}', [MatchController::class, 'show'])->name('matches.show');
