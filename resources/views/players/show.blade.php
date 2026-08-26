@@ -94,10 +94,10 @@
           <li style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);"><span style="color:var(--ink-faint);">Nationality</span><strong>{{ $player->nationality }}</strong></li>
           @endif
           @if($player->height)
-          <li style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);"><span style="color:var(--ink-faint);">Height</span><strong>{{ $player->height }}</strong></li>
+          <li style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);"><span style="color:var(--ink-faint);">Height</span><strong>{{ Str::contains($player->height, 'cm') ? $player->height : $player->height.' cm' }}</strong></li>
           @endif
           @if($player->weight)
-          <li style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);"><span style="color:var(--ink-faint);">Weight</span><strong>{{ $player->weight }}</strong></li>
+          <li style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);"><span style="color:var(--ink-faint);">Weight</span><strong>{{ Str::contains($player->weight, 'kg') ? $player->weight : $player->weight.' kg' }}</strong></li>
           @endif
           <li style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);"><span style="color:var(--ink-faint);">Position</span><strong>{{ $player->position }}</strong></li>
           @if($player->shirt_number)
