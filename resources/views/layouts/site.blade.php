@@ -288,7 +288,9 @@
         <span class="ticker-status{{ $tm->status === 'live' ? ' is-live' : '' }}">
           @if($tm->status === 'live') LIVE
           @elseif($tm->status === 'final') FT
-          @else {{ $tm->kickoff_at->format('H:i') }}
+          @elseif($tm->kickoff_at->isToday()) {{ $tm->kickoff_at->format('H:i') }}
+          @elseif($tm->kickoff_at->isTomorrow()) Tomorrow {{ $tm->kickoff_at->format('H:i') }}
+          @else {{ $tm->kickoff_at->format('D H:i') }}
           @endif
         </span>
         <span class="ticker-teams">

@@ -119,6 +119,20 @@
         </section>
       @endif
 
+      @if($isLive && ! empty($match->commentary))
+        <section class="live-commentary" aria-labelledby="commentary-heading">
+          <div class="section-head"><h2 id="commentary-heading"><span class="dot-live" aria-hidden="true"></span> Live Commentary</h2></div>
+          <div class="commentary-feed">
+            @foreach (array_reverse($match->commentary) as $entry)
+            <div class="commentary-line">
+              <span class="commentary-minute">{{ $entry['minute'] }}'</span>
+              <p>{{ $entry['text'] }}</p>
+            </div>
+            @endforeach
+          </div>
+        </section>
+      @endif
+
       @if($isFinal)
 
         <section aria-label="Match Report">

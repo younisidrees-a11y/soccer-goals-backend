@@ -60,6 +60,15 @@ Schedule::command('api-football:sync-previews liga-mx')->everyFiveMinutes()->wit
 Schedule::command('api-football:sync-previews super-lig')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('api-football:sync-previews mls')->everyFiveMinutes()->withoutOverlapping();
 
+// Minute-by-minute AI live commentary - piloting on two leagues only
+// (League::live_commentary_enabled). Runs every minute rather than every
+// five like everything else above, since "live commentary" that's five
+// minutes behind isn't live - but each run is a cheap no-op the instant
+// there's no live match in the league, so this is safe to leave on
+// even when nothing's being played.
+Schedule::command('api-football:sync-commentary la-liga')->everyMinute()->withoutOverlapping();
+Schedule::command('api-football:sync-commentary saudi-pro-league')->everyMinute()->withoutOverlapping();
+
 // Each of these already skips itself when there's nothing new to cover
 // (same match/team not re-covered), so running on a schedule never spams
 // the review queue - it just writes fresh content when there's genuinely

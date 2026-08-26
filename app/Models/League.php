@@ -14,11 +14,12 @@ class League extends Model
         'name', 'slug', 'external_code', 'api_football_id', 'country', 'flag_code', 'season', 'total_matchdays',
         'about_text', 'table_intro', 'table_closing',
         'meta_title', 'meta_description', 'meta_keywords',
-        'is_published',
+        'is_published', 'live_commentary_enabled',
     ];
 
     protected $casts = [
         'is_published' => 'boolean',
+        'live_commentary_enabled' => 'boolean',
     ];
 
     public function scopePublished($query)

@@ -39,6 +39,12 @@ class ApiFootballClient
         return $this->request('/fixtures', ['league' => $leagueId, 'season' => $season]);
     }
 
+    /** A single fixture's live status - the only endpoint that carries the real elapsed minute clock (fixture.status.elapsed), which events/statistics don't. */
+    public function getFixtureById(int $fixtureId): ?array
+    {
+        return $this->request('/fixtures', ['id' => $fixtureId]);
+    }
+
     public function getStatistics(int $fixtureId): ?array
     {
         return $this->request('/fixtures/statistics', ['fixture' => $fixtureId]);

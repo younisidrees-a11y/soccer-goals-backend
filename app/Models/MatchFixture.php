@@ -16,7 +16,7 @@ class MatchFixture extends Model
         'league_id', 'external_id', 'api_football_fixture_id', 'home_team_id', 'away_team_id', 'matchday', 'kickoff_at',
         'venue', 'referee', 'home_preview_note', 'away_preview_note', 'preview_published_at',
         'status', 'home_score', 'away_score', 'home_score_ht', 'away_score_ht',
-        'match_report', 'halftime_report', 'halftime_published_at', 'stats', 'events', 'lineups', 'motm', 'prediction',
+        'match_report', 'halftime_report', 'halftime_published_at', 'stats', 'events', 'lineups', 'motm', 'prediction', 'commentary',
         'meta_title', 'meta_description', 'meta_keywords',
         'is_published',
     ];
@@ -30,6 +30,7 @@ class MatchFixture extends Model
         'lineups' => 'array',
         'motm' => 'array',
         'prediction' => 'array',
+        'commentary' => 'array',
         'is_published' => 'boolean',
     ];
 
