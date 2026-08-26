@@ -6,9 +6,13 @@ use App\Http\Controllers\LeagueController;
 use App\Http\Controllers\MatchController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ResultController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.index');
+Route::get('/sitemap-news.xml', [SitemapController::class, 'news'])->name('sitemap.news');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/leagues/{slug}', [LeagueController::class, 'show'])->name('leagues.show');

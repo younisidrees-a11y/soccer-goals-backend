@@ -7,11 +7,15 @@
 <meta name="description" content="@yield('meta_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the English Premier League, Spanish La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')">
 <meta name="keywords" content="@yield('meta_keywords', 'soccer news, football news, English Premier League, Spanish La Liga, Serie A, Bundesliga, Ligue 1, fixtures, results, points table, football scores')">
 <link rel="canonical" href="@yield('canonical', url()->current())">
-<meta property="og:type" content="website">
+<meta property="og:type" content="@yield('og_type', 'website')">
 <meta property="og:site_name" content="The Soccer Goals">
 <meta property="og:title" content="@yield('og_title', 'The Soccer Goals — Soccer, Covered.')">
 <meta property="og:description" content="@yield('og_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the English Premier League, Spanish La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')">
 <meta property="og:url" content="@yield('canonical', url()->current())">
+@hasSection('og_image')
+<meta property="og:image" content="@yield('og_image')">
+<meta name="twitter:image" content="@yield('og_image')">
+@endif
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="@yield('og_title', 'The Soccer Goals — Soccer, Covered.')">
 <meta name="twitter:description" content="@yield('og_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the English Premier League, Spanish La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')">
@@ -21,6 +25,24 @@
 <link rel="alternate icon" href="{{ asset('favicon.ico') }}">
 <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/site.css') }}">
+@php
+  $orgSchema = [
+      '@context' => 'https://schema.org',
+      '@type' => 'NewsMediaOrganization',
+      'name' => 'The Soccer Goals',
+      'url' => url('/'),
+      'logo' => [
+          '@type' => 'ImageObject',
+          'url' => asset('apple-touch-icon.png'),
+          'width' => 180,
+          'height' => 180,
+      ],
+  ];
+@endphp
+<script type="application/ld+json">
+{!! json_encode($orgSchema) !!}
+</script>
+@yield('head_extra')
 @if($siteSettings->analytics_head_code ?? null)
 {!! $siteSettings->analytics_head_code !!}
 @endif

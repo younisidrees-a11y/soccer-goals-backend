@@ -6,6 +6,57 @@
 @section('canonical', route('news.show', $article->slug))
 @section('og_title', $article->meta_title ?: $article->title)
 @section('og_description', $article->meta_description ?: $article->dek)
+@section('og_type', 'article')
+@section('og_image', $article->image_url ?: asset('apple-touch-icon.png'))
+
+@php
+  $publishedAt = $article->published_at ?? $article->created_at;
+  $modifiedAt = $article->updated_at ?? $publishedAt;
+  $newsArticleSchema = [
+      '@context' => 'https://schema.org',
+      '@type' => 'NewsArticle',
+      'headline' => \Illuminate\Support\Str::limit($article->title, 110, ''),
+      'description' => $article->meta_description ?: $article->dek,
+      'image' => [$article->image_url ?: asset('apple-touch-icon.png')],
+      'datePublished' => $publishedAt->toIso8601String(),
+      'dateModified' => $modifiedAt->toIso8601String(),
+      'author' => $article->author
+          ? [['@type' => 'Person', 'name' => $article->author]]
+          : [['@type' => 'Organization', 'name' => 'The Soccer Goals']],
+      'publisher' => [
+          '@type' => 'Organization',
+          'name' => 'The Soccer Goals',
+          'logo' => [
+              '@type' => 'ImageObject',
+              'url' => asset('apple-touch-icon.png'),
+              'width' => 180,
+              'height' => 180,
+          ],
+      ],
+      'mainEntityOfPage' => [
+          '@type' => 'WebPage',
+          '@id' => route('news.show', $article->slug),
+      ],
+      'articleSection' => $categoryLabel,
+      'inLanguage' => 'en',
+  ];
+
+  if ($article->meta_keywords) {
+      $newsArticleSchema['keywords'] = $article->meta_keywords;
+  }
+@endphp
+
+@section('head_extra')
+<meta property="article:published_time" content="{{ $publishedAt->toIso8601String() }}">
+<meta property="article:modified_time" content="{{ $modifiedAt->toIso8601String() }}">
+<meta property="article:section" content="{{ $categoryLabel }}">
+@if($article->author)
+<meta property="article:author" content="{{ $article->author }}">
+@endif
+<script type="application/ld+json">
+{!! json_encode($newsArticleSchema, JSON_UNESCAPED_SLASHES) !!}
+</script>
+@endsection
 
 @section('content')
 
@@ -38,7 +89,7 @@
         <div class="byline" style="margin-top:14px;">
           By {{ $article->author ?: 'The Soccer Goals' }}
           <span class="dot"></span>
-          {{ ($article->published_at ?? $article->created_at)->format('j M Y') }}
+          <time datetime="{{ $publishedAt->toIso8601String() }}">{{ $publishedAt->format('j M Y') }}</time>
           @if($article->team)
           <span class="dot"></span>
           <a href="{{ route('teams.show', $article->team->slug) }}" style="color:inherit;text-decoration:underline;">{{ $article->team->name }}</a>

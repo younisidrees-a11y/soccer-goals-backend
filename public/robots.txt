@@ -1,2 +1,5 @@
 User-agent: *
 Disallow:
+
+Sitemap: https://thesoccergoals.com/sitemap.xml
+Sitemap: https://thesoccergoals.com/sitemap-news.xml
