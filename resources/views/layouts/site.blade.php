@@ -61,6 +61,8 @@
 <symbol id="flag-fra" viewBox="0 0 3 2"><path fill="#EC1920" d="M0 0h3v2H0z"/><path fill="#fff" d="M0 0h2v2H0z"/><path fill="#051440" d="M0 0h1v2H0z"/></symbol>
 <symbol id="flag-sau" viewBox="0 0 3 2"><rect width="3" height="2" fill="#006C35"/><rect x="0.55" y="1.35" width="1.4" height="0.16" fill="#FFF"/><path d="M1.95 1.43l0.18-0.1-0.05 0.1 0.05 0.1z" fill="#FFF"/></symbol>
 <symbol id="flag-mex" viewBox="0 0 3 2"><path fill="#006847" d="M0 0h1v2H0z"/><path fill="#fff" d="M1 0h1v2H1z"/><path fill="#CE1126" d="M2 0h1v2H2z"/></symbol>
+<symbol id="flag-tur" viewBox="0 0 3 2"><rect width="3" height="2" fill="#E30A17"/><circle cx="1.1" cy="1" r="0.5" fill="#FFF"/><circle cx="1.25" cy="1" r="0.4" fill="#E30A17"/><path d="M1.5 0.65l0.15 0.46-0.4-0.28h0.5l-0.4 0.28z" fill="#FFF"/></symbol>
+<symbol id="flag-usa" viewBox="0 0 3 2"><rect width="3" height="2" fill="#FFF"/><g fill="#B22234"><rect width="3" height="0.154"/><rect y="0.308" width="3" height="0.154"/><rect y="0.615" width="3" height="0.154"/><rect y="0.923" width="3" height="0.154"/><rect y="1.231" width="3" height="0.154"/><rect y="1.538" width="3" height="0.154"/><rect y="1.846" width="3" height="0.154"/></g><rect width="1.2" height="1.077" fill="#3C3B6E"/></symbol>
 </defs>
 </svg>
 
@@ -120,6 +122,8 @@
                 <li><a href="{{ route('leagues.show', 'ligue-1') }}"><svg class="flag" role="img" aria-label="France flag"><use href="#flag-fra"></use></svg>Ligue 1</a></li>
                 <li><a href="{{ route('leagues.show', 'saudi-pro-league') }}"><svg class="flag" role="img" aria-label="Saudi Arabia flag"><use href="#flag-sau"></use></svg>Saudi Pro League</a></li>
                 <li><a href="{{ route('leagues.show', 'liga-mx') }}"><svg class="flag" role="img" aria-label="Mexico flag"><use href="#flag-mex"></use></svg>Liga MX</a></li>
+                <li><a href="{{ route('leagues.show', 'super-lig') }}"><svg class="flag" role="img" aria-label="Turkey flag"><use href="#flag-tur"></use></svg>Süper Lig</a></li>
+                <li><a href="{{ route('leagues.show', 'mls') }}"><svg class="flag" role="img" aria-label="United States flag"><use href="#flag-usa"></use></svg>Major League Soccer</a></li>
               </ul>
             </div>
             <div class="mega-col">
@@ -236,6 +240,8 @@
           <a href="{{ route('leagues.show', 'ligue-1') }}"><svg class="flag" role="img" aria-label="France flag"><use href="#flag-fra"></use></svg>Ligue 1</a>
           <a href="{{ route('leagues.show', 'saudi-pro-league') }}"><svg class="flag" role="img" aria-label="Saudi Arabia flag"><use href="#flag-sau"></use></svg>Saudi Pro League</a>
           <a href="{{ route('leagues.show', 'liga-mx') }}"><svg class="flag" role="img" aria-label="Mexico flag"><use href="#flag-mex"></use></svg>Liga MX</a>
+          <a href="{{ route('leagues.show', 'super-lig') }}"><svg class="flag" role="img" aria-label="Turkey flag"><use href="#flag-tur"></use></svg>Süper Lig</a>
+          <a href="{{ route('leagues.show', 'mls') }}"><svg class="flag" role="img" aria-label="United States flag"><use href="#flag-usa"></use></svg>Major League Soccer</a>
           <a href="#">Champions League</a>
         </div>
       </details>
@@ -320,6 +326,8 @@
         <li><a href="{{ route('leagues.show', 'ligue-1') }}"><svg class="flag" role="img" aria-label="France flag"><use href="#flag-fra"></use></svg>Ligue 1</a></li>
         <li><a href="{{ route('leagues.show', 'saudi-pro-league') }}"><svg class="flag" role="img" aria-label="Saudi Arabia flag"><use href="#flag-sau"></use></svg>Saudi Pro League</a></li>
         <li><a href="{{ route('leagues.show', 'liga-mx') }}"><svg class="flag" role="img" aria-label="Mexico flag"><use href="#flag-mex"></use></svg>Liga MX</a></li>
+        <li><a href="{{ route('leagues.show', 'super-lig') }}"><svg class="flag" role="img" aria-label="Turkey flag"><use href="#flag-tur"></use></svg>Süper Lig</a></li>
+        <li><a href="{{ route('leagues.show', 'mls') }}"><svg class="flag" role="img" aria-label="United States flag"><use href="#flag-usa"></use></svg>Major League Soccer</a></li>
         <li><a href="#">Champions League</a></li>
       </ul>
     </div>
