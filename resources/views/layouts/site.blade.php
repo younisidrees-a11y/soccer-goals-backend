@@ -123,6 +123,7 @@
             <div class="mega-col">
               <div class="mega-col-title">Leagues</div>
               <ul>
+                <li><a href="{{ route('leagues.index') }}" style="font-weight:800;color:var(--accent);">View All Leagues &amp; Clubs</a></li>
                 <li><a href="{{ route('leagues.show', 'premier-league') }}"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>English Premier League</a></li>
                 <li><a href="{{ route('leagues.show', 'la-liga') }}"><svg class="flag" role="img" aria-label="Spain flag"><use href="#flag-esp"></use></svg>Spanish La Liga</a></li>
                 <li><a href="{{ route('leagues.show', 'serie-a') }}"><svg class="flag" role="img" aria-label="Italy flag"><use href="#flag-ita"></use></svg>Serie A</a></li>
@@ -245,6 +246,7 @@
       <details class="drawer-group">
         <summary>Leagues <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 4l4 4 4-4"/></svg></summary>
         <div class="drawer-sublist">
+          <a href="{{ route('leagues.index') }}" style="font-weight:800;color:var(--accent);">View All Leagues &amp; Clubs</a>
           <a href="{{ route('leagues.show', 'premier-league') }}"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>English Premier League</a>
           <a href="{{ route('leagues.show', 'la-liga') }}"><svg class="flag" role="img" aria-label="Spain flag"><use href="#flag-esp"></use></svg>Spanish La Liga</a>
           <a href="{{ route('leagues.show', 'serie-a') }}"><svg class="flag" role="img" aria-label="Italy flag"><use href="#flag-ita"></use></svg>Serie A</a>
@@ -333,6 +335,7 @@
     <div class="footer-col">
       <h3>Leagues</h3>
       <ul>
+        <li><a href="{{ route('leagues.index') }}" style="font-weight:700;">View All Leagues</a></li>
         <li><a href="{{ route('leagues.show', 'premier-league') }}"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>English Premier League</a></li>
         <li><a href="{{ route('leagues.show', 'la-liga') }}"><svg class="flag" role="img" aria-label="Spain flag"><use href="#flag-esp"></use></svg>Spanish La Liga</a></li>
         <li><a href="{{ route('leagues.show', 'serie-a') }}"><svg class="flag" role="img" aria-label="Italy flag"><use href="#flag-ita"></use></svg>Serie A</a></li>

@@ -15,7 +15,7 @@ class Team extends Model
 
     protected $fillable = [
         'league_id', 'name', 'full_name', 'slug', 'external_id', 'api_football_id', 'crest_code', 'color_hex',
-        'stadium', 'stadium_capacity', 'manager', 'manager_facts', 'manager_bio', 'manager_photo_path',
+        'stadium', 'stadium_capacity', 'ground_history', 'manager', 'manager_facts', 'manager_bio', 'manager_photo_path',
         'coach_age', 'coach_nationality', 'coach_synced_at',
         'founded_year', 'history_essay', 'honours_facts',
         'meta_title', 'meta_description', 'meta_keywords',

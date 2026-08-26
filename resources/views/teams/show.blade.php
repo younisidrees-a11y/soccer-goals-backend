@@ -113,6 +113,19 @@
         @endif
       </section>
 
+      @if($team->ground_history)
+      <section aria-labelledby="ground-heading" class="essay-block" style="margin-top:28px;">
+        <h2 id="ground-heading">{{ $team->stadium ?: 'The Ground' }}</h2>
+        @if($team->stadium_capacity)
+        <p class="lede" style="margin-bottom:12px;">Capacity: {{ $team->stadium_capacity }}</p>
+        @endif
+        @foreach (explode("\n", $team->ground_history) as $paragraph)
+          @continue(trim($paragraph) === '')
+          <p>{{ trim($paragraph) }}</p>
+        @endforeach
+      </section>
+      @endif
+
       @if($team->manager)
       <section aria-labelledby="coach-heading" class="essay-block" style="margin-top:28px;">
         <h2 id="coach-heading">Head Coach</h2>

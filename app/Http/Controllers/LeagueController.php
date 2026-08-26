@@ -10,6 +10,23 @@ use Illuminate\Http\Request;
 
 class LeagueController extends Controller
 {
+    public function index()
+    {
+        $leagues = League::published()
+            ->withCount(['teams' => fn ($q) => $q->published()])
+            ->with(['teams' => fn ($q) => $q->published()->orderBy('name')])
+            ->orderBy('name')
+            ->get();
+
+        $todaysMatches = MatchFixture::with(['homeTeam', 'awayTeam', 'league'])
+            ->published()
+            ->whereDate('kickoff_at', now()->toDateString())
+            ->orderBy('kickoff_at')
+            ->get();
+
+        return view('leagues.index', compact('leagues', 'todaysMatches'));
+    }
+
     public function show(Request $request, string $slug)
     {
         $league = League::published()
