@@ -16,6 +16,12 @@ Artisan::command('inspire', function () {
 // match that's actually just waiting on real data.
 Schedule::command('football-data:sync premier-league')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('football-data:sync la-liga')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('football-data:sync serie-a')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('football-data:sync ligue-1')->everyFiveMinutes()->withoutOverlapping();
+
+// Saudi Pro League isn't covered by football-data.org at all, so
+// API-Football is the primary fixture source here (not just enrichment).
+Schedule::command('api-football:sync-fixtures saudi-pro-league')->everyFiveMinutes()->withoutOverlapping();
 
 // Real statistics, event timelines, lineups, and a ratings-based Man of
 // the Match from API-Football - football-data.org's tier has none of
@@ -25,6 +31,9 @@ Schedule::command('football-data:sync la-liga')->everyFiveMinutes()->withoutOver
 // to run often.
 Schedule::command('api-football:sync-stats premier-league')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('api-football:sync-stats la-liga')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-stats serie-a')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-stats ligue-1')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-stats saudi-pro-league')->everyFiveMinutes()->withoutOverlapping();
 
 // Referee, prediction, coach and (once confirmed, usually ~1h before
 // kick-off) lineups for fixtures in the next 7 days - powers the match
@@ -34,6 +43,9 @@ Schedule::command('api-football:sync-stats la-liga')->everyFiveMinutes()->withou
 // we re-spend calls on matches already enriched.
 Schedule::command('api-football:sync-previews premier-league')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('api-football:sync-previews la-liga')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-previews serie-a')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-previews ligue-1')->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-previews saudi-pro-league')->everyFiveMinutes()->withoutOverlapping();
 
 // Each of these already skips itself when there's nothing new to cover
 // (same match/team not re-covered), so running on a schedule never spams
