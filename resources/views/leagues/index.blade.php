@@ -25,7 +25,7 @@
         <div>
           <div class="league-hero-eyebrow eyebrow" style="color:#8FB8FF;">Worldwide Coverage</div>
           <h1 class="league-hero-title">Every League, One Page</h1>
-          <div class="league-hero-meta">{{ $leagueCount }} competitions &middot; {{ $clubCount }} real clubs &middot; updated live from the database</div>
+          <div class="league-hero-meta">{{ $leagueCount }} competitions &middot; {{ $clubCount }} clubs</div>
         </div>
       </div>
 

@@ -23,7 +23,7 @@
         <div>
           <div class="league-hero-eyebrow eyebrow" style="color:#8FB8FF;">{{ $league->country }} &middot; {{ $league->season }} Season</div>
           <h1 class="league-hero-title">{{ $league->name }}</h1>
-          <div class="league-hero-meta">{{ $league->teams_count }} clubs &middot; {{ $league->season }} season &middot; Live from the database</div>
+          <div class="league-hero-meta">{{ $league->teams_count }} clubs &middot; {{ $league->season }} season</div>
         </div>
       </div>
 
