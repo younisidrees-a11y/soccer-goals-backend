@@ -122,33 +122,29 @@
           <button class="nav-link mega-trigger" aria-expanded="false">Leagues
             <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 4l4 4 4-4"/></svg>
           </button>
-          <div class="mega-panel">
+          <div class="mega-panel mega-panel-leagues">
             <div class="mega-col">
-              <div class="mega-col-title">Leagues</div>
+              <div class="mega-col-title">Top Leagues</div>
               <ul>
-                <li><a href="{{ route('leagues.index') }}" style="font-weight:800;color:var(--accent);">View All Leagues &amp; Clubs</a></li>
                 <li><a href="{{ route('leagues.show', 'premier-league') }}"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>English Premier League</a></li>
                 <li><a href="{{ route('leagues.show', 'la-liga') }}"><svg class="flag" role="img" aria-label="Spain flag"><use href="#flag-esp"></use></svg>Spanish La Liga</a></li>
                 <li><a href="{{ route('leagues.show', 'serie-a') }}"><svg class="flag" role="img" aria-label="Italy flag"><use href="#flag-ita"></use></svg>Serie A</a></li>
                 <li><a href="{{ route('leagues.show', 'bundesliga') }}"><svg class="flag" role="img" aria-label="Germany flag"><use href="#flag-deu"></use></svg>Bundesliga</a></li>
                 <li><a href="{{ route('leagues.show', 'ligue-1') }}"><svg class="flag" role="img" aria-label="France flag"><use href="#flag-fra"></use></svg>Ligue 1</a></li>
                 <li><a href="{{ route('leagues.show', 'saudi-pro-league') }}"><svg class="flag" role="img" aria-label="Saudi Arabia flag"><use href="#flag-sau"></use></svg>Saudi Pro League</a></li>
-                <li><a href="{{ route('leagues.show', 'liga-mx') }}"><svg class="flag" role="img" aria-label="Mexico flag"><use href="#flag-mex"></use></svg>Liga MX</a></li>
-                <li><a href="{{ route('leagues.show', 'super-lig') }}"><svg class="flag" role="img" aria-label="Turkey flag"><use href="#flag-tur"></use></svg>Süper Lig</a></li>
-                <li><a href="{{ route('leagues.show', 'mls') }}"><svg class="flag" role="img" aria-label="United States flag"><use href="#flag-usa"></use></svg>Major League Soccer</a></li>
-                <li><a href="{{ route('leagues.show', 'championship') }}"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>English Championship</a></li>
-                <li><a href="{{ route('leagues.show', 'scottish-premiership') }}"><svg class="flag" role="img" aria-label="Scotland flag"><use href="#flag-sct"></use></svg>Scottish Premiership</a></li>
-                <li><a href="{{ route('leagues.show', 'eredivisie') }}"><svg class="flag" role="img" aria-label="Netherlands flag"><use href="#flag-nld"></use></svg>Eredivisie</a></li>
-                <li><a href="{{ route('leagues.show', 'primeira-liga') }}"><svg class="flag" role="img" aria-label="Portugal flag"><use href="#flag-prt"></use></svg>Primeira Liga</a></li>
               </ul>
             </div>
             <div class="mega-col">
-              <div class="mega-col-title">European Cups</div>
+              <div class="mega-col-title">More Leagues</div>
               <ul>
-                <li><a href="#">Champions League</a></li>
-                <li><a href="#">Europa League</a></li>
-                <li><a href="#">Conference League</a></li>
-                <li><a href="#">Nations League</a></li>
+                <li><a href="{{ route('leagues.show', 'championship') }}"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>English Championship</a></li>
+                <li><a href="{{ route('leagues.show', 'liga-mx') }}"><svg class="flag" role="img" aria-label="Mexico flag"><use href="#flag-mex"></use></svg>Liga MX</a></li>
+                <li><a href="{{ route('leagues.show', 'super-lig') }}"><svg class="flag" role="img" aria-label="Turkey flag"><use href="#flag-tur"></use></svg>Süper Lig</a></li>
+                <li><a href="{{ route('leagues.show', 'mls') }}"><svg class="flag" role="img" aria-label="United States flag"><use href="#flag-usa"></use></svg>Major League Soccer</a></li>
+                <li><a href="{{ route('leagues.show', 'scottish-premiership') }}"><svg class="flag" role="img" aria-label="Scotland flag"><use href="#flag-sct"></use></svg>Scottish Premiership</a></li>
+                <li><a href="{{ route('leagues.show', 'eredivisie') }}"><svg class="flag" role="img" aria-label="Netherlands flag"><use href="#flag-nld"></use></svg>Eredivisie</a></li>
+                <li><a href="{{ route('leagues.show', 'primeira-liga') }}"><svg class="flag" role="img" aria-label="Portugal flag"><use href="#flag-prt"></use></svg>Primeira Liga</a></li>
+                <li><a href="{{ route('leagues.index') }}" class="mega-view-all">View all 13 leagues &amp; clubs &rarr;</a></li>
               </ul>
             </div>
             <div class="mega-col">
@@ -157,15 +153,14 @@
                 <li><a href="{{ route('tables.index') }}">Points Table</a></li>
                 <li><a href="{{ route('fixtures.index') }}">Fixtures</a></li>
                 <li><a href="{{ route('results.index') }}">Results</a></li>
-                <li><a href="#">Top Scorers</a></li>
-                <li><a href="#">Team Directory</a></li>
+                <li><a href="{{ route('news.index') }}">Latest News</a></li>
               </ul>
             </div>
             <div class="mega-feature">
-              <span class="eyebrow">Deadline Day</span>
-              <h4>Transfer Tracker: every deal, live</h4>
-              <p>Follow every signing before the window slams shut.</p>
-              <a href="#" class="btn btn-accent btn-sm">Open Tracker</a>
+              <span class="eyebrow">Transfer News</span>
+              <h4>Every deal before the window shuts</h4>
+              <p>Confirmed moves, medicals and deadline-day reporting.</p>
+              <a href="{{ route('news.category', 'transfers') }}" class="btn btn-accent btn-sm">See Transfer News</a>
             </div>
           </div>
         </li>
@@ -197,16 +192,18 @@
             <div class="mega-col">
               <div class="mega-col-title">Just In</div>
               <ul>
-                <li><a href="#">City edge Chelsea in five-goal thriller</a></li>
-                <li><a href="#">Yamal starts as Barca open title defense</a></li>
-                <li><a href="#">Napoli confirm deal for Belgian winger</a></li>
+                @forelse ($megaLatestNews ?? [] as $article)
+                <li><a href="{{ route('news.show', $article->slug) }}">{{ $article->title }}</a></li>
+                @empty
+                <li><a href="{{ route('news.index') }}">See all news &rarr;</a></li>
+                @endforelse
               </ul>
             </div>
             <div class="mega-feature">
               <span class="eyebrow">Editor's Pick</span>
               <h4>The Evolution of the English Premier League</h4>
               <p>From first whistle to global game &mdash; the long read.</p>
-              <a href="#" class="btn btn-accent btn-sm">Read Feature</a>
+              <a href="{{ route('leagues.show', 'premier-league') }}" class="btn btn-accent btn-sm">Read Feature</a>
             </div>
           </div>
         </li>

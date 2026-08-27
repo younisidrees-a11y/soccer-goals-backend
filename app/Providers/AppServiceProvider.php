@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\MatchFixture;
+use App\Models\NewsArticle;
 use App\Models\SiteSetting;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
@@ -43,6 +44,12 @@ class AppServiceProvider extends ServiceProvider
             $view->with('siteSettings', SiteSetting::current());
             $view->with('currentMatchday', MatchFixture::published()->where('status', 'final')->max('matchday') ?? 1);
             $view->with('tickerMatches', $this->buildTickerMatches());
+            // Powers the "Just In" column of the News mega menu, which is
+            // global (every page renders this layout) - previously this
+            // was three headlines hand-typed straight into the Blade file
+            // and frozen in time. Small limit since it's a nav dropdown,
+            // not a feed.
+            $view->with('megaLatestNews', NewsArticle::published()->latest('published_at')->take(3)->get());
         });
     }
 
