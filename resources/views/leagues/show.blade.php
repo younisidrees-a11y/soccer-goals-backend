@@ -14,7 +14,7 @@
       <div class="breadcrumb" style="color:#8FA6BA;">
         <a href="{{ route('home') }}" style="color:#B9CBDA;">Home</a>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
-        <a href="#" style="color:#B9CBDA;">Leagues</a>
+        <a href="{{ route('leagues.index') }}" style="color:#B9CBDA;">Leagues</a>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
         <span style="color:#fff;">{{ $league->name }}</span>
       </div>
@@ -70,8 +70,151 @@
   <div class="wrap content-grid">
     <div class="content-main">
 
-      <section aria-labelledby="table-heading" id="table">
-        <div class="section-head"><h2 id="table-heading">{{ $league->name }} Table</h2></div>
+      <section aria-labelledby="history-heading-1" class="essay-block" id="about">
+        <div class="essay-part-tag">League History</div>
+        <h2 id="history-heading-1">About the {{ $league->name }}</h2>
+        <p class="lede">The {{ $league->name }} is {{ $league->country }}'s top professional football division, contested by {{ $league->teams_count }} clubs across {{ $league->total_matchdays }} matchdays every season.</p>
+        @if($matchesTotal > 0)
+        <p style="font-size:13.5px;color:var(--ink-faint);">{{ $matchesPlayed }} of {{ $matchesTotal }} matches played this season &middot; {{ $matchesPlayed > 0 ? round($matchesPlayed / $matchesTotal * 100) : 0 }}% complete.</p>
+        @endif
+        @if($league->about_text)
+          @foreach (explode("\n", $league->about_text) as $paragraph)
+            @continue(trim($paragraph) === '')
+            <p>{{ trim($paragraph) }}</p>
+          @endforeach
+        @endif
+      </section>
+
+      <div class="ad-slot ad-native">
+        <span class="ad-eyebrow">Advertisement</span>
+        <span class="ad-size">Native in-content unit</span>
+      </div>
+
+      <section aria-labelledby="teams-heading" id="teams">
+        <div class="section-head"><h2 id="teams-heading">{{ $league->name }} Teams List</h2></div>
+        <div class="team-directory-grid">
+          @foreach ($standings as $s)
+          <a href="{{ route('teams.show', $s->team->slug) }}" class="team-card"><span class="crest crest-{{ $s->team->crest_code }}" role="img" aria-label="{{ $s->team->full_name }} badge"></span><span class="team-card-body"><span class="team-card-name">{{ $s->team->name }}</span><span class="team-card-meta">{{ $s->position }}{{ match(true){ in_array($s->position % 100, [11,12,13]) => 'th', $s->position % 10 === 1 => 'st', $s->position % 10 === 2 => 'nd', $s->position % 10 === 3 => 'rd', default => 'th' } }} &middot; {{ $s->points }} {{ Str::plural('pt', $s->points) }}</span></span></a>
+          @endforeach
+        </div>
+      </section>
+
+      <section aria-labelledby="fixtures-heading" id="fixtures" style="margin-top:32px;">
+        <div class="section-head"><h2 id="fixtures-heading">Upcoming Fixtures</h2></div>
+
+        @if($upcomingFixtures->isNotEmpty())
+        <div class="match-grid">
+          @foreach ($upcomingFixtures as $m)
+          <a href="{{ $m->prettyUrl() }}" class="match-card">
+            <div class="match-meta"><span class="match-comp">{{ $league->name }} &middot; {{ $m->venue }}</span><span class="match-status">{{ $m->kickoff_at->format('D j M, H:i') }}</span></div>
+            <div class="match-teams">
+              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->homeTeam->crest_code }}" role="img" aria-label="{{ $m->homeTeam->full_name }} badge"></span><span class="team-name">{{ $m->homeTeam->name }}</span></div></div>
+              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->awayTeam->crest_code }}" role="img" aria-label="{{ $m->awayTeam->full_name }} badge"></span><span class="team-name">{{ $m->awayTeam->name }}</span></div></div>
+            </div>
+            <div class="match-venue">{{ $m->venue }}</div>
+          </a>
+          @endforeach
+        </div>
+        @else
+        <p class="achievements-empty">No fixtures currently scheduled for the {{ $league->name }}.</p>
+        @endif
+      </section>
+
+      <section aria-labelledby="results-heading" id="results" style="margin-top:32px;">
+        <div class="section-head"><h2 id="results-heading">Latest Results</h2></div>
+
+        @if($latestResults->isNotEmpty())
+        <div class="match-grid">
+          @foreach ($latestResults as $m)
+          <a href="{{ $m->prettyUrl() }}" class="match-card">
+            <div class="match-meta"><span class="match-comp">{{ $league->name }} &middot; {{ $m->venue }}</span><span class="match-status">Full-Time</span></div>
+            <div class="match-teams">
+              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->homeTeam->crest_code }}" role="img" aria-label="{{ $m->homeTeam->full_name }} badge"></span><span class="team-name">{{ $m->homeTeam->name }}</span></div><span class="team-score{{ $m->home_score > $m->away_score ? ' winning' : '' }}">{{ $m->home_score }}</span></div>
+              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->awayTeam->crest_code }}" role="img" aria-label="{{ $m->awayTeam->full_name }} badge"></span><span class="team-name">{{ $m->awayTeam->name }}</span></div><span class="team-score{{ $m->away_score > $m->home_score ? ' winning' : '' }}">{{ $m->away_score }}</span></div>
+            </div>
+            <div class="match-venue">{{ $m->venue }}</div>
+          </a>
+          @endforeach
+        </div>
+        @else
+        <p class="achievements-empty">No matches played yet this season &mdash; check back once the {{ $league->name }} kicks off.</p>
+        @endif
+      </section>
+
+      @php
+        $hasAnyAchievement = collect($achievements)->filter()->isNotEmpty();
+      @endphp
+      <section aria-labelledby="achievements-heading" id="achievements" style="margin-top:32px;">
+        <div class="section-head"><h2 id="achievements-heading">Top Achievements</h2></div>
+        <p style="font-size:13.5px;color:var(--ink-faint);margin-top:-8px;margin-bottom:18px;">Real superlatives from this season's {{ $league->name }} results &mdash; not a prediction, just what's actually happened on the pitch.</p>
+
+        @if($hasAnyAchievement)
+        <div class="achievements-grid">
+
+          @if($achievements['bestAttack'])
+          <div class="achievement-card" style="--ach-color:var(--accent);--ach-soft:var(--accent-soft);">
+            <span class="achievement-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.3"/><circle cx="12" cy="12" r="1"/></svg></span>
+            <span class="achievement-label">Best Attack</span>
+            <span class="achievement-team"><span class="crest crest-{{ $achievements['bestAttack']->team->crest_code }}" role="img" aria-label="{{ $achievements['bestAttack']->team->full_name }} badge"></span>{{ $achievements['bestAttack']->team->name }}</span>
+            <span class="achievement-value">{{ $achievements['bestAttack']->goals_for }} goals scored</span>
+            <span class="achievement-detail">The division's most prolific attack so far this season.</span>
+          </div>
+          @endif
+
+          @if($achievements['bestDefense'])
+          <div class="achievement-card" style="--ach-color:var(--accent-2);--ach-soft:var(--accent-2-soft);">
+            <span class="achievement-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 19 6.5V11c0 5.2-3 8.6-7 9.8-4-1.2-7-4.6-7-9.8V6.5L12 3.5Z"/></svg></span>
+            <span class="achievement-label">Best Defense</span>
+            <span class="achievement-team"><span class="crest crest-{{ $achievements['bestDefense']->team->crest_code }}" role="img" aria-label="{{ $achievements['bestDefense']->team->full_name }} badge"></span>{{ $achievements['bestDefense']->team->name }}</span>
+            <span class="achievement-value">{{ $achievements['bestDefense']->goals_against }} conceded</span>
+            <span class="achievement-detail">The tightest defensive record in the league right now.</span>
+          </div>
+          @endif
+
+          @if($achievements['mostWins'])
+          <div class="achievement-card" style="--ach-color:var(--accent);--ach-soft:var(--accent-soft);">
+            <span class="achievement-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 4h8v3.2a4 4 0 0 1-8 0V4Z"/><path d="M8 5H5.2A2.8 2.8 0 0 0 8 7.6V5Z"/><path d="M16 5h2.8A2.8 2.8 0 0 1 16 7.6V5Z"/><path d="M11 11.5h2V15h-2z"/><path d="M9 19.5h6v1.3H9z"/><path d="M9.7 16.5h4.6l.5 3H9.2l.5-3Z"/></svg></span>
+            <span class="achievement-label">Most Wins</span>
+            <span class="achievement-team"><span class="crest crest-{{ $achievements['mostWins']->team->crest_code }}" role="img" aria-label="{{ $achievements['mostWins']->team->full_name }} badge"></span>{{ $achievements['mostWins']->team->name }}</span>
+            <span class="achievement-value">{{ $achievements['mostWins']->won }} {{ Str::plural('win', $achievements['mostWins']->won) }}</span>
+            <span class="achievement-detail">No side has won more matches this season.</span>
+          </div>
+          @endif
+
+          @if($achievements['biggestWin'])
+          @php
+            $bw = $achievements['biggestWin'];
+            $bwWinner = $bw->home_score > $bw->away_score ? $bw->homeTeam : $bw->awayTeam;
+            $bwLoser = $bw->home_score > $bw->away_score ? $bw->awayTeam : $bw->homeTeam;
+            $bwMargin = abs($bw->home_score - $bw->away_score);
+          @endphp
+          <div class="achievement-card" style="--ach-color:var(--live);--ach-soft:var(--live-soft);">
+            <span class="achievement-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M13 2 5 14h5.5L9.5 22 19 10h-5.5L13 2Z"/></svg></span>
+            <span class="achievement-label">Biggest Win</span>
+            <span class="achievement-team"><span class="crest crest-{{ $bwWinner->crest_code }}" role="img" aria-label="{{ $bwWinner->full_name }} badge"></span>{{ $bwWinner->name }}</span>
+            <span class="achievement-value">Beat {{ $bwLoser->name }} by {{ $bwMargin }}</span>
+            <span class="achievement-detail"><a href="{{ $bw->prettyUrl() }}" style="color:inherit;text-decoration:underline;">{{ $bw->homeTeam->name }} {{ $bw->home_score }}&ndash;{{ $bw->away_score }} {{ $bw->awayTeam->name }}</a></span>
+          </div>
+          @endif
+
+          @if($achievements['longestUnbeaten'])
+          <div class="achievement-card" style="--ach-color:var(--accent-2);--ach-soft:var(--accent-2-soft);">
+            <span class="achievement-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2.5c.9 3-2.6 4.4-2.6 8a2.6 2.6 0 0 0 5.2 0c0-1-.6-1.7-.6-1.7.9 2.5 2.5 3.6 2.5 6.3a4.5 4.5 0 0 1-9 0c0-5.6 3-6.6 4.5-12.6Z"/></svg></span>
+            <span class="achievement-label">Longest Unbeaten Run</span>
+            <span class="achievement-team"><span class="crest crest-{{ $achievements['longestUnbeaten']['team']->crest_code }}" role="img" aria-label="{{ $achievements['longestUnbeaten']['team']->full_name }} badge"></span>{{ $achievements['longestUnbeaten']['team']->name }}</span>
+            <span class="achievement-value">{{ $achievements['longestUnbeaten']['best'] }} {{ Str::plural('game', $achievements['longestUnbeaten']['best']) }} unbeaten</span>
+            <span class="achievement-detail">Longest current-season run without a loss.</span>
+          </div>
+          @endif
+
+        </div>
+        @else
+        <p class="achievements-empty">Achievements will appear here once {{ $league->name }} matches have been played this season.</p>
+        @endif
+      </section>
+
+      <section aria-labelledby="table-heading" id="table" style="margin-top:32px;">
+        <div class="section-head"><h2 id="table-heading">{{ $league->name }} Points Table</h2></div>
 
         @if($league->table_intro)
         <p class="lede" style="margin-bottom:18px;">{{ $league->table_intro }}</p>
@@ -97,99 +240,7 @@
         @endif
       </section>
 
-      @php
-        $top5 = $standings->take(5);
-        $maxPoints = $top5->max('points') ?: 1;
-        $maxGoals = $top5->max('goals_for') ?: 1;
-        $maxGd = $top5->max('goal_difference') ?: 1;
-      @endphp
-      @if($top5->isNotEmpty())
-      <section aria-labelledby="stats-heading" style="margin-top:32px;">
-        <div class="section-head"><h2 id="stats-heading">Top 5 &mdash; Season Snapshot</h2></div>
-        <p style="font-size:13.5px;color:var(--ink-faint);margin-top:-8px;margin-bottom:16px;">How the league's top five compare on points, goals scored and goal difference so far.</p>
-
-        <h3 style="font-family:var(--font-display);font-size:15px;font-weight:600;margin-bottom:10px;">Points</h3>
-        <div class="stat-bullets" style="margin-bottom:24px;">
-          @foreach ($top5 as $s)
-          <div class="stat-bullet-row">
-            <span class="stat-bullet-label">{{ $s->team->name }}</span>
-            <span class="stat-bullet-track"><span class="stat-bullet-fill" style="width:{{ round($s->points / $maxPoints * 100) }}%;"></span></span>
-            <span class="stat-bullet-value">{{ $s->points }}</span>
-          </div>
-          @endforeach
-        </div>
-
-        <h3 style="font-family:var(--font-display);font-size:15px;font-weight:600;margin-bottom:10px;">Goals Scored</h3>
-        <div class="stat-bullets" style="margin-bottom:24px;">
-          @foreach ($top5 as $s)
-          <div class="stat-bullet-row">
-            <span class="stat-bullet-label">{{ $s->team->name }}</span>
-            <span class="stat-bullet-track"><span class="stat-bullet-fill" style="width:{{ round($s->goals_for / $maxGoals * 100) }}%;"></span></span>
-            <span class="stat-bullet-value">{{ $s->goals_for }}</span>
-          </div>
-          @endforeach
-        </div>
-
-        <h3 style="font-family:var(--font-display);font-size:15px;font-weight:600;margin-bottom:10px;">Goal Difference</h3>
-        <div class="stat-bullets">
-          @foreach ($top5 as $s)
-          <div class="stat-bullet-row">
-            <span class="stat-bullet-label">{{ $s->team->name }}</span>
-            <span class="stat-bullet-track"><span class="stat-bullet-fill" style="width:{{ $maxGd > 0 ? round(max($s->goal_difference, 0) / $maxGd * 100) : 0 }}%;"></span></span>
-            <span class="stat-bullet-value">{{ $s->goal_difference > 0 ? '+' : '' }}{{ $s->goal_difference }}</span>
-          </div>
-          @endforeach
-        </div>
-      </section>
-      @endif
-
-      <section aria-labelledby="matches-heading" id="fixtures">
-        <div class="section-head">
-          <h2 id="matches-heading">{{ $matchdayOneResults->contains(fn ($m) => $m->isFinal()) ? 'Latest Results' : 'Upcoming Fixtures' }}</h2>
-        </div>
-
-        <div class="match-grid">
-          @foreach ($matchdayOneResults as $m)
-          <a href="{{ $m->prettyUrl() }}" class="match-card">
-            <div class="match-meta"><span class="match-comp">{{ $league->name }} &middot; {{ $m->venue }}</span><span class="match-status{{ $m->isLive() ? ' is-live' : '' }}">{{ $m->isFinal() ? 'Full-Time' : ($m->isLive() ? 'LIVE' : $m->kickoff_at->format('D j M, H:i')) }}</span></div>
-            <div class="match-teams">
-              @php $mShowLiveScore = $m->isLive() && $m->home_score !== null; @endphp
-              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->homeTeam->crest_code }}" role="img" aria-label="{{ $m->homeTeam->full_name }} badge"></span><span class="team-name">{{ $m->homeTeam->name }}</span></div>@if($m->isFinal())<span class="team-score{{ $m->home_score > $m->away_score ? ' winning' : '' }}">{{ $m->home_score }}</span>@elseif($mShowLiveScore)<span class="team-score">{{ $m->home_score }}</span>@endif</div>
-              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->awayTeam->crest_code }}" role="img" aria-label="{{ $m->awayTeam->full_name }} badge"></span><span class="team-name">{{ $m->awayTeam->name }}</span></div>@if($m->isFinal())<span class="team-score{{ $m->away_score > $m->home_score ? ' winning' : '' }}">{{ $m->away_score }}</span>@elseif($mShowLiveScore)<span class="team-score">{{ $m->away_score }}</span>@endif</div>
-            </div>
-            <div class="match-venue">{{ $m->venue }}</div>
-          </a>
-          @endforeach
-        </div>
-      </section>
-
-      <section aria-labelledby="history-heading-1" class="essay-block">
-        <div class="essay-part-tag">League History</div>
-        <h2 id="history-heading-1">About the {{ $league->name }}</h2>
-        <p class="lede">The {{ $league->name }} is {{ $league->country }}'s top professional football division, contested by {{ $league->teams_count }} clubs across {{ $league->total_matchdays }} matchdays every season.</p>
-        @if($league->about_text)
-          @foreach (explode("\n", $league->about_text) as $paragraph)
-            @continue(trim($paragraph) === '')
-            <p>{{ trim($paragraph) }}</p>
-          @endforeach
-        @endif
-      </section>
-
-      <div class="ad-slot ad-native">
-        <span class="ad-eyebrow">Advertisement</span>
-        <span class="ad-size">Native in-content unit</span>
-      </div>
-
-      <section aria-labelledby="teams-heading" id="teams">
-        <div class="section-head"><h2 id="teams-heading">Team Directory</h2></div>
-        <div class="team-directory-grid">
-          @foreach ($standings as $s)
-          <a href="{{ route('teams.show', $s->team->slug) }}" class="team-card"><span class="crest crest-{{ $s->team->crest_code }}" role="img" aria-label="{{ $s->team->full_name }} badge"></span><span class="team-card-body"><span class="team-card-name">{{ $s->team->name }}</span><span class="team-card-meta">{{ $s->position }}{{ match(true){ in_array($s->position % 100, [11,12,13]) => 'th', $s->position % 10 === 1 => 'st', $s->position % 10 === 2 => 'nd', $s->position % 10 === 3 => 'rd', default => 'th' } }} &middot; {{ $s->points }} {{ Str::plural('pt', $s->points) }}</span></span></a>
-          @endforeach
-        </div>
-      </section>
-
-      <section aria-labelledby="news-heading">
+      <section aria-labelledby="news-heading" style="margin-top:32px;">
         <div class="section-head">
           <h2 id="news-heading">{{ $league->name }} News</h2>
         </div>

@@ -377,7 +377,12 @@
   .dot-live{width:7px;height:7px;border-radius:50%;background:var(--live);animation:pulse 1.6s ease-in-out infinite;}
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
   .ticker-track{
-    display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;
+    /* min-width:0 is required here: without it this flex item (itself a
+       flex container of many chips) refuses to shrink below its content's
+       full unwrapped width, so overflow-x:auto never gets a chance to
+       kick in - the whole page gets pushed wider than the viewport
+       instead of just this strip scrolling internally. */
+    display:flex;gap:10px;overflow-x:auto;min-width:0;flex:1 1 auto;scrollbar-width:none;-ms-overflow-style:none;
     -webkit-mask-image:linear-gradient(to right, transparent 0, black 18px, black calc(100% - 24px), transparent 100%);
     mask-image:linear-gradient(to right, transparent 0, black 18px, black calc(100% - 24px), transparent 100%);
   }
@@ -700,6 +705,11 @@
   /* ---------- Sidebar ---------- */
   .content-grid{display:grid;gap:36px;grid-template-columns:1fr;padding-block:8px 20px;}
   @media (min-width:1024px){.content-grid{grid-template-columns:minmax(0,1fr) 336px;align-items:start;}}
+  /* Grid items default to min-width:auto, which lets a descendant's own
+     minimum content size (e.g. the achievement cards' minmax(215px,...)
+     track) inflate this column past its assigned track width instead of
+     wrapping inside it - min-width:0 makes it actually respect the track. */
+  .content-main{min-width:0;}
   .content-main > section:first-child{padding-top:0;}
   .sidebar{display:flex;flex-direction:column;gap:24px;}
   @media (min-width:1024px){.sidebar{position:sticky;top:88px;}}
@@ -805,7 +815,12 @@
   @media (min-width:640px){.team-directory-grid{grid-template-columns:repeat(3,1fr);}}
   @media (min-width:1024px){.team-directory-grid{grid-template-columns:repeat(4,1fr);}}
   .team-card{
-    display:flex;align-items:center;gap:13px;padding:14px;
+    /* min-width:0 so this grid item can actually shrink to its 1fr track
+       on narrow screens - team-card-body already truncates its own text,
+       but that's moot if this outer flex box refuses to shrink below the
+       card's unwrapped min-content width (the same nested-container issue
+       as .content-main above). */
+    display:flex;align-items:center;gap:13px;padding:14px;min-width:0;
     background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);
     box-shadow:var(--shadow-sm);
     transition:box-shadow .18s ease,transform .18s ease,border-color .18s ease;
@@ -853,6 +868,25 @@
   .radar-point{fill:var(--team-color, var(--accent));}
   .radar-label{font-family:var(--font-display);font-size:11px;font-weight:600;fill:var(--ink-muted);text-anchor:middle;text-transform:uppercase;letter-spacing:.04em;}
   .radar-label-value{font-family:var(--font-display);font-size:13px;font-weight:700;fill:var(--ink);text-anchor:middle;}
+
+  /* ---------- Achievement / superlative cards ---------- */
+  .achievements-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));}
+  .achievement-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+    padding:20px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:13px;
+    transition:transform .15s ease,box-shadow .15s ease;
+  }
+  .achievement-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);}
+  .achievement-icon{
+    width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    background:var(--ach-soft,var(--accent-soft));color:var(--ach-color,var(--accent));
+  }
+  .achievement-icon svg{width:21px;height:21px;}
+  .achievement-label{font-family:var(--font-display);font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-faint);}
+  .achievement-team{display:flex;align-items:center;gap:9px;font-size:16px;font-weight:700;color:var(--ink);text-wrap:balance;}
+  .achievement-value{font-family:var(--font-display);font-size:23px;font-weight:700;color:var(--ach-color,var(--accent));line-height:1;font-variant-numeric:tabular-nums;}
+  .achievement-detail{font-size:13px;color:var(--ink-muted);line-height:1.5;}
+  .achievements-empty{font-size:14px;color:var(--ink-muted);background:var(--surface-2);border-radius:var(--radius-md);padding:18px 20px;}
 
   .stat-bullets{display:flex;flex-direction:column;gap:16px;}
   .stat-bullet-row{display:grid;grid-template-columns:120px 1fr 52px;align-items:center;gap:12px;}
