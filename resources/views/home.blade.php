@@ -173,12 +173,15 @@
         </div>
         <div class="table-tabs" role="tablist" aria-label="Select league table" style="flex-wrap:wrap;margin-bottom:14px;">
           @foreach ($leagueTables as $i => $t)
-          <button class="ttab{{ $i === 0 ? ' is-active' : '' }}" data-table="home-lt-{{ $t['league']->slug }}" aria-selected="{{ $i === 0 ? 'true' : 'false' }}"><svg class="flag" role="img" aria-label="{{ $t['league']->country }} flag"><use href="#flag-{{ $t['league']->flag_code }}"></use></svg>{{ $t['league']->name }}</button>
+          <button class="ttab{{ $i === $defaultLeagueIndex ? ' is-active' : '' }}" data-table="home-lt-{{ $t['league']->slug }}" aria-selected="{{ $i === $defaultLeagueIndex ? 'true' : 'false' }}"><svg class="flag" role="img" aria-label="{{ $t['league']->country }} flag"><use href="#flag-{{ $t['league']->flag_code }}"></use></svg>{{ $t['league']->name }}</button>
           @endforeach
         </div>
 
         @foreach ($leagueTables as $i => $t)
-        <div class="standings-panel{{ $i === 0 ? ' is-active' : '' }}" data-panel="home-lt-{{ $t['league']->slug }}">
+        <div class="standings-panel{{ $i === $defaultLeagueIndex ? ' is-active' : '' }}" data-panel="home-lt-{{ $t['league']->slug }}">
+          @unless ($t['hasStarted'])
+          <p style="font-size:12.5px;color:var(--ink-muted);margin:0 0 10px;">Season hasn&rsquo;t kicked off yet &mdash; table will fill in once matches are played.</p>
+          @endunless
           <table class="standings">
             <thead><tr><th></th><th class="th-team">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>Pts</th></tr></thead>
             <tbody>

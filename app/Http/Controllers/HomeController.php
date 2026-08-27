@@ -58,7 +58,15 @@ class HomeController extends Controller
                 'standings' => Standing::with('team')->where('league_id', $l->id)->orderBy('position')->get(),
             ])
             ->filter(fn ($t) => $t['standings']->isNotEmpty())
-            ->values();
+            ->values()
+            ->map(fn ($t) => $t + ['hasStarted' => $t['standings']->sum('played') > 0]);
+
+        // Alphabetical order can easily land on a league whose season hasn't
+        // kicked off yet (every row still 0-0-0-0-0), which is a useless
+        // default view. Default to the first league that actually has
+        // played matches; only fall back to index 0 if literally none do.
+        $defaultLeagueIndex = $leagueTables->search(fn ($t) => $t['hasStarted']);
+        $defaultLeagueIndex = $defaultLeagueIndex === false ? 0 : $defaultLeagueIndex;
 
         return view('home', compact(
             'todaysMatches',
@@ -67,6 +75,7 @@ class HomeController extends Controller
             'upcomingFixtures',
             'recentResults',
             'leagueTables',
+            'defaultLeagueIndex',
         ));
     }
 }
