@@ -212,7 +212,7 @@
         <li><a class="nav-link" href="{{ route('fixtures.index') }}">Fixtures</a></li>
         <li><a class="nav-link" href="{{ route('results.index') }}">Results</a></li>
         <li><a class="nav-link" href="{{ route('tables.index') }}">Points Table</a></li>
-        <li><a class="nav-link" href="#">Transfers</a></li>
+        <li><a class="nav-link" href="{{ route('news.category', 'transfers') }}">Transfers</a></li>
       </ul>
     </nav>
 
@@ -265,7 +265,6 @@
           <a href="{{ route('leagues.show', 'scottish-premiership') }}"><svg class="flag" role="img" aria-label="Scotland flag"><use href="#flag-sct"></use></svg>Scottish Premiership</a>
           <a href="{{ route('leagues.show', 'eredivisie') }}"><svg class="flag" role="img" aria-label="Netherlands flag"><use href="#flag-nld"></use></svg>Eredivisie</a>
           <a href="{{ route('leagues.show', 'primeira-liga') }}"><svg class="flag" role="img" aria-label="Portugal flag"><use href="#flag-prt"></use></svg>Primeira Liga</a>
-          <a href="#">Champions League</a>
         </div>
       </details>
       <details class="drawer-group">
@@ -280,7 +279,7 @@
       <a href="{{ route('fixtures.index') }}">Fixtures</a>
       <a href="{{ route('results.index') }}">Results</a>
       <a href="{{ route('tables.index') }}">Points Table</a>
-      <a href="#">Transfers</a>
+      <a href="{{ route('news.category', 'transfers') }}">Transfers</a>
     </div>
 
     <div class="drawer-cta">
@@ -358,19 +357,17 @@
         <li><a href="{{ route('leagues.show', 'scottish-premiership') }}"><svg class="flag" role="img" aria-label="Scotland flag"><use href="#flag-sct"></use></svg>Scottish Premiership</a></li>
         <li><a href="{{ route('leagues.show', 'eredivisie') }}"><svg class="flag" role="img" aria-label="Netherlands flag"><use href="#flag-nld"></use></svg>Eredivisie</a></li>
         <li><a href="{{ route('leagues.show', 'primeira-liga') }}"><svg class="flag" role="img" aria-label="Portugal flag"><use href="#flag-prt"></use></svg>Primeira Liga</a></li>
-        <li><a href="#">Champions League</a></li>
       </ul>
     </div>
 
     <div class="footer-col">
       <h3>Coverage</h3>
       <ul>
+        <li><a href="{{ route('today.index') }}">Today's Matches</a></li>
         <li><a href="{{ route('fixtures.index') }}">Fixtures</a></li>
         <li><a href="{{ route('results.index') }}">Results</a></li>
         <li><a href="{{ route('tables.index') }}">Points Table</a></li>
-        <li><a href="#">Top Scorers</a></li>
-        <li><a href="#">Transfers</a></li>
-        <li><a href="#">Team Directory</a></li>
+        <li><a href="{{ route('news.category', 'transfers') }}">Transfers</a></li>
       </ul>
     </div>
 

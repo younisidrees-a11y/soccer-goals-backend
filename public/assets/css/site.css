@@ -474,6 +474,20 @@
   .tab-btn:hover{border-color:var(--accent);color:var(--accent);}
   .tab-btn[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:#fff;}
 
+  /* Today's Matches: status filter + competition grouping */
+  .status-tabs{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:var(--radius-pill);width:fit-content;margin-bottom:24px;}
+  .status-tab{padding:7px 16px;font-size:13px;font-weight:700;border-radius:var(--radius-pill);color:var(--ink-muted);transition:background .15s ease,color .15s ease;}
+  .status-tab:hover{color:var(--ink);}
+  .status-tab.is-active{background:var(--surface);color:var(--ink);box-shadow:var(--shadow-sm);}
+  .today-comp-group{margin-bottom:28px;}
+  .today-comp-group:last-child{margin-bottom:0;}
+  .today-comp-group.is-empty{display:none;}
+  .today-comp-head{display:flex;align-items:center;gap:10px;padding-bottom:10px;margin-bottom:14px;border-bottom:1px solid var(--border);}
+  .today-comp-head .flag{width:20px;height:14px;flex-shrink:0;}
+  .today-comp-name{font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--ink);}
+  .today-comp-name:hover{color:var(--accent);}
+  .match-card[data-status].is-hidden{display:none;}
+
   /* Match cards */
   .match-grid{display:grid;gap:14px;grid-template-columns:1fr;}
   @media (min-width:640px){.match-grid{grid-template-columns:1fr 1fr;}}

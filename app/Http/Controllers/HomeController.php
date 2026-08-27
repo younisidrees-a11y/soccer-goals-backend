@@ -11,12 +11,17 @@ class HomeController extends Controller
 {
     public function index()
     {
+        // No take() limit here - the homepage groups these by competition
+        // with a real client-side status filter (All/Live/Upcoming/
+        // Finished), so it needs every match today, not a 4-card sample.
         $todaysMatches = MatchFixture::with(['homeTeam', 'awayTeam', 'league'])
             ->published()
             ->whereDate('kickoff_at', now()->toDateString())
+            ->orderBy('league_id')
             ->orderBy('kickoff_at')
-            ->take(4)
             ->get();
+
+        $todaysMatchesByLeague = $todaysMatches->groupBy('league_id');
 
         $latestNews = NewsArticle::with(['league', 'team'])
             ->published()
@@ -70,6 +75,7 @@ class HomeController extends Controller
 
         return view('home', compact(
             'todaysMatches',
+            'todaysMatchesByLeague',
             'latestNews',
             'heroArticles',
             'upcomingFixtures',

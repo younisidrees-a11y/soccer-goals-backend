@@ -77,20 +77,44 @@
         @if($todaysMatches->isEmpty())
         <p style="color:var(--ink-faint);font-size:14.5px;">No matches kicking off today across any covered league &mdash; check <a href="{{ route('fixtures.index') }}">upcoming fixtures</a> instead.</p>
         @else
-        <div class="match-grid">
-          @foreach ($todaysMatches as $m)
-          @php
-            $mShowScore = $m->isFinal() || ($m->isLive() && $m->home_score !== null);
-            $mStatusLabel = $m->isFinal() ? 'Full-Time' : ($m->isLive() ? 'LIVE' : $m->kickoff_at->format('H:i').' UTC');
-          @endphp
-          <a href="{{ $m->prettyUrl() }}" class="match-card">
-            <div class="match-meta"><span class="match-comp">{{ $m->league->name }} &middot; {{ $m->venue }}</span><span class="match-status{{ $m->isLive() ? ' is-live' : '' }}">@unless($m->isFinal() || $m->isLive())<span class="dot-waiting" aria-hidden="true"></span>@endunless{{ $mStatusLabel }}</span></div>
-            <div class="match-teams">
-              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->homeTeam->crest_code }}" role="img" aria-label="{{ $m->homeTeam->full_name }} badge"></span><span class="team-name">{{ $m->homeTeam->name }}</span></div>@if($mShowScore)<span class="team-score{{ $m->isFinal() && $m->home_score > $m->away_score ? ' winning' : '' }}">{{ $m->home_score }}</span>@endif</div>
-              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->awayTeam->crest_code }}" role="img" aria-label="{{ $m->awayTeam->full_name }} badge"></span><span class="team-name">{{ $m->awayTeam->name }}</span></div>@if($mShowScore)<span class="team-score{{ $m->isFinal() && $m->away_score > $m->home_score ? ' winning' : '' }}">{{ $m->away_score }}</span>@endif</div>
+        @php
+          $todayHasLive = $todaysMatches->contains(fn ($m) => $m->isLive());
+          $todayHasUpcoming = $todaysMatches->contains(fn ($m) => ! $m->isFinal() && ! $m->isLive());
+          $todayHasFinished = $todaysMatches->contains(fn ($m) => $m->isFinal());
+        @endphp
+        <div class="status-tabs" role="tablist" aria-label="Filter today's matches by status" data-status-tabs>
+          <button class="status-tab is-active" data-status-filter="all" role="tab" aria-selected="true">All</button>
+          @if($todayHasLive)<button class="status-tab" data-status-filter="live" role="tab" aria-selected="false">Live</button>@endif
+          @if($todayHasUpcoming)<button class="status-tab" data-status-filter="scheduled" role="tab" aria-selected="false">Upcoming</button>@endif
+          @if($todayHasFinished)<button class="status-tab" data-status-filter="final" role="tab" aria-selected="false">Finished</button>@endif
+        </div>
+
+        <div data-status-groups>
+          @foreach ($todaysMatchesByLeague as $leagueMatches)
+          @php $grpLeague = $leagueMatches->first()->league; @endphp
+          <div class="today-comp-group">
+            <div class="today-comp-head">
+              <svg class="flag" role="img" aria-label="{{ $grpLeague->country }} flag"><use href="#flag-{{ $grpLeague->flag_code }}"></use></svg>
+              <a href="{{ route('leagues.show', $grpLeague->slug) }}" class="today-comp-name">{{ $grpLeague->name }}</a>
             </div>
-            <div class="match-venue">{{ $m->venue }}</div>
-          </a>
+            <div class="match-grid">
+              @foreach ($leagueMatches as $m)
+              @php
+                $mShowScore = $m->isFinal() || ($m->isLive() && $m->home_score !== null);
+                $mStatusLabel = $m->isFinal() ? 'Full-Time' : ($m->isLive() ? 'LIVE' : $m->kickoff_at->format('H:i').' UTC');
+                $mStatusKey = $m->isFinal() ? 'final' : ($m->isLive() ? 'live' : 'scheduled');
+              @endphp
+              <a href="{{ $m->prettyUrl() }}" class="match-card" data-status="{{ $mStatusKey }}">
+                <div class="match-meta"><span class="match-comp">{{ $m->league->name }} &middot; {{ $m->venue }}</span><span class="match-status{{ $m->isLive() ? ' is-live' : '' }}">@unless($m->isFinal() || $m->isLive())<span class="dot-waiting" aria-hidden="true"></span>@endunless{{ $mStatusLabel }}</span></div>
+                <div class="match-teams">
+                  <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->homeTeam->crest_code }}" role="img" aria-label="{{ $m->homeTeam->full_name }} badge"></span><span class="team-name">{{ $m->homeTeam->name }}</span></div>@if($mShowScore)<span class="team-score{{ $m->isFinal() && $m->home_score > $m->away_score ? ' winning' : '' }}">{{ $m->home_score }}</span>@endif</div>
+                  <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->awayTeam->crest_code }}" role="img" aria-label="{{ $m->awayTeam->full_name }} badge"></span><span class="team-name">{{ $m->awayTeam->name }}</span></div>@if($mShowScore)<span class="team-score{{ $m->isFinal() && $m->away_score > $m->home_score ? ' winning' : '' }}">{{ $m->away_score }}</span>@endif</div>
+                </div>
+                <div class="match-venue">{{ $m->venue }}</div>
+              </a>
+              @endforeach
+            </div>
+          </div>
           @endforeach
         </div>
         @endif

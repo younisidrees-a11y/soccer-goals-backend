@@ -161,3 +161,38 @@
     spawnConfetti(teamWinCelebrate.querySelector('.rs-score'), 350);
   }
 })();
+
+(function(){
+  "use strict";
+  // Today's Matches status filter (All/Live/Upcoming/Finished) - purely
+  // client-side, filtering match-cards already in the DOM by their real
+  // data-status attribute. No extra query, nothing fake to fetch.
+  var tabsWrap = document.querySelector('[data-status-tabs]');
+  if (!tabsWrap) return;
+  var groupsWrap = document.querySelector('[data-status-groups]');
+  var tabs = Array.prototype.slice.call(tabsWrap.querySelectorAll('[data-status-filter]'));
+  var cards = Array.prototype.slice.call(groupsWrap.querySelectorAll('.match-card[data-status]'));
+  var groups = Array.prototype.slice.call(groupsWrap.querySelectorAll('.today-comp-group'));
+
+  tabsWrap.addEventListener('click', function(e){
+    var tab = e.target.closest('[data-status-filter]');
+    if (!tab) return;
+    var filter = tab.getAttribute('data-status-filter');
+
+    tabs.forEach(function(t){
+      t.classList.toggle('is-active', t === tab);
+      t.setAttribute('aria-selected', String(t === tab));
+    });
+
+    cards.forEach(function(card){
+      var show = filter === 'all' || card.getAttribute('data-status') === filter;
+      card.classList.toggle('is-hidden', !show);
+    });
+
+    groups.forEach(function(group){
+      var anyVisible = Array.prototype.slice.call(group.querySelectorAll('.match-card[data-status]'))
+        .some(function(card){ return !card.classList.contains('is-hidden'); });
+      group.classList.toggle('is-empty', !anyVisible);
+    });
+  });
+})();
