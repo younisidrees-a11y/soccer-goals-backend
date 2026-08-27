@@ -22,6 +22,7 @@ class SitemapController extends Controller
     {
         $urls = [
             ['loc' => route('home'), 'changefreq' => 'hourly', 'priority' => '1.0'],
+            ['loc' => route('today.index'), 'changefreq' => 'hourly', 'priority' => '0.9'],
             ['loc' => route('news.index'), 'changefreq' => 'hourly', 'priority' => '0.9'],
             ['loc' => route('fixtures.index'), 'changefreq' => 'hourly', 'priority' => '0.8'],
             ['loc' => route('results.index'), 'changefreq' => 'hourly', 'priority' => '0.8'],

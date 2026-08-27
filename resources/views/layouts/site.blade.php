@@ -150,6 +150,7 @@
             <div class="mega-col">
               <div class="mega-col-title">Quick Links</div>
               <ul>
+                <li><a href="{{ route('today.index') }}">Today's Matches</a></li>
                 <li><a href="{{ route('tables.index') }}">Points Table</a></li>
                 <li><a href="{{ route('fixtures.index') }}">Fixtures</a></li>
                 <li><a href="{{ route('results.index') }}">Results</a></li>

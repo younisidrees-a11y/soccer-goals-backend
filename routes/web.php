@@ -10,6 +10,7 @@ use App\Http\Controllers\ResultController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TodayController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.index');
@@ -22,6 +23,8 @@ Route::get('/leagues/{slug}', [LeagueController::class, 'show'])->name('leagues.
 Route::get('/teams/{slug}', [TeamController::class, 'show'])->name('teams.show');
 Route::get('/players/{player}/{slug?}', [PlayerController::class, 'show'])->name('players.show');
 Route::get('/matches/{match}/{month?}/{slug?}', [MatchController::class, 'show'])->name('matches.show');
+
+Route::get('/today', [TodayController::class, 'index'])->name('today.index');
 
 Route::get('/fixtures', [FixtureController::class, 'index'])->name('fixtures.index');
 Route::get('/fixtures/{slug}', [FixtureController::class, 'show'])->name('fixtures.show');

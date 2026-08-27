@@ -69,7 +69,9 @@
       <section aria-labelledby="matches-heading" id="fixtures">
         <div class="section-head">
           <h2 id="matches-heading">Today's Matches</h2>
-          <span class="section-link" style="color:var(--ink-faint);font-weight:600;cursor:default;">{{ now()->format('l, j F') }}</span>
+          <a href="{{ route('today.index') }}" class="section-link">Full schedule
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
         </div>
 
         @if($todaysMatches->isEmpty())
