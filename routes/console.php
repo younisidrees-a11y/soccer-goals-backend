@@ -78,8 +78,14 @@ Schedule::command('api-football:sync-previews primeira-liga')->everyFiveMinutes(
 // minutes behind isn't live - but each run is a cheap no-op the instant
 // there's no live match in the league, so this is safe to leave on
 // even when nothing's being played.
-Schedule::command('api-football:sync-commentary la-liga')->everyMinute()->withoutOverlapping();
-Schedule::command('api-football:sync-commentary saudi-pro-league')->everyMinute()->withoutOverlapping();
+// appendOutputTo: unlike every other scheduled command here, this one's
+// own info/warn output (e.g. "Wrote 0 commentary lines" or "AI commentary
+// generation failed") was going nowhere - the scheduler discards command
+// output by default, so a silent failure every minute for an entire live
+// match left zero trace anywhere. This is the only reliable signal for
+// diagnosing why a match ended up with no commentary after the fact.
+Schedule::command('api-football:sync-commentary la-liga')->everyMinute()->withoutOverlapping()->appendOutputTo(storage_path('logs/commentary.log'));
+Schedule::command('api-football:sync-commentary saudi-pro-league')->everyMinute()->withoutOverlapping()->appendOutputTo(storage_path('logs/commentary.log'));
 
 // Each of these already skips itself when there's nothing new to cover
 // (same match/team not re-covered), so running on a schedule never spams
