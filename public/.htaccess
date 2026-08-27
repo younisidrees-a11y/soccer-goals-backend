@@ -5,6 +5,16 @@
 
     RewriteEngine On
 
+    # Canonicalize the host: this server answers for any hostname pointed at
+    # its IP (cPanel's default catch-all vhost behaviour), which meant
+    # ns1.thesoccergoals.com - a nameserver subdomain, never meant to serve
+    # the site - was quietly serving an identical copy of every page and
+    # getting indexed by Google as duplicate content. Anything that isn't
+    # exactly the canonical host 301s here before Laravel ever sees the
+    # request, so no other hostname can ever serve or get credit for a page.
+    RewriteCond %{HTTP_HOST} !^thesoccergoals\.com$ [NC]
+    RewriteRule ^(.*)$ https://thesoccergoals.com/$1 [R=301,L]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

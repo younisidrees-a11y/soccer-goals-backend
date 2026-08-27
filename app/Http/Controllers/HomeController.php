@@ -11,18 +11,12 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $premierLeague = League::published()->where('slug', 'premier-league')->first();
-        $laLiga = League::published()->where('slug', 'la-liga')->first();
-
-        $todaysMatches = $premierLeague
-            ? MatchFixture::with(['homeTeam', 'awayTeam'])
-                ->published()
-                ->where('league_id', $premierLeague->id)
-                ->where('matchday', 1)
-                ->orderBy('kickoff_at')
-                ->take(4)
-                ->get()
-            : collect();
+        $todaysMatches = MatchFixture::with(['homeTeam', 'awayTeam', 'league'])
+            ->published()
+            ->whereDate('kickoff_at', now()->toDateString())
+            ->orderBy('kickoff_at')
+            ->take(4)
+            ->get();
 
         $latestNews = NewsArticle::with(['league', 'team'])
             ->published()
@@ -56,13 +50,15 @@ class HomeController extends Controller
             ->take(5)
             ->get();
 
-        $plStandings = $premierLeague
-            ? Standing::with('team')->where('league_id', $premierLeague->id)->orderBy('position')->get()
-            : collect();
-
-        $laLigaStandings = $laLiga
-            ? Standing::with('team')->where('league_id', $laLiga->id)->orderBy('position')->get()
-            : collect();
+        $leagueTables = League::published()
+            ->orderBy('name')
+            ->get()
+            ->map(fn (League $l) => [
+                'league' => $l,
+                'standings' => Standing::with('team')->where('league_id', $l->id)->orderBy('position')->get(),
+            ])
+            ->filter(fn ($t) => $t['standings']->isNotEmpty())
+            ->values();
 
         return view('home', compact(
             'todaysMatches',
@@ -70,8 +66,7 @@ class HomeController extends Controller
             'heroArticles',
             'upcomingFixtures',
             'recentResults',
-            'plStandings',
-            'laLigaStandings',
+            'leagueTables',
         ));
     }
 }

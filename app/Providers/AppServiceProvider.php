@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\MatchFixture;
 use App\Models\SiteSetting;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,6 +23,21 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Belt-and-braces alongside the host-canonicalization redirect in
+        // public/.htaccess: every route()/url() call - canonical tags, the
+        // sitemap, OG tags - always builds from the real domain, never
+        // whatever Host header a request happened to arrive with. Without
+        // this, a request that reached Laravel under a different hostname
+        // (before a redirect propagates, a raw IP hit, etc.) would generate
+        // self-referencing canonical URLs for that wrong host instead of
+        // pointing back to the one true domain. Deliberately NOT also
+        // calling forceScheme('https') here - APP_URL already encodes the
+        // right scheme per environment (https in production, plain http
+        // for local dev on :8000), and forceScheme('https') on top of that
+        // breaks asset() locally by forcing CSS/JS requests to HTTPS
+        // against a server that only speaks HTTP.
+        URL::forceRootUrl(config('app.url'));
+
         View::composer('layouts.site', function ($view) {
             $view->with('hasLiveMatch', MatchFixture::where('status', 'live')->where('is_published', true)->exists());
             $view->with('siteSettings', SiteSetting::current());

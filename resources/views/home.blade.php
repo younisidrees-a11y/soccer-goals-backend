@@ -68,21 +68,30 @@
 
       <section aria-labelledby="matches-heading" id="fixtures">
         <div class="section-head">
-          <h2 id="matches-heading">English Premier League &middot; Matchday 1 Results</h2>
+          <h2 id="matches-heading">Today's Matches</h2>
+          <span class="section-link" style="color:var(--ink-faint);font-weight:600;cursor:default;">{{ now()->format('l, j F') }}</span>
         </div>
 
+        @if($todaysMatches->isEmpty())
+        <p style="color:var(--ink-faint);font-size:14.5px;">No matches kicking off today across any covered league &mdash; check <a href="{{ route('fixtures.index') }}">upcoming fixtures</a> instead.</p>
+        @else
         <div class="match-grid">
           @foreach ($todaysMatches as $m)
+          @php
+            $mShowScore = $m->isFinal() || ($m->isLive() && $m->home_score !== null);
+            $mStatusLabel = $m->isFinal() ? 'Full-Time' : ($m->isLive() ? 'LIVE' : $m->kickoff_at->format('H:i').' UTC');
+          @endphp
           <a href="{{ $m->prettyUrl() }}" class="match-card">
-            <div class="match-meta"><span class="match-comp"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>{{ $m->venue }}</span><span class="match-status">Full-Time</span></div>
+            <div class="match-meta"><span class="match-comp">{{ $m->league->name }} &middot; {{ $m->venue }}</span><span class="match-status{{ $m->isLive() ? ' is-live' : '' }}">@unless($m->isFinal() || $m->isLive())<span class="dot-waiting" aria-hidden="true"></span>@endunless{{ $mStatusLabel }}</span></div>
             <div class="match-teams">
-              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->homeTeam->crest_code }}" role="img" aria-label="{{ $m->homeTeam->full_name }} badge"></span><span class="team-name">{{ $m->homeTeam->name }}</span></div><span class="team-score{{ $m->home_score > $m->away_score ? ' winning' : '' }}">{{ $m->home_score }}</span></div>
-              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->awayTeam->crest_code }}" role="img" aria-label="{{ $m->awayTeam->full_name }} badge"></span><span class="team-name">{{ $m->awayTeam->name }}</span></div><span class="team-score{{ $m->away_score > $m->home_score ? ' winning' : '' }}">{{ $m->away_score }}</span></div>
+              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->homeTeam->crest_code }}" role="img" aria-label="{{ $m->homeTeam->full_name }} badge"></span><span class="team-name">{{ $m->homeTeam->name }}</span></div>@if($mShowScore)<span class="team-score{{ $m->isFinal() && $m->home_score > $m->away_score ? ' winning' : '' }}">{{ $m->home_score }}</span>@endif</div>
+              <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->awayTeam->crest_code }}" role="img" aria-label="{{ $m->awayTeam->full_name }} badge"></span><span class="team-name">{{ $m->awayTeam->name }}</span></div>@if($mShowScore)<span class="team-score{{ $m->isFinal() && $m->away_score > $m->home_score ? ' winning' : '' }}">{{ $m->away_score }}</span>@endif</div>
             </div>
             <div class="match-venue">{{ $m->venue }}</div>
           </a>
           @endforeach
         </div>
+        @endif
       </section>
 
       <section aria-labelledby="news-heading">
@@ -161,33 +170,25 @@
       <div class="widget table-widget" id="tables">
         <div class="widget-head">
           <h2>Points Table</h2>
-          <div class="table-tabs" role="tablist" aria-label="Select league table">
-            <button class="ttab is-active" data-table="pl" aria-selected="true"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>PL</button>
-            <button class="ttab" data-table="laliga" aria-selected="false"><svg class="flag" role="img" aria-label="Spain flag"><use href="#flag-esp"></use></svg>Spanish La Liga</button>
-          </div>
+        </div>
+        <div class="table-tabs" role="tablist" aria-label="Select league table" style="flex-wrap:wrap;margin-bottom:14px;">
+          @foreach ($leagueTables as $i => $t)
+          <button class="ttab{{ $i === 0 ? ' is-active' : '' }}" data-table="home-lt-{{ $t['league']->slug }}" aria-selected="{{ $i === 0 ? 'true' : 'false' }}"><svg class="flag" role="img" aria-label="{{ $t['league']->country }} flag"><use href="#flag-{{ $t['league']->flag_code }}"></use></svg>{{ $t['league']->name }}</button>
+          @endforeach
         </div>
 
-        <div class="standings-panel is-active" data-panel="pl">
+        @foreach ($leagueTables as $i => $t)
+        <div class="standings-panel{{ $i === 0 ? ' is-active' : '' }}" data-panel="home-lt-{{ $t['league']->slug }}">
           <table class="standings">
             <thead><tr><th></th><th class="th-team">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>Pts</th></tr></thead>
             <tbody>
-              @foreach ($plStandings as $s)
+              @foreach ($t['standings'] as $s)
               <tr class="{{ $s->zone === 'ucl' ? 'zone-ucl' : ($s->zone === 'rel' ? 'zone-rel' : '') }}"><td class="pos">{{ $s->position }}</td><td class="team-td"><a href="{{ route('teams.show', $s->team->slug) }}" class="team-td-inner"><span class="crest crest-{{ $s->team->crest_code }}" role="img" aria-label="{{ $s->team->full_name }} badge" style="width:20px;height:22px;"></span>{{ $s->team->name }}</a></td><td>{{ $s->played }}</td><td>{{ $s->won }}</td><td>{{ $s->drawn }}</td><td>{{ $s->lost }}</td><td class="pts">{{ $s->points }}</td></tr>
               @endforeach
             </tbody>
           </table>
         </div>
-
-        <div class="standings-panel" data-panel="laliga">
-          <table class="standings">
-            <thead><tr><th></th><th class="th-team">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>Pts</th></tr></thead>
-            <tbody>
-              @foreach ($laLigaStandings as $s)
-              <tr class="{{ $s->zone === 'ucl' ? 'zone-ucl' : ($s->zone === 'rel' ? 'zone-rel' : '') }}"><td class="pos">{{ $s->position }}</td><td class="team-td"><a href="{{ route('teams.show', $s->team->slug) }}" class="team-td-inner"><span class="crest crest-{{ $s->team->crest_code }}" role="img" aria-label="{{ $s->team->full_name }} badge" style="width:20px;height:22px;"></span>{{ $s->team->name }}</a></td><td>{{ $s->played }}</td><td>{{ $s->won }}</td><td>{{ $s->drawn }}</td><td>{{ $s->lost }}</td><td class="pts">{{ $s->points }}</td></tr>
-              @endforeach
-            </tbody>
-          </table>
-        </div>
+        @endforeach
 
         <div class="table-legend">
           <span class="legend-item"><span class="legend-dot ucl"></span>Champions League</span>
