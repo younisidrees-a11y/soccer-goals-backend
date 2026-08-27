@@ -26,51 +26,71 @@ Schedule::command('football-data:sync primeira-liga')->everyFiveMinutes()->witho
 // Saudi Pro League, Liga MX, Süper Lig and MLS aren't covered by
 // football-data.org at all, so API-Football is the primary fixture
 // source for these (not just enrichment).
-Schedule::command('api-football:sync-fixtures saudi-pro-league')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-fixtures liga-mx')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-fixtures super-lig')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-fixtures mls')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-fixtures scottish-premiership')->everyFiveMinutes()->withoutOverlapping();
+//
+// All API-Football calls site-wide - this block, sync-stats and
+// sync-previews below, and the minute-by-minute live commentary pilot -
+// share a single 100-request/day quota. Commentary alone can burn 3
+// calls/minute per live match (250+ for one full 90-minute game), so a
+// day with any live La Liga/Saudi Pro League match is enough on its own
+// to exhaust the quota via commentary before it even reaches these -
+// which is exactly what happened to Celta Vigo vs Osasuna on 27 Aug
+// 2026: the quota was already gone by the time the match kicked off,
+// every API-Football call that evening (including this fixtures sync)
+// silently no-op'd, and zero commentary lines got written despite the
+// scheduler firing correctly every minute for the full match. Slowed
+// down from every 5 minutes to every 15 to leave real headroom for
+// commentary; this remains the primary/only fixture source for these
+// leagues, so don't slow it further without accepting slower score
+// updates for them specifically.
+Schedule::command('api-football:sync-fixtures saudi-pro-league')->everyFifteenMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-fixtures liga-mx')->everyFifteenMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-fixtures super-lig')->everyFifteenMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-fixtures mls')->everyFifteenMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-fixtures scottish-premiership')->everyFifteenMinutes()->withoutOverlapping();
 
 // Real statistics, event timelines, lineups, and a ratings-based Man of
 // the Match from API-Football - football-data.org's tier has none of
 // this. Runs a few minutes after the sync above so a match is already
 // marked final (and its teams already resolved) before this looks for
 // it; only touches matches that don't have real stats yet, so it's cheap
-// to run often.
-Schedule::command('api-football:sync-stats premier-league')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats la-liga')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats serie-a')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats ligue-1')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats bundesliga')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats saudi-pro-league')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats liga-mx')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats super-lig')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats mls')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats championship')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats scottish-premiership')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats eredivisie')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats primeira-liga')->everyFiveMinutes()->withoutOverlapping();
+// to run often - but "cheap" still isn't free against a 100/day quota
+// shared with live commentary (see note above), and post-match stats
+// tolerate real latency far better than a live commentary feed does.
+// Slowed from every 5 minutes to every 30.
+Schedule::command('api-football:sync-stats premier-league')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-stats la-liga')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-stats serie-a')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-stats ligue-1')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-stats bundesliga')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-stats saudi-pro-league')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-stats liga-mx')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-stats super-lig')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-stats mls')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-stats championship')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-stats scottish-premiership')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-stats eredivisie')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-stats primeira-liga')->everyThirtyMinutes()->withoutOverlapping();
 
 // Referee, prediction, coach and (once confirmed, usually ~1h before
 // kick-off) lineups for fixtures in the next 7 days - powers the match
 // preview page. Only fetches lineups/predictions once per match (checks
-// the column is still null first), so running every 5 minutes just
-// means a confirmed lineup shows up quickly once it exists, not that
-// we re-spend calls on matches already enriched.
-Schedule::command('api-football:sync-previews premier-league')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews la-liga')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews serie-a')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews ligue-1')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews bundesliga')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews saudi-pro-league')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews liga-mx')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews super-lig')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews mls')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews championship')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews scottish-premiership')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews eredivisie')->everyFiveMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews primeira-liga')->everyFiveMinutes()->withoutOverlapping();
+// the column is still null first). Same quota-sharing reasoning as
+// sync-stats above applies here, and a lineup confirmed 45 minutes late
+// is a non-issue for a preview page read hours or days ahead of
+// kick-off - slowed from every 5 minutes to every 30.
+Schedule::command('api-football:sync-previews premier-league')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-previews la-liga')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-previews serie-a')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-previews ligue-1')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-previews bundesliga')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-previews saudi-pro-league')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-previews liga-mx')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-previews super-lig')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-previews mls')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-previews championship')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-previews scottish-premiership')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-previews eredivisie')->everyThirtyMinutes()->withoutOverlapping();
+Schedule::command('api-football:sync-previews primeira-liga')->everyThirtyMinutes()->withoutOverlapping();
 
 // Minute-by-minute AI live commentary - piloting on two leagues only
 // (League::live_commentary_enabled). Runs every minute rather than every

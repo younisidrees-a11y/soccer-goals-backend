@@ -127,6 +127,8 @@ class SyncApiFootballCommentary extends Command
         $elapsed = $fixture['fixture']['status']['elapsed'] ?? null;
 
         if ($elapsed === null) {
+            $this->warn("No elapsed-minute clock yet for {$match->homeTeam->name} vs {$match->awayTeam->name} (status: {$fixture['fixture']['status']['long']}).");
+
             return false;
         }
 
