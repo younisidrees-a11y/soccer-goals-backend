@@ -29,8 +29,14 @@
 
       <div class="stat-strip">
         <div class="stat-item">
-          <div class="stat-label">Matchday</div>
-          <div class="stat-value">1 of {{ $league->total_matchdays }}</div>
+          <div class="stat-label">Top Scorer</div>
+          <div class="stat-value">
+            @if($topScorer)
+              <a href="{{ $topScorer->prettyUrl() }}" style="color:inherit;display:flex;align-items:center;gap:8px;"><span class="crest crest-{{ $topScorer->team->crest_code }}" role="img" aria-label="{{ $topScorer->team->full_name }} badge"></span>{{ $topScorer->name }} &middot; {{ $topScorer->goals }}</a>
+            @else
+              TBC
+            @endif
+          </div>
         </div>
         <div class="stat-item">
           <div class="stat-label">League Leader</div>
@@ -47,7 +53,7 @@
           <div class="stat-value">{{ $leader->points ?? 0 }} pts</div>
         </div>
         <div class="stat-item">
-          <div class="stat-label">Next Matchday</div>
+          <div class="stat-label">Next Fixture</div>
           <div class="stat-value">{{ $nextFixture?->kickoff_at->format('D, j M') ?? 'TBC' }}</div>
         </div>
       </div>
@@ -139,7 +145,7 @@
 
       <section aria-labelledby="matches-heading" id="fixtures">
         <div class="section-head">
-          <h2 id="matches-heading">Matchday 1 &mdash; {{ $matchdayOneResults->contains(fn ($m) => $m->isFinal()) ? 'Full Results' : 'Fixtures' }}</h2>
+          <h2 id="matches-heading">{{ $matchdayOneResults->contains(fn ($m) => $m->isFinal()) ? 'Latest Results' : 'Upcoming Fixtures' }}</h2>
         </div>
 
         <div class="match-grid">

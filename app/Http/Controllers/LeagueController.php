@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\League;
 use App\Models\MatchFixture;
 use App\Models\NewsArticle;
+use App\Models\Player;
 use App\Models\Standing;
 use Illuminate\Http\Request;
 
@@ -41,10 +42,15 @@ class LeagueController extends Controller
 
         $leader = $standings->first();
 
+        $latestMatchday = MatchFixture::published()
+            ->where('league_id', $league->id)
+            ->where('status', 'final')
+            ->max('matchday') ?? 1;
+
         $matchdayOneResults = MatchFixture::with(['homeTeam', 'awayTeam'])
             ->published()
             ->where('league_id', $league->id)
-            ->where('matchday', 1)
+            ->where('matchday', $latestMatchday)
             ->orderBy('kickoff_at')
             ->get();
 
@@ -53,6 +59,16 @@ class LeagueController extends Controller
             ->where('status', 'scheduled')
             ->orderBy('kickoff_at')
             ->first();
+
+        $topScorer = Player::with('team')
+            ->whereHas('team', fn ($q) => $q->where('league_id', $league->id)->where('is_published', true))
+            ->where('goals', '>', 0)
+            ->orderByDesc('goals')
+            ->orderByDesc('assists')
+            ->first();
+
+        $matchesPlayed = MatchFixture::published()->where('league_id', $league->id)->where('status', 'final')->count();
+        $matchesTotal = MatchFixture::published()->where('league_id', $league->id)->count();
 
         $news = NewsArticle::with(['team'])
             ->published()
@@ -66,6 +82,9 @@ class LeagueController extends Controller
             'leader',
             'matchdayOneResults',
             'nextFixture',
+            'topScorer',
+            'matchesPlayed',
+            'matchesTotal',
             'news',
         ));
     }
