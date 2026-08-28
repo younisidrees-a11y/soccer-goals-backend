@@ -289,9 +289,18 @@
   </div>
 </div>
 
-<div class="live-ticker" aria-label="Live scores ticker">
+<div class="live-ticker" aria-label="{{ ($hasLiveMatch ?? false) ? 'Live scores ticker' : 'Scores ticker' }}">
   <div class="wrap">
+    {{-- Only claim LIVE (and pulse the dot) when a match is actually in
+         progress - this used to show unconditionally, so on a quiet day
+         it kept blinking "LIVE" over a strip of nothing but full-time
+         scores and kickoff times, which reads as broken even though the
+         fallback content underneath it is correct. --}}
+    @if($hasLiveMatch ?? false)
     <span class="ticker-label"><span class="dot-live" aria-hidden="true"></span>LIVE</span>
+    @else
+    <span class="ticker-label ticker-label-idle">SCORES</span>
+    @endif
     <div class="ticker-track" tabindex="0">
       @foreach ($tickerMatches ?? [] as $tm)
       <a href="{{ $tm->prettyUrl() }}" class="ticker-chip">
