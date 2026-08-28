@@ -81,17 +81,52 @@ class HomeController extends Controller
         $todaysMatchesByLeague = $todaysMatches->groupBy('league_id');
 
         // Real recent match report, not a fabricated headline - the most
-        // recently published match-report article that's actually linked
-        // to a real match (score, teams, league all come from that match,
-        // not guessed). Renders nothing if no such article exists yet.
-        $spotlight = NewsArticle::with(['match.homeTeam', 'match.awayTeam', 'match.league'])
+        // recently published match-report article that's actually tied to
+        // a real result. Articles don't set match_id in practice (checked
+        // live: 0 of 5 published match-report articles have it, only
+        // team_id/league_id), so the real match has to be resolved by
+        // joining on those instead - same team, same league, a final
+        // result near publication.
+        //
+        // That join alone isn't precise enough: a team can play more than
+        // once inside the date window, and matching on team+league+date
+        // picked the WRONG opponent in testing (article headlined "...Win
+        // Over Valencia", join returned a real but different Barcelona
+        // result against Elche - a real score paired with the wrong
+        // opponent, which is worse than showing nothing). Every candidate
+        // is now cross-checked against the article's own title for the
+        // opponent's name before being accepted; $spotMatch stays null
+        // (section doesn't render) if nothing passes that check.
+        $spotlight = NewsArticle::with(['team', 'league'])
             ->published()
             ->where('category', 'match-report')
-            ->whereNotNull('match_id')
+            ->whereNotNull('team_id')
+            ->whereNotNull('league_id')
             ->orderByDesc('published_at')
             ->first();
-        if ($spotlight && ! $spotlight->match) {
-            $spotlight = null; // linked match_id pointed at a deleted/unpublished match
+
+        $spotMatch = null;
+        if ($spotlight && $spotlight->published_at) {
+            $candidates = MatchFixture::with(['homeTeam', 'awayTeam', 'league'])
+                ->published()
+                ->where('league_id', $spotlight->league_id)
+                ->where('status', 'final')
+                ->where(fn ($q) => $q->where('home_team_id', $spotlight->team_id)->orWhere('away_team_id', $spotlight->team_id))
+                ->whereBetween('kickoff_at', [
+                    $spotlight->published_at->copy()->subDays(2),
+                    $spotlight->published_at->copy()->addDays(2),
+                ])
+                ->get()
+                ->sortBy(fn (MatchFixture $m) => abs($m->kickoff_at->diffInMinutes($spotlight->published_at)));
+
+            $spotMatch = $candidates->first(function (MatchFixture $m) use ($spotlight) {
+                $opponent = $m->home_team_id === $spotlight->team_id ? $m->awayTeam : $m->homeTeam;
+
+                return $opponent && str_contains(Str::lower($spotlight->title), Str::lower($opponent->name));
+            });
+        }
+        if (! $spotMatch) {
+            $spotlight = null;
         }
 
         // Feeds both the Latest News section (1 featured + 2 medium + a
@@ -203,6 +238,7 @@ class HomeController extends Controller
             'isToday',
             'dateStrip',
             'spotlight',
+            'spotMatch',
         ));
     }
 }

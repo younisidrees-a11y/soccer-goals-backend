@@ -18,7 +18,6 @@
 
   @if($spotlight)
   @php
-    $spotMatch = $spotlight->match;
     $spotWinner = $spotMatch->home_score > $spotMatch->away_score ? 'home' : ($spotMatch->away_score > $spotMatch->home_score ? 'away' : null);
   @endphp
   <div class="wrap" style="margin-top:20px;">
