@@ -7,10 +7,15 @@ use App\Models\MatchFixture;
 use App\Models\NewsArticle;
 use App\Models\Player;
 use App\Models\Standing;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class HomeController extends Controller
 {
+    /** How far either side of real "today" the date strip allows browsing to. */
+    private const DATE_RANGE_DAYS = 10;
+
     /**
      * Official competition brand colours for the leagues this site
      * actually covers - used as the accent bar on dashboard match groups
@@ -27,19 +32,67 @@ class HomeController extends Controller
         'saudi-pro-league' => '#0B7A3B',
     ];
 
-    public function index()
+    public function index(Request $request)
     {
+        $today = Carbon::today();
+
+        // Real day-to-day browsing, not a decorative strip: ?date= picks
+        // which day's matches the dashboard hero shows. Clamped to a sane
+        // window either side of today rather than accepting an arbitrary
+        // date, and falls back to today on anything invalid.
+        $selectedDate = $today;
+        if ($request->filled('date')) {
+            try {
+                $requested = Carbon::createFromFormat('Y-m-d', (string) $request->query('date'))->startOfDay();
+                if ($requested->between($today->copy()->subDays(self::DATE_RANGE_DAYS), $today->copy()->addDays(self::DATE_RANGE_DAYS))) {
+                    $selectedDate = $requested;
+                }
+            } catch (\Exception) {
+                // Malformed date string - keep the $today fallback.
+            }
+        }
+        $isToday = $selectedDate->isSameDay($today);
+
+        // The 6-chip strip always centers on TODAY (not the selected day),
+        // so "where am I relative to now" stays visible no matter which
+        // day you're browsing - matches how the mockup's WED/THU/TODAY/
+        // SAT/SUN/MON row worked.
+        $dateStrip = collect(range(-2, 3))->map(fn (int $offset) => $today->copy()->addDays($offset));
+
         // No take() limit here - the homepage groups these by competition
         // with a real client-side status filter (All/Live/Upcoming/
-        // Finished), so it needs every match today, not a 4-card sample.
+        // Finished), so it needs every match on the selected day, not a
+        // 4-card sample.
         $todaysMatches = MatchFixture::with(['homeTeam', 'awayTeam', 'league'])
             ->published()
-            ->whereDate('kickoff_at', now()->toDateString())
+            ->whereDate('kickoff_at', $selectedDate->toDateString())
             ->orderBy('league_id')
             ->orderBy('kickoff_at')
             ->get();
 
+        // Popular Competitions isn't wired to the date strip above (the
+        // mockup treats it as a standalone, always-current module) - it
+        // needs its own real-today count even while you're browsing a
+        // different day in the dashboard hero.
+        $realTodayMatchesByLeague = $isToday
+            ? $todaysMatches->groupBy('league_id')
+            : MatchFixture::published()->whereDate('kickoff_at', $today->toDateString())->get()->groupBy('league_id');
+
         $todaysMatchesByLeague = $todaysMatches->groupBy('league_id');
+
+        // Real recent match report, not a fabricated headline - the most
+        // recently published match-report article that's actually linked
+        // to a real match (score, teams, league all come from that match,
+        // not guessed). Renders nothing if no such article exists yet.
+        $spotlight = NewsArticle::with(['match.homeTeam', 'match.awayTeam', 'match.league'])
+            ->published()
+            ->where('category', 'match-report')
+            ->whereNotNull('match_id')
+            ->orderByDesc('published_at')
+            ->first();
+        if ($spotlight && ! $spotlight->match) {
+            $spotlight = null; // linked match_id pointed at a deleted/unpublished match
+        }
 
         // Feeds both the Latest News section (1 featured + 2 medium + a
         // timeline of the rest) and the dashboard sidebar's Latest Stories
@@ -115,9 +168,9 @@ class HomeController extends Controller
         $popularLeagues = League::published()
             ->orderBy('name')
             ->get()
-            ->map(function (League $l) use ($todaysMatchesByLeague) {
-                $todayCount = $todaysMatchesByLeague->get($l->id, collect())->count();
-                $liveCount = $todaysMatchesByLeague->get($l->id, collect())->filter(fn ($m) => $m->isLive())->count();
+            ->map(function (League $l) use ($realTodayMatchesByLeague) {
+                $todayCount = $realTodayMatchesByLeague->get($l->id, collect())->count();
+                $liveCount = $realTodayMatchesByLeague->get($l->id, collect())->filter(fn ($m) => $m->isLive())->count();
 
                 return [
                     'league' => $l,
@@ -146,6 +199,10 @@ class HomeController extends Controller
             'topScorer',
             'popularLeagues',
             'leagueColors',
+            'selectedDate',
+            'isToday',
+            'dateStrip',
+            'spotlight',
         ));
     }
 }

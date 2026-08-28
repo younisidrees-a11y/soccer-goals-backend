@@ -529,7 +529,62 @@
      not a second implementation of the filter. */
   .dash{display:grid;grid-template-columns:1fr;gap:28px;}
   @media (min-width:1024px){.dash{grid-template-columns:1.9fr 1fr;align-items:start;}}
-  .dash-date{font-size:13px;color:var(--ink-faint);margin-bottom:16px;}
+
+  /* Real day-to-day navigation (each chip is a link to that day's real
+     matches via ?date=), not a decorative strip - .is-today marks the
+     real calendar day regardless of what's selected; .is-selected is the
+     day actually being viewed, which is the one that gets the accent
+     fill. They're usually the same chip but don't have to be. */
+  .date-row{display:flex;align-items:center;gap:8px;overflow-x:auto;padding-bottom:2px;margin-bottom:20px;scrollbar-width:none;}
+  .date-row::-webkit-scrollbar{display:none;}
+  .date-nav-btn{
+    width:28px;height:28px;border-radius:50%;border:1px solid var(--border);
+    display:inline-flex;align-items:center;justify-content:center;color:var(--ink-muted);flex-shrink:0;
+    transition:border-color .15s ease,color .15s ease;
+  }
+  .date-nav-btn:hover{border-color:var(--border-strong);color:var(--ink);}
+  .date-nav-btn svg{width:13px;height:13px;}
+  .date-chip{
+    flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:1px;
+    padding:6px 13px;border-radius:var(--radius-md);font-size:11.5px;color:var(--ink-muted);
+    transition:background .15s ease,color .15s ease;
+  }
+  .date-chip:hover{background:var(--surface-2);}
+  .date-chip .d{font-weight:600;}
+  .date-chip.is-selected{background:var(--accent);color:#fff;}
+  .date-chip.is-selected:hover{background:var(--accent);}
+  .date-chip.is-selected .d{font-family:var(--font-display);font-weight:800;}
+
+  /* ---------- Match Spotlight ---------- */
+  /* Same white-card language as every other module, colour contained to
+     the top accent bar and crest badges rather than washed across the
+     whole surface - reads as part of the system, not a one-off banner. */
+  .spotlight{
+    background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--spot-a,var(--accent));
+    border-radius:var(--radius-lg);padding:24px 28px;position:relative;overflow:hidden;
+    display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap;
+    box-shadow:var(--shadow-sm);
+  }
+  .spotlight-tag{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-muted);}
+  .spotlight-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--spot-a,var(--accent));}
+  .spotlight-score{display:flex;align-items:center;gap:18px;margin:14px 0 16px;}
+  .spot-team{display:flex;align-items:center;gap:10px;}
+  .spot-team .crest{width:40px;height:40px;}
+  .spot-team-name{font-weight:700;font-size:14.5px;color:var(--ink);}
+  .spot-num{font-family:var(--font-mono);font-weight:700;font-size:32px;color:var(--ink-faint);}
+  .spot-num.is-winner{color:var(--ink);}
+  .spot-sep{font-family:var(--font-mono);font-size:20px;color:var(--ink-faint);}
+  .spotlight-body h2{font-family:var(--font-display);font-size:23px;font-weight:800;line-height:1.18;max-width:46ch;text-wrap:balance;color:var(--ink);margin-top:4px;}
+  .spotlight-dek{font-size:13.5px;color:var(--ink-muted);margin-top:8px;max-width:52ch;line-height:1.55;}
+  .spotlight-byline{font-size:11.5px;color:var(--ink-faint);margin-top:10px;}
+  .spotlight-cta{
+    flex-shrink:0;display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;
+    font-size:13px;font-weight:700;padding:11px 18px;border-radius:var(--radius-md);white-space:nowrap;
+    transition:background .15s ease;
+  }
+  .spotlight:hover .spotlight-cta{background:var(--accent-strong);}
+  .spotlight-cta svg{width:14px;height:14px;}
+  @media (max-width:700px){.spotlight{padding:20px;}.spotlight-body h2{font-size:19px;}}
 
   .match-list{display:flex;flex-direction:column;}
   .match-row{

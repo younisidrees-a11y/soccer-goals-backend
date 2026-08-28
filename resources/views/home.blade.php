@@ -16,19 +16,59 @@
     </div>
   </div>
 
+  @if($spotlight)
+  @php
+    $spotMatch = $spotlight->match;
+    $spotWinner = $spotMatch->home_score > $spotMatch->away_score ? 'home' : ($spotMatch->away_score > $spotMatch->home_score ? 'away' : null);
+  @endphp
+  <div class="wrap" style="margin-top:20px;">
+    <a href="{{ route('news.show', $spotlight->slug) }}" class="spotlight"@if($spotMatch->homeTeam->color_hex) style="--spot-a:{{ $spotMatch->homeTeam->color_hex }};"@endif>
+      <div class="spotlight-body">
+        <span class="spotlight-tag"><span class="dot" aria-hidden="true"></span>Match Report &middot; {{ $spotMatch->league->name }}</span>
+        <div class="spotlight-score">
+          <div class="spot-team"><span class="crest crest-{{ $spotMatch->homeTeam->crest_code }}" role="img" aria-label="{{ $spotMatch->homeTeam->full_name }} badge"></span><span class="spot-team-name">{{ $spotMatch->homeTeam->name }}</span></div>
+          <span class="spot-num{{ $spotWinner === 'home' ? ' is-winner' : '' }}">{{ $spotMatch->home_score }}</span>
+          <span class="spot-sep">&ndash;</span>
+          <span class="spot-num{{ $spotWinner === 'away' ? ' is-winner' : '' }}">{{ $spotMatch->away_score }}</span>
+          <div class="spot-team"><span class="crest crest-{{ $spotMatch->awayTeam->crest_code }}" role="img" aria-label="{{ $spotMatch->awayTeam->full_name }} badge"></span><span class="spot-team-name">{{ $spotMatch->awayTeam->name }}</span></div>
+        </div>
+        <h2>{{ $spotlight->title }}</h2>
+        <p class="spotlight-dek">{{ $spotlight->dek }}</p>
+        <p class="spotlight-byline">{{ $spotlight->author }} &middot; {{ $spotlight->published_at?->format('j M Y') }}</p>
+      </div>
+      <span class="spotlight-cta">Read Match Report<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+  </div>
+  @endif
+
   <div class="wrap">
     <div class="dash">
       <div>
         <div class="section-head">
-          <h2>Today's Football</h2>
+          <h2>{{ $isToday ? "Today's Football" : 'Football on '.$selectedDate->format('j F') }}</h2>
           <a href="{{ route('today.index') }}" class="section-link">Full schedule
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
         </div>
-        <div class="dash-date">{{ now()->format('l, j F Y') }}</div>
+
+        <div class="date-row">
+          <a href="{{ route('home', ['date' => $selectedDate->copy()->subDay()->toDateString()]) }}" class="date-nav-btn" aria-label="Previous day">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>
+          </a>
+          @foreach ($dateStrip as $day)
+          @php $dayIsToday = $day->isToday(); $dayIsSelected = $day->isSameDay($selectedDate); @endphp
+          <a href="{{ $dayIsToday ? route('home') : route('home', ['date' => $day->toDateString()]) }}" class="date-chip{{ $dayIsSelected ? ' is-selected' : '' }}{{ $dayIsToday ? ' is-today' : '' }}">
+            <span>{{ $dayIsToday ? 'TODAY' : strtoupper($day->format('D')) }}</span>
+            <span class="d">{{ $day->format('j') }}</span>
+          </a>
+          @endforeach
+          <a href="{{ route('home', ['date' => $selectedDate->copy()->addDay()->toDateString()]) }}" class="date-nav-btn" aria-label="Next day">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+          </a>
+        </div>
 
         @if($todaysMatches->isEmpty())
-        <p style="color:var(--ink-faint);font-size:14.5px;">No matches kicking off today across any covered league &mdash; check <a href="{{ route('fixtures.index') }}">upcoming fixtures</a> instead.</p>
+        <p style="color:var(--ink-faint);font-size:14.5px;">No matches {{ $isToday ? 'kicking off today' : 'on '.$selectedDate->format('j F') }} across any covered league &mdash; check <a href="{{ route('fixtures.index') }}">upcoming fixtures</a> instead.</p>
         @else
         @php
           $todayHasLive = $todaysMatches->contains(fn ($m) => $m->isLive());
@@ -84,7 +124,7 @@
 
       <aside class="sidebar" aria-label="Sidebar">
         <div class="widget">
-          <div class="widget-head"><h2>Latest Stories</h2></div>
+          <div class="widget-head"><h2>Trending Now</h2></div>
           @if($latestNews->isEmpty())
           <p style="color:var(--ink-faint);font-size:13px;">No published stories yet &mdash; check back soon.</p>
           @else
