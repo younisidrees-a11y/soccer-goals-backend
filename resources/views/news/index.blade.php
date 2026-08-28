@@ -12,13 +12,13 @@
   <section class="league-hero">
     <div class="wrap">
       <div class="breadcrumb" style="color:#8FA6BA;">
-        <a href="{{ route('home') }}" style="color:#B9CBDA;">Home</a>
+        <a href="{{ route('home') }}" style="color:#9299AA;">Home</a>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
         <span style="color:#fff;">News</span>
       </div>
       <div class="league-hero-inner">
         <div>
-          <div class="league-hero-eyebrow eyebrow" style="color:#8FB8FF;">Coverage</div>
+          <div class="league-hero-eyebrow eyebrow" style="color:#8FB4FF;">Coverage</div>
           <h1 class="league-hero-title">News</h1>
           <div class="league-hero-meta">Match reports, transfers, analysis and more from every major league.</div>
         </div>

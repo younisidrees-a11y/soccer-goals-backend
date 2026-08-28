@@ -47,16 +47,16 @@
   <section class="league-hero">
     <div class="wrap">
       <div class="breadcrumb" style="color:#8FA6BA;">
-        <a href="{{ route('home') }}" style="color:#B9CBDA;">Home</a>
+        <a href="{{ route('home') }}" style="color:#9299AA;">Home</a>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
-        <a href="{{ route('leagues.show', $match->league->slug) }}" style="color:#B9CBDA;">{{ $match->league->name }}</a>
+        <a href="{{ route('leagues.show', $match->league->slug) }}" style="color:#9299AA;">{{ $match->league->name }}</a>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
         <span style="color:#fff;">{{ $title }}</span>
       </div>
       <div class="league-hero-inner">
         <span class="league-hero-flag" aria-hidden="true"><svg viewBox="0 0 25 15"><use href="#flag-{{ $match->league->flag_code }}"></use></svg></span>
         <div>
-          <div class="league-hero-eyebrow eyebrow" style="color:#8FB8FF;">{{ $match->league->name }}@if($match->venue) &middot; {{ $match->venue }}@endif</div>
+          <div class="league-hero-eyebrow eyebrow" style="color:#8FB4FF;">{{ $match->league->name }}@if($match->venue) &middot; {{ $match->venue }}@endif</div>
           <h1 class="league-hero-title">{{ $title }}</h1>
           <div class="league-hero-meta">
             {{ $match->kickoff_at->format('D j M Y') }} &middot;
@@ -142,7 +142,7 @@
       @else
 
         @php
-          $previewSafeColor = fn (?string $hex) => $hex && preg_match('/^#[0-9a-fA-F]{3,6}$/', $hex) ? $hex : '#1552C0';
+          $previewSafeColor = fn (?string $hex) => $hex && preg_match('/^#[0-9a-fA-F]{3,6}$/', $hex) ? $hex : '#1240C4';
           $previewHomeColor = $previewSafeColor($match->homeTeam->color_hex);
           $previewAwayColor = $previewSafeColor($match->awayTeam->color_hex);
           $ordinal = fn ($n) => $n.(in_array($n % 100, [11, 12, 13]) ? 'th' : (['th', 'st', 'nd', 'rd'][$n % 10] ?? 'th'));
@@ -346,15 +346,15 @@
 
         @php
           $contrastColor = function (?string $hex) {
-              $hex = ltrim($hex ?: '#1552C0', '#');
+              $hex = ltrim($hex ?: '#1240C4', '#');
               if (strlen($hex) === 3) { $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2]; }
               if (strlen($hex) !== 6) { return '#FFFFFF'; }
               [$r, $g, $b] = array_map(fn ($h) => hexdec($h), str_split($hex, 2));
               $luminance = (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
 
-              return $luminance > 0.6 ? '#0E2233' : '#FFFFFF';
+              return $luminance > 0.6 ? '#12151B' : '#FFFFFF';
           };
-          $safeColor = fn (?string $hex) => $hex && preg_match('/^#[0-9a-fA-F]{3,6}$/', $hex) ? $hex : '#1552C0';
+          $safeColor = fn (?string $hex) => $hex && preg_match('/^#[0-9a-fA-F]{3,6}$/', $hex) ? $hex : '#1240C4';
         @endphp
 
         @if($match->motm)

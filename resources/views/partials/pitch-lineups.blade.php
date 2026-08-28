@@ -6,15 +6,15 @@
   within a row is used purely as a left-to-right sort key.
 --}}
 @php
-  $safeColorPitch = fn (?string $hex) => $hex && preg_match('/^#[0-9a-fA-F]{3,6}$/', $hex) ? $hex : '#1552C0';
+  $safeColorPitch = fn (?string $hex) => $hex && preg_match('/^#[0-9a-fA-F]{3,6}$/', $hex) ? $hex : '#1240C4';
   $contrastColorPitch = function (?string $hex) {
-      $hex = ltrim($hex ?: '#1552C0', '#');
+      $hex = ltrim($hex ?: '#1240C4', '#');
       if (strlen($hex) === 3) { $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2]; }
       if (strlen($hex) !== 6) { return '#FFFFFF'; }
       [$r, $g, $b] = array_map(fn ($h) => hexdec($h), str_split($hex, 2));
       $luminance = (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
 
-      return $luminance > 0.6 ? '#0E2233' : '#FFFFFF';
+      return $luminance > 0.6 ? '#12151B' : '#FFFFFF';
   };
 
   $sides = [];

@@ -13,13 +13,13 @@
   <section class="league-hero">
     <div class="wrap">
       <div class="breadcrumb" style="color:#8FA6BA;">
-        <a href="{{ route('home') }}" style="color:#B9CBDA;">Home</a>
+        <a href="{{ route('home') }}" style="color:#9299AA;">Home</a>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
         <span style="color:#fff;">Today's Matches</span>
       </div>
       <div class="league-hero-inner" style="align-items:flex-start;">
         <div>
-          <div class="league-hero-eyebrow eyebrow" style="color:#8FB8FF;">{{ $todayLabel }}</div>
+          <div class="league-hero-eyebrow eyebrow" style="color:#8FB4FF;">{{ $todayLabel }}</div>
           <h1 class="league-hero-title">Today's Matches</h1>
           <div class="league-hero-meta">{{ $matches->total() }} {{ Str::plural('match', $matches->total()) }} today across every covered league</div>
         </div>

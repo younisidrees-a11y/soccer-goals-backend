@@ -12,16 +12,16 @@
   <section class="league-hero">
     <div class="wrap">
       <div class="breadcrumb" style="color:#8FA6BA;">
-        <a href="{{ route('home') }}" style="color:#B9CBDA;">Home</a>
+        <a href="{{ route('home') }}" style="color:#9299AA;">Home</a>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
-        <a href="{{ route('leagues.index') }}" style="color:#B9CBDA;">Leagues</a>
+        <a href="{{ route('leagues.index') }}" style="color:#9299AA;">Leagues</a>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
         <span style="color:#fff;">{{ $league->name }}</span>
       </div>
       <div class="league-hero-inner">
         <span class="league-hero-flag" aria-hidden="true"><svg viewBox="0 0 25 15"><use href="#flag-{{ $league->flag_code }}"></use></svg></span>
         <div>
-          <div class="league-hero-eyebrow eyebrow" style="color:#8FB8FF;">{{ $league->country }} &middot; {{ $league->season }} Season</div>
+          <div class="league-hero-eyebrow eyebrow" style="color:#8FB4FF;">{{ $league->country }} &middot; {{ $league->season }} Season</div>
           <h1 class="league-hero-title">{{ $league->name }}</h1>
           <div class="league-hero-meta">{{ $league->teams_count }} clubs &middot; {{ $league->season }} season</div>
         </div>
