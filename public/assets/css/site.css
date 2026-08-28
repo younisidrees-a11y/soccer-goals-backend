@@ -1275,8 +1275,9 @@
   .footer-leagues-title{font-family:var(--font-display);font-size:15px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;color:#fff;margin-bottom:22px;}
   .footer-league-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:28px 24px;padding-bottom:32px;}
   .footer-league-col h3{font-family:var(--font-display);font-size:13px;font-weight:600;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.09);}
-  .footer-league-col h3 a{color:#fff;}
+  .footer-league-col h3 a{color:#fff;display:flex;align-items:center;gap:8px;}
   .footer-league-col h3 a:hover{color:var(--accent);}
+  .footer-league-col h3 .flag{width:18px;height:13px;flex-shrink:0;}
   .footer-league-teams{columns:2;column-gap:14px;}
   .footer-league-teams a{display:block;font-size:12px;color:#8FA6BA;padding:4px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;break-inside:avoid;}
   .footer-league-teams a:hover{color:#fff;text-decoration:underline;text-underline-offset:2px;}

@@ -429,12 +429,11 @@
       <h3>Leagues</h3>
       <ul>
         <li><a href="{{ route('leagues.index') }}" style="font-weight:700;">View All Leagues</a></li>
-        <li><a href="{{ route('leagues.show', 'premier-league') }}"><svg class="flag" role="img" aria-label="England flag"><use href="#flag-eng"></use></svg>English Premier League</a></li>
-        <li><a href="{{ route('leagues.show', 'la-liga') }}"><svg class="flag" role="img" aria-label="Spain flag"><use href="#flag-esp"></use></svg>Spanish La Liga</a></li>
-        <li><a href="{{ route('leagues.show', 'serie-a') }}"><svg class="flag" role="img" aria-label="Italy flag"><use href="#flag-ita"></use></svg>Serie A</a></li>
-        <li><a href="{{ route('leagues.show', 'bundesliga') }}"><svg class="flag" role="img" aria-label="Germany flag"><use href="#flag-deu"></use></svg>Bundesliga</a></li>
+        {{-- Premier League/La Liga/Serie A/Bundesliga/Saudi Pro League are
+             deliberately left out here - they're the 5 leagues already
+             listed with their full team rosters in the Leagues & Teams
+             section below, so this column only needs the rest. --}}
         <li><a href="{{ route('leagues.show', 'ligue-1') }}"><svg class="flag" role="img" aria-label="France flag"><use href="#flag-fra"></use></svg>Ligue 1</a></li>
-        <li><a href="{{ route('leagues.show', 'saudi-pro-league') }}"><svg class="flag" role="img" aria-label="Saudi Arabia flag"><use href="#flag-sau"></use></svg>Saudi Pro League</a></li>
         <li><a href="{{ route('leagues.show', 'liga-mx') }}"><svg class="flag" role="img" aria-label="Mexico flag"><use href="#flag-mex"></use></svg>Liga MX</a></li>
         <li><a href="{{ route('leagues.show', 'super-lig') }}"><svg class="flag" role="img" aria-label="Turkey flag"><use href="#flag-tur"></use></svg>Süper Lig</a></li>
         <li><a href="{{ route('leagues.show', 'mls') }}"><svg class="flag" role="img" aria-label="United States flag"><use href="#flag-usa"></use></svg>Major League Soccer</a></li>
@@ -485,7 +484,7 @@
     <div class="footer-league-cols">
       @foreach ($footerLeagues as $fl)
       <div class="footer-league-col">
-        <h3><a href="{{ route('leagues.show', $fl->slug) }}">{{ $fl->name }}</a></h3>
+        <h3><a href="{{ route('leagues.show', $fl->slug) }}"><svg class="flag" role="img" aria-label="{{ $fl->country }} flag"><use href="#flag-{{ $fl->flag_code }}"></use></svg>{{ $fl->name }}</a></h3>
         <div class="footer-league-teams">
           @forelse ($fl->teams as $flTeam)
           <a href="{{ route('teams.show', $flTeam->slug) }}">{{ $flTeam->name }}</a>
