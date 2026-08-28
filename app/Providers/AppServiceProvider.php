@@ -42,7 +42,6 @@ class AppServiceProvider extends ServiceProvider
         View::composer('layouts.site', function ($view) {
             $view->with('hasLiveMatch', MatchFixture::where('status', 'live')->where('is_published', true)->exists());
             $view->with('siteSettings', SiteSetting::current());
-            $view->with('currentMatchday', MatchFixture::published()->where('status', 'final')->max('matchday') ?? 1);
             $view->with('tickerMatches', $this->buildTickerMatches());
             // Powers the "Just In" column of the News mega menu, which is
             // global (every page renders this layout) - previously this
