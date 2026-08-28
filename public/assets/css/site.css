@@ -400,6 +400,16 @@
      no red dot, no pulse - so the label stops asserting something that
      isn't true instead of just relabeling itself while still shouting. */
   .ticker-label-idle{color:var(--topbar-ink);}
+  .ticker-nav{
+    flex-shrink:0;width:24px;height:24px;border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,.08);color:#fff;transition:background .15s ease;
+  }
+  .ticker-nav:hover{background:rgba(255,255,255,.18);}
+  .ticker-nav svg{width:13px;height:13px;}
+  /* Hide on narrow screens: touch scrolling already works there, and at
+     this width the buttons would eat too much of the strip. */
+  @media (max-width:640px){.ticker-nav{display:none;}}
   .ticker-track{
     /* min-width:0 is required here: without it this flex item (itself a
        flex container of many chips) refuses to shrink below its content's

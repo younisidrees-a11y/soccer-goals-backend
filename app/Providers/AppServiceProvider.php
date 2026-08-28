@@ -72,35 +72,42 @@ class AppServiceProvider extends ServiceProvider
 
     /**
      * The header ticker is styled and labelled as live coverage, so it
-     * needs to actually be that: any match in progress right now, padded
-     * out with the soonest upcoming fixtures and the most recent final
-     * scores so it's never empty on a quiet day. Previously every
-     * controller copy-pasted an identical "last 7 final matches" query -
-     * this is now the single source of truth.
-     *
-     * Order matters here beyond just the data: the ticker track is wider
-     * than its viewport and doesn't auto-scroll, so only the first ~6
-     * chips are ever seen without a manual scroll. Live matches lead,
-     * then upcoming kickoffs, with recent results padded in last - on a
-     * quiet day that meant the visible chips were exclusively yesterday's
-     * results with every upcoming fixture scrolled off-screen, which
-     * reads as a stale ticker even though the data itself was current.
+     * needs to actually be that: every one of today's real matches -
+     * live, still to kick off, or already finished - in kickoff order,
+     * with live matches pulled to the front so anything in progress is
+     * visible without scrolling. Previously this queried "any recent
+     * final" and "any upcoming fixture" with no date scoping at all, so
+     * on a normal day the ticker was half yesterday's results and only
+     * showed 6 of the day's fixtures even though scrolling was possible -
+     * "today's matches" and "what the ticker contains" were different
+     * sets. Only pads in matches from other days when today itself is
+     * too thin to fill the strip.
      */
     private function buildTickerMatches()
     {
-        $live = MatchFixture::with(['homeTeam', 'awayTeam'])
+        $today = MatchFixture::with(['homeTeam', 'awayTeam'])
             ->published()
-            ->where('status', 'live')
+            ->whereDate('kickoff_at', now()->toDateString())
             ->orderBy('kickoff_at')
-            ->get();
+            ->get()
+            ->sortByDesc(fn (MatchFixture $m) => $m->status === 'live')
+            ->values();
 
-        $remaining = max(0, 12 - $live->count());
+        $minimum = 8;
+
+        if ($today->count() >= $minimum) {
+            return $today->take(24);
+        }
+
+        $remaining = $minimum - $today->count();
         $recentCount = (int) ceil($remaining / 2);
         $upcomingCount = $remaining - $recentCount;
+        $excludeIds = $today->pluck('id');
 
         $recent = MatchFixture::with(['homeTeam', 'awayTeam'])
             ->published()
             ->where('status', 'final')
+            ->whereNotIn('id', $excludeIds)
             ->orderByDesc('kickoff_at')
             ->limit($recentCount)
             ->get();
@@ -108,10 +115,11 @@ class AppServiceProvider extends ServiceProvider
         $upcoming = MatchFixture::with(['homeTeam', 'awayTeam'])
             ->published()
             ->where('status', 'scheduled')
+            ->whereNotIn('id', $excludeIds)
             ->orderBy('kickoff_at')
             ->limit($upcomingCount)
             ->get();
 
-        return $live->concat($upcoming)->concat($recent);
+        return $today->concat($upcoming)->concat($recent);
     }
 }

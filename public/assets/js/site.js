@@ -196,3 +196,29 @@
     });
   });
 })();
+
+(function(){
+  "use strict";
+  // The ticker track scrolls (overflow-x:auto) but its scrollbar is
+  // hidden and a plain vertical mouse wheel doesn't move horizontal
+  // content on most browsers without Shift held - so on desktop there
+  // was no visible or discoverable way to reach anything past the first
+  // handful of chips. This translates a normal wheel gesture into
+  // horizontal movement, and wires the two arrow buttons, so the strip
+  // is actually scrollable with an ordinary mouse, not just touch.
+  var track = document.querySelector('[data-ticker-track]');
+  if (!track) return;
+
+  track.addEventListener('wheel', function(e){
+    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return; // already horizontal (trackpad) - let it through
+    e.preventDefault();
+    track.scrollBy({ left: e.deltaY, behavior: 'auto' });
+  }, { passive: false });
+
+  Array.prototype.slice.call(document.querySelectorAll('[data-ticker-scroll]')).forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var dir = parseInt(btn.getAttribute('data-ticker-scroll'), 10) || 1;
+      track.scrollBy({ left: dir * Math.round(track.clientWidth * 0.8), behavior: 'smooth' });
+    });
+  });
+})();

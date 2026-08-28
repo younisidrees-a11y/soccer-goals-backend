@@ -301,7 +301,16 @@
     @else
     <span class="ticker-label ticker-label-idle">SCORES</span>
     @endif
-    <div class="ticker-track" tabindex="0">
+    {{-- overflow-x:auto on .ticker-track technically scrolls, but with the
+         scrollbar hidden and a plain mouse wheel not moving horizontal
+         content, there was no visible or discoverable way to reach
+         anything past the first ~6 chips. These buttons + the wheel
+         listener in site.js are the actual fix - real click targets,
+         not decoration. --}}
+    <button type="button" class="ticker-nav ticker-nav-prev" data-ticker-scroll="-1" aria-label="Scroll ticker left">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
+    <div class="ticker-track" tabindex="0" data-ticker-track>
       @foreach ($tickerMatches ?? [] as $tm)
       <a href="{{ $tm->prettyUrl() }}" class="ticker-chip">
         <span class="ticker-status{{ $tm->status === 'live' ? ' is-live' : '' }}">
@@ -324,6 +333,9 @@
       </a>
       @endforeach
     </div>
+    <button type="button" class="ticker-nav ticker-nav-next" data-ticker-scroll="1" aria-label="Scroll ticker right">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
   </div>
 </div>
 
