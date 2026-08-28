@@ -1268,7 +1268,10 @@
      flat league-name list - every club here is a real route. Plain
      heading + list, not a card or an accordion: nothing to click open,
      every team already on the page. */
-  .footer-leagues{padding:40px 0 8px;border-bottom:1px solid rgba(255,255,255,.09);}
+  /* Reduced top padding vs the original 40px - this section now follows
+     footer-grid directly, which already has its own 32px bottom
+     padding, so the two combined kept too much dead air between them. */
+  .footer-leagues{padding:8px 0 32px;border-top:1px solid rgba(255,255,255,.09);}
   .footer-leagues-title{font-family:var(--font-display);font-size:15px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;color:#fff;margin-bottom:22px;}
   .footer-league-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:28px 24px;padding-bottom:32px;}
   .footer-league-col h3{font-family:var(--font-display);font-size:13px;font-weight:600;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.09);}

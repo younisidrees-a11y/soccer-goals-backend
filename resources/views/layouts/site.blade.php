@@ -408,26 +408,6 @@
 </main>
 
 <footer class="site-footer">
-  @if(($footerLeagues ?? collect())->isNotEmpty())
-  <div class="wrap footer-leagues">
-    <h2 class="footer-leagues-title">Leagues &amp; Teams</h2>
-    <div class="footer-league-cols">
-      @foreach ($footerLeagues as $fl)
-      <div class="footer-league-col">
-        <h3><a href="{{ route('leagues.show', $fl->slug) }}">{{ $fl->name }}</a></h3>
-        <div class="footer-league-teams">
-          @forelse ($fl->teams as $flTeam)
-          <a href="{{ route('teams.show', $flTeam->slug) }}">{{ $flTeam->name }}</a>
-          @empty
-          <span class="footer-league-empty">Teams coming soon</span>
-          @endforelse
-        </div>
-      </div>
-      @endforeach
-    </div>
-  </div>
-  @endif
-
   <div class="wrap footer-grid">
     <div class="footer-brand">
       <a href="{{ route('home') }}" class="brand" aria-label="The Soccer Goals home">
@@ -498,6 +478,26 @@
       </ul>
     </div>
   </div>
+
+  @if(($footerLeagues ?? collect())->isNotEmpty())
+  <div class="wrap footer-leagues">
+    <h2 class="footer-leagues-title">Leagues &amp; Teams</h2>
+    <div class="footer-league-cols">
+      @foreach ($footerLeagues as $fl)
+      <div class="footer-league-col">
+        <h3><a href="{{ route('leagues.show', $fl->slug) }}">{{ $fl->name }}</a></h3>
+        <div class="footer-league-teams">
+          @forelse ($fl->teams as $flTeam)
+          <a href="{{ route('teams.show', $flTeam->slug) }}">{{ $flTeam->name }}</a>
+          @empty
+          <span class="footer-league-empty">Teams coming soon</span>
+          @endforelse
+        </div>
+      </div>
+      @endforeach
+    </div>
+  </div>
+  @endif
 
   <div class="wrap footer-bottom">
     <span>&copy; 2026 The Soccer Goals. All rights reserved.</span>
