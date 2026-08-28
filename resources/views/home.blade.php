@@ -274,24 +274,53 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
         </div>
-        <div class="news-grid">
-          @forelse ($latestNews as $article)
-          <article class="news-card">
-            <a href="{{ route('news.show', $article->slug) }}"><div class="media" aria-hidden="true">
-              @if($article->image_url)
-                <img src="{{ $article->image_url }}" alt="{{ $article->title }}" loading="lazy">
+        @if($latestNews->isEmpty())
+        <p style="color:var(--ink-faint);font-size:14.5px;">No published stories yet &mdash; check back soon.</p>
+        @else
+        @php
+          $newsFeat = $latestNews->first();
+          $newsMed = $latestNews->slice(1, 2);
+          $newsTimeline = $latestNews->slice(3, 4);
+        @endphp
+        <div class="news-feature-grid">
+          <a href="{{ route('news.show', $newsFeat->slug) }}" class="news-feat">
+            <div class="media" aria-hidden="true">
+              @if($newsFeat->image_url)
+                <img src="{{ $newsFeat->image_url }}" alt="{{ $newsFeat->title }}" loading="lazy">
               @else
                 <svg viewBox="0 0 200 150"><circle cx="160" cy="20" r="60" fill="#fff" fill-opacity=".08"/></svg>
               @endif
-            </div></a>
-            <span class="cat-tag {{ $article->category_badge_class }}">{{ $article->category_label }}</span>
-            <a href="{{ route('news.show', $article->slug) }}"><h3>{{ $article->title }}</h3></a>
-            <p class="dek">{{ $article->dek }}</p>
-          </article>
-          @empty
-          <p>No published stories yet &mdash; check back soon.</p>
-          @endforelse
+            </div>
+            <span class="cat-tag {{ $newsFeat->category_badge_class }}">{{ $newsFeat->category_label }}</span>
+            <h3>{{ $newsFeat->title }}</h3>
+            <p class="news-dek">{{ $newsFeat->dek }}</p>
+            <span class="news-meta">{{ $newsFeat->author }} &middot; {{ $newsFeat->published_at?->format('j M') }}</span>
+          </a>
+
+          @foreach ($newsMed as $nm)
+          <a href="{{ route('news.show', $nm->slug) }}" class="news-med">
+            <span class="cat-tag {{ $nm->category_badge_class }}">{{ $nm->category_label }}</span>
+            <h3>{{ $nm->title }}</h3>
+            <p class="news-dek">{{ $nm->dek }}</p>
+          </a>
+          @endforeach
+
+          @if($newsTimeline->isNotEmpty())
+          <div class="news-timeline">
+            @foreach ($newsTimeline as $nt)
+            @php
+              $ntHours = (int) ($nt->published_at?->diffInHours(now()) ?? 0);
+              $ntRel = $ntHours < 1 ? (int) $nt->published_at->diffInMinutes(now()).'m' : ($ntHours < 24 ? $ntHours.'h' : (int) $nt->published_at->diffInDays(now()).'d');
+            @endphp
+            <a href="{{ route('news.show', $nt->slug) }}" class="tl-item">
+              <span class="tl-time">{{ $ntRel }}</span>
+              <span class="tl-title">{{ $nt->title }}</span>
+            </a>
+            @endforeach
+          </div>
+          @endif
         </div>
+        @endif
       </section>
 
       <section aria-labelledby="history-heading" class="history-feature">
@@ -316,27 +345,25 @@
 
       <section aria-labelledby="transfers-heading">
         <div class="section-head">
-          <h2 id="transfers-heading">Transfer News</h2>
+          <h2 id="transfers-heading">Transfer Center</h2>
           <a href="{{ route('news.category', 'transfers') }}" class="section-link">View all transfers
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
         </div>
-        <div class="news-grid">
+        {{-- Real published transfer-news articles in a card/list shell,
+             not the mockup's Player/From/To/Status table - that table
+             used invented sample names and its own markup flagged it as
+             a placeholder with no backing data model. This is the same
+             shell treatment with real content instead. --}}
+        <div class="transfer-card">
           @forelse ($transferNews as $article)
-          <article class="news-card">
-            <a href="{{ route('news.show', $article->slug) }}"><div class="media" aria-hidden="true">
-              @if($article->image_url)
-                <img src="{{ $article->image_url }}" alt="{{ $article->title }}" loading="lazy">
-              @else
-                <svg viewBox="0 0 200 150"><circle cx="160" cy="20" r="60" fill="#fff" fill-opacity=".08"/></svg>
-              @endif
-            </div></a>
+          <a href="{{ route('news.show', $article->slug) }}" class="transfer-row">
             <span class="cat-tag {{ $article->category_badge_class }}">{{ $article->category_label }}</span>
-            <a href="{{ route('news.show', $article->slug) }}"><h3>{{ $article->title }}</h3></a>
-            <p class="dek">{{ $article->dek }}</p>
-          </article>
+            <span class="transfer-row-title">{{ $article->title }}</span>
+            <span class="transfer-row-date">{{ $article->published_at?->format('j M') }}</span>
+          </a>
           @empty
-          <p style="color:var(--ink-faint);font-size:14.5px;">No transfer news published yet &mdash; check back soon.</p>
+          <p class="transfer-card-empty">No transfer news published yet &mdash; check back soon.</p>
           @endforelse
         </div>
       </section>
