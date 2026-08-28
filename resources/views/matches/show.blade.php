@@ -119,9 +119,14 @@
         </section>
       @endif
 
-      @if($isLive && ! empty($match->commentary))
+      {{-- Real commentary data doesn't disappear once the match ends - it
+           used to only render while $isLive was true, which hid a match's
+           entire commentary feed the moment it went final. Same feed,
+           heading just drops the "Live" framing (and pulsing dot) once
+           there's nothing live left to claim. --}}
+      @if(($isLive || $isFinal) && ! empty($match->commentary))
         <section class="live-commentary" aria-labelledby="commentary-heading">
-          <div class="section-head"><h2 id="commentary-heading"><span class="dot-live" aria-hidden="true"></span> Live Commentary</h2></div>
+          <div class="section-head"><h2 id="commentary-heading">@if($isLive)<span class="dot-live" aria-hidden="true"></span> Live Commentary @else Match Commentary @endif</h2></div>
           <div class="commentary-feed">
             @foreach (array_reverse($match->commentary) as $entry)
             <div class="commentary-line">
