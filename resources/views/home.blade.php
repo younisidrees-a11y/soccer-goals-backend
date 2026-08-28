@@ -46,7 +46,6 @@
           @foreach ($todaysMatchesByLeague as $leagueMatches)
           @php
             $grpLeague = $leagueMatches->first()->league;
-            $grpMatchday = $leagueMatches->first()->matchday;
             $grpColor = $leagueColors[$grpLeague->slug] ?? null;
           @endphp
           <div class="today-comp-group"@if($grpColor) style="--comp-color:{{ $grpColor }};"@endif>
@@ -55,7 +54,6 @@
                 <svg class="flag" role="img" aria-label="{{ $grpLeague->country }} flag"><use href="#flag-{{ $grpLeague->flag_code }}"></use></svg>
                 <a href="{{ route('leagues.show', $grpLeague->slug) }}" class="today-comp-name">{{ $grpLeague->name }}</a>
               </div>
-              @if($grpMatchday)<span class="today-comp-round">Round {{ $grpMatchday }}</span>@endif
             </div>
             <div class="match-list">
               @foreach ($leagueMatches as $m)
