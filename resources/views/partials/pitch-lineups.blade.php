@@ -24,12 +24,31 @@
       $color = $safeColorPitch($team->color_hex);
       $textColor = $contrastColorPitch($color);
 
-      $byRow = collect($teamLineup['start_xi'])->groupBy(fn ($p) => (int) explode(':', $p['grid'])[0]);
+      // API-Football's "row:col" grid field isn't always present in the
+      // stored data (found on 2 real published matches: it's just
+      // missing from that sync, not a null/empty string) - falls back to
+      // bucketing by the player's position letter so those matches show
+      // a real, sensibly-arranged pitch instead of a 500.
+      $rowFor = function ($p) {
+          if (! empty($p['grid'])) {
+              return (int) explode(':', $p['grid'])[0];
+          }
+
+          return match (strtoupper($p['position'] ?? '')) {
+              'G' => 1,
+              'D' => 2,
+              'M' => 3,
+              'F' => 4,
+              default => 3,
+          };
+      };
+
+      $byRow = collect($teamLineup['start_xi'])->groupBy($rowFor);
       $maxRow = $byRow->keys()->max() ?: 1;
 
       $positioned = [];
       foreach ($byRow as $row => $players) {
-          $sorted = $players->sortBy(fn ($p) => (int) explode(':', $p['grid'])[1])->values();
+          $sorted = $players->values()->sortBy(fn ($p, $i) => ! empty($p['grid']) ? (int) explode(':', $p['grid'])[1] : $i)->values();
           $count = $sorted->count();
           $depth = $maxRow > 1 ? ($row - 1) / ($maxRow - 1) : 0;
 

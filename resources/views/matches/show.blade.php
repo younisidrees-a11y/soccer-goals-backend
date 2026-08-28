@@ -478,32 +478,11 @@
         @if($match->lineups && count($match->lineups) === 2)
         <section aria-labelledby="lineups-heading" style="margin-top:0;">
           <div class="section-head"><h2 id="lineups-heading">{{ $match->homeTeam->name }} vs {{ $match->awayTeam->name }} Lineups</h2></div>
-          <div class="lineup-grid">
-            @foreach($match->lineups as $team)
-            @php
-              $teamColor = $safeColor($team['team_id'] === $match->homeTeam->api_football_id ? $match->homeTeam->color_hex : $match->awayTeam->color_hex);
-              $shirtText = $contrastColor($teamColor);
-            @endphp
-            <div class="widget">
-              <div class="lineup-team-head">
-                <strong>{{ $team['team'] }}</strong>
-                <span class="lineup-formation">{{ $team['formation'] }}</span>
-              </div>
-              <div class="jersey-grid">
-                @foreach($team['start_xi'] as $player)
-                <div class="jersey-card">
-                  @include('partials.jersey', ['color' => $teamColor, 'number' => $player['number'], 'textColor' => $shirtText])
-                  <span class="jersey-name">{{ $player['name'] }}</span>
-                  <span class="jersey-pos">{{ $player['position'] }}</span>
-                </div>
-                @endforeach
-              </div>
-              @if($team['coach'])
-              <div class="lineup-coach">Coach: {{ $team['coach'] }}</div>
-              @endif
-            </div>
-            @endforeach
-          </div>
+          {{-- Same pitch-graphic partial as the pre-match preview - it's
+               purely a starting-XI layout, nothing about it assumes the
+               match hasn't been played yet, so the post-match page was
+               showing a plain list instead of this for no real reason. --}}
+          @include('partials.pitch-lineups', ['lineups' => $match->lineups, 'homeTeam' => $match->homeTeam, 'awayTeam' => $match->awayTeam])
         </section>
         @endif
 
