@@ -16,14 +16,41 @@
     </div>
   </div>
 
-  @if($spotlight)
+  @if($spotMatch)
   @php
     $spotWinner = $spotMatch->home_score > $spotMatch->away_score ? 'home' : ($spotMatch->away_score > $spotMatch->home_score ? 'away' : null);
+    // Real article available: use its real headline/dek/byline, link to
+    // the article. No article yet: generate the headline straight from
+    // the match's own real score - never invented prose - and link to
+    // the match page instead of an article that doesn't exist.
+    if ($spotlight) {
+        $spotHref = route('news.show', $spotlight->slug);
+        $spotTag = 'Match Report';
+        $spotHeadline = $spotlight->title;
+        $spotDek = $spotlight->dek;
+        $spotByline = trim(($spotlight->author ?? '').' · '.$spotlight->published_at?->format('j M Y'), ' ·');
+        $spotCta = 'Read Match Report';
+    } else {
+        $spotHref = $spotMatch->prettyUrl();
+        $spotTag = 'Full-Time';
+        if ($spotWinner) {
+            $winnerTeam = $spotWinner === 'home' ? $spotMatch->homeTeam : $spotMatch->awayTeam;
+            $loserTeam = $spotWinner === 'home' ? $spotMatch->awayTeam : $spotMatch->homeTeam;
+            $winnerScore = $spotWinner === 'home' ? $spotMatch->home_score : $spotMatch->away_score;
+            $loserScore = $spotWinner === 'home' ? $spotMatch->away_score : $spotMatch->home_score;
+            $spotHeadline = "{$winnerTeam->name} Beat {$loserTeam->name} {$winnerScore}-{$loserScore}";
+        } else {
+            $spotHeadline = "{$spotMatch->homeTeam->name} and {$spotMatch->awayTeam->name} Draw {$spotMatch->home_score}-{$spotMatch->away_score}";
+        }
+        $spotDek = 'Full-time in the '.$spotMatch->league->name.($spotMatch->venue ? ' at '.$spotMatch->venue : '').'.';
+        $spotByline = $spotMatch->kickoff_at->format('j M Y');
+        $spotCta = 'View Match';
+    }
   @endphp
   <div class="wrap" style="margin-top:20px;">
-    <a href="{{ route('news.show', $spotlight->slug) }}" class="spotlight"@if($spotMatch->homeTeam->color_hex) style="--spot-a:{{ $spotMatch->homeTeam->color_hex }};"@endif>
+    <a href="{{ $spotHref }}" class="spotlight"@if($spotMatch->homeTeam->color_hex) style="--spot-a:{{ $spotMatch->homeTeam->color_hex }};"@endif>
       <div class="spotlight-body">
-        <span class="spotlight-tag"><span class="dot" aria-hidden="true"></span>Match Report &middot; {{ $spotMatch->league->name }}</span>
+        <span class="spotlight-tag"><span class="dot" aria-hidden="true"></span>{{ $spotTag }} &middot; {{ $spotMatch->league->name }}</span>
         <div class="spotlight-score">
           <div class="spot-team"><span class="crest crest-{{ $spotMatch->homeTeam->crest_code }}" role="img" aria-label="{{ $spotMatch->homeTeam->full_name }} badge"></span><span class="spot-team-name">{{ $spotMatch->homeTeam->name }}</span></div>
           <span class="spot-num{{ $spotWinner === 'home' ? ' is-winner' : '' }}">{{ $spotMatch->home_score }}</span>
@@ -31,11 +58,11 @@
           <span class="spot-num{{ $spotWinner === 'away' ? ' is-winner' : '' }}">{{ $spotMatch->away_score }}</span>
           <div class="spot-team"><span class="crest crest-{{ $spotMatch->awayTeam->crest_code }}" role="img" aria-label="{{ $spotMatch->awayTeam->full_name }} badge"></span><span class="spot-team-name">{{ $spotMatch->awayTeam->name }}</span></div>
         </div>
-        <h2>{{ $spotlight->title }}</h2>
-        <p class="spotlight-dek">{{ $spotlight->dek }}</p>
-        <p class="spotlight-byline">{{ $spotlight->author }} &middot; {{ $spotlight->published_at?->format('j M Y') }}</p>
+        <h2>{{ $spotHeadline }}</h2>
+        <p class="spotlight-dek">{{ $spotDek }}</p>
+        <p class="spotlight-byline">{{ $spotByline }}</p>
       </div>
-      <span class="spotlight-cta">Read Match Report<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <span class="spotlight-cta">{{ $spotCta }}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </a>
   </div>
   @endif

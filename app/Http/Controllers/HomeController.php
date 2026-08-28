@@ -129,6 +129,20 @@ class HomeController extends Controller
             $spotlight = null;
         }
 
+        // No article cleared both checks above - rather than an empty
+        // section, fall back to the single most recent real final score
+        // site-wide. Headline/dek are generated straight from that
+        // match's own real data (never invented prose), and the CTA
+        // points at the match page itself instead of a "Read Match
+        // Report" article that doesn't exist.
+        if (! $spotMatch) {
+            $spotMatch = MatchFixture::with(['homeTeam', 'awayTeam', 'league'])
+                ->published()
+                ->where('status', 'final')
+                ->orderByDesc('kickoff_at')
+                ->first();
+        }
+
         // Feeds both the Latest News section (1 featured + 2 medium + a
         // timeline of the rest) and the dashboard sidebar's Latest Stories
         // card, so it needs enough rows for both slices.
