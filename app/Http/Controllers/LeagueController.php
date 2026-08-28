@@ -73,6 +73,43 @@ class LeagueController extends Controller
             ->orderByDesc('assists')
             ->first();
 
+        // Sidebar Top Scorers list (replaces the old duplicate points-table
+        // widget there) - same query as $topScorer above, just the top 5
+        // instead of only the leader.
+        $topScorers = Player::with('team')
+            ->whereHas('team', fn ($q) => $q->where('league_id', $league->id)->where('is_published', true))
+            ->where('goals', '>', 0)
+            ->orderByDesc('goals')
+            ->orderByDesc('assists')
+            ->take(5)
+            ->get();
+
+        // Form guide (last 5 real results, oldest to newest) for the main
+        // points table - same approach as the homepage's standings
+        // snapshot, scoped to this one league's teams.
+        $formTeamIds = $standings->pluck('team_id');
+        $formMatches = MatchFixture::where('league_id', $league->id)
+            ->where('status', 'final')
+            ->orderByDesc('kickoff_at')
+            ->limit(300)
+            ->get(['home_team_id', 'away_team_id', 'home_score', 'away_score']);
+
+        $formByTeam = [];
+        foreach ($formTeamIds as $teamId) {
+            $formByTeam[$teamId] = $formMatches
+                ->filter(fn ($m) => $m->home_team_id === $teamId || $m->away_team_id === $teamId)
+                ->take(5)
+                ->reverse()
+                ->map(function ($m) use ($teamId) {
+                    $isHome = $m->home_team_id === $teamId;
+                    $for = $isHome ? $m->home_score : $m->away_score;
+                    $against = $isHome ? $m->away_score : $m->home_score;
+
+                    return $for > $against ? 'W' : ($for < $against ? 'L' : 'D');
+                })
+                ->values();
+        }
+
         $matchesPlayed = MatchFixture::published()->where('league_id', $league->id)->where('status', 'final')->count();
         $matchesTotal = MatchFixture::published()->where('league_id', $league->id)->count();
 
@@ -90,6 +127,8 @@ class LeagueController extends Controller
             'latestResults',
             'nextFixture',
             'topScorer',
+            'topScorers',
+            'formByTeam',
             'matchesPlayed',
             'matchesTotal',
             'achievements',

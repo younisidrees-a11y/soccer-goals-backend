@@ -85,6 +85,34 @@
         @endif
       </section>
 
+      <section aria-labelledby="table-heading" id="table" style="margin-top:32px;">
+        <div class="section-head"><h2 id="table-heading">{{ $league->name }} Points Table</h2></div>
+
+        @if($league->table_intro)
+        <p class="lede" style="margin-bottom:18px;">{{ $league->table_intro }}</p>
+        @endif
+
+        <div class="table-scroll">
+          <table class="standings standings-full">
+            <thead><tr><th></th><th class="th-team">Team</th><th>MP</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th><th class="th-form">Form</th></tr></thead>
+            <tbody>
+              @foreach ($standings as $s)
+              @php $sForm = $formByTeam[$s->team_id] ?? collect(); @endphp
+              <tr class="{{ $s->zone === 'ucl' ? 'zone-ucl' : ($s->zone === 'rel' ? 'zone-rel' : '') }}"><td class="pos">{{ $s->position }}</td><td class="team-td"><a href="{{ route('teams.show', $s->team->slug) }}" class="team-td-inner"><span class="crest crest-{{ $s->team->crest_code }}" role="img" aria-label="{{ $s->team->full_name }} badge" style="width:20px;height:22px;"></span>{{ $s->team->name }}</a></td><td>{{ $s->played }}</td><td>{{ $s->won }}</td><td>{{ $s->drawn }}</td><td>{{ $s->lost }}</td><td>{{ $s->goals_for }}</td><td>{{ $s->goals_against }}</td><td>{{ $s->goal_difference > 0 ? '+' : '' }}{{ $s->goal_difference }}</td><td class="pts">{{ $s->points }}</td><td class="form-cell">@forelse($sForm as $fr)<span class="form-pip form-{{ strtolower($fr) }}">{{ $fr }}</span>@empty<span class="form-pip-empty">&mdash;</span>@endforelse</td></tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+        <div class="table-legend" style="margin-top:12px;">
+          <span class="legend-item"><span class="legend-dot ucl"></span>Champions League</span>
+          <span class="legend-item"><span class="legend-dot rel"></span>Relegation</span>
+        </div>
+
+        @if($league->table_closing)
+        <p style="margin-top:18px;color:var(--ink-muted);font-size:14.5px;line-height:1.65;">{{ $league->table_closing }}</p>
+        @endif
+      </section>
+
       <div class="ad-slot ad-native">
         <span class="ad-eyebrow">Advertisement</span>
         <span class="ad-size">Native in-content unit</span>
@@ -213,33 +241,6 @@
         @endif
       </section>
 
-      <section aria-labelledby="table-heading" id="table" style="margin-top:32px;">
-        <div class="section-head"><h2 id="table-heading">{{ $league->name }} Points Table</h2></div>
-
-        @if($league->table_intro)
-        <p class="lede" style="margin-bottom:18px;">{{ $league->table_intro }}</p>
-        @endif
-
-        <div class="table-scroll">
-          <table class="standings standings-full">
-            <thead><tr><th></th><th class="th-team">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead>
-            <tbody>
-              @foreach ($standings as $s)
-              <tr class="{{ $s->zone === 'ucl' ? 'zone-ucl' : ($s->zone === 'rel' ? 'zone-rel' : '') }}"><td class="pos">{{ $s->position }}</td><td class="team-td"><a href="{{ route('teams.show', $s->team->slug) }}" class="team-td-inner"><span class="crest crest-{{ $s->team->crest_code }}" role="img" aria-label="{{ $s->team->full_name }} badge" style="width:20px;height:22px;"></span>{{ $s->team->name }}</a></td><td>{{ $s->played }}</td><td>{{ $s->won }}</td><td>{{ $s->drawn }}</td><td>{{ $s->lost }}</td><td>{{ $s->goals_for }}</td><td>{{ $s->goals_against }}</td><td>{{ $s->goal_difference > 0 ? '+' : '' }}{{ $s->goal_difference }}</td><td class="pts">{{ $s->points }}</td></tr>
-              @endforeach
-            </tbody>
-          </table>
-        </div>
-        <div class="table-legend" style="margin-top:12px;">
-          <span class="legend-item"><span class="legend-dot ucl"></span>Champions League</span>
-          <span class="legend-item"><span class="legend-dot rel"></span>Relegation</span>
-        </div>
-
-        @if($league->table_closing)
-        <p style="margin-top:18px;color:var(--ink-muted);font-size:14.5px;line-height:1.65;">{{ $league->table_closing }}</p>
-        @endif
-      </section>
-
       <section aria-labelledby="news-heading" style="margin-top:32px;">
         <div class="section-head">
           <h2 id="news-heading">{{ $league->name }} News</h2>
@@ -270,24 +271,25 @@
     </div>
 
     <aside class="sidebar" aria-label="Sidebar">
-      <div class="widget table-widget" id="tables">
+      {{-- Real top scorers, not a second copy of the points table already
+           shown in the main content column above. --}}
+      <div class="widget" id="scorers">
         <div class="widget-head">
-          <h2>{{ $league->name }} Table</h2>
+          <h2>{{ $league->name }} Top Scorers</h2>
         </div>
 
-        <table class="standings">
-          <thead><tr><th></th><th class="th-team">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>Pts</th></tr></thead>
-          <tbody>
-            @foreach ($standings as $s)
-            <tr class="{{ $s->zone === 'ucl' ? 'zone-ucl' : ($s->zone === 'rel' ? 'zone-rel' : '') }}"><td class="pos">{{ $s->position }}</td><td class="team-td"><a href="{{ route('teams.show', $s->team->slug) }}" class="team-td-inner"><span class="crest crest-{{ $s->team->crest_code }}" role="img" aria-label="{{ $s->team->full_name }} badge" style="width:20px;height:22px;"></span>{{ $s->team->name }}</a></td><td>{{ $s->played }}</td><td>{{ $s->won }}</td><td>{{ $s->drawn }}</td><td>{{ $s->lost }}</td><td class="pts">{{ $s->points }}</td></tr>
-            @endforeach
-          </tbody>
-        </table>
-
-        <div class="table-legend">
-          <span class="legend-item"><span class="legend-dot ucl"></span>Champions League</span>
-          <span class="legend-item"><span class="legend-dot rel"></span>Relegation</span>
+        @forelse ($topScorers as $i => $ts)
+        <div class="top-scorer-row"@if($i > 0) style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);"@endif>
+          <span class="scorer-rank">{{ $i + 1 }}</span>
+          <span class="crest crest-{{ $ts->team->crest_code }}" role="img" aria-label="{{ $ts->team->full_name }} badge"></span>
+          <div>
+            <a href="{{ $ts->prettyUrl() }}" class="top-scorer-name">{{ $ts->name }}</a>
+            <div class="top-scorer-meta">{{ $ts->team->name }} &middot; {{ $ts->goals }} {{ Str::plural('goal', $ts->goals) }}</div>
+          </div>
         </div>
+        @empty
+        <p style="font-size:13px;color:var(--ink-faint);">No scoring data yet this season.</p>
+        @endforelse
       </div>
 
       <div class="ad-slot ad-mpu">
