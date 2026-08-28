@@ -295,7 +295,7 @@
       </div>
 
       <div class="widget newsletter-widget">
-        <h2>The Matchday Briefing</h2>
+        <h2>The Daily Briefing</h2>
         <p>Every score, every storyline, every morning &mdash; straight to your inbox.</p>
         <form class="nl-form" onsubmit="return false;">
           <input type="email" placeholder="you@email.com" required aria-label="Email address">

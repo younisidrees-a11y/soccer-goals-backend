@@ -73,7 +73,7 @@
       <section aria-labelledby="history-heading-1" class="essay-block" id="about">
         <div class="essay-part-tag">League History</div>
         <h2 id="history-heading-1">About the {{ $league->name }}</h2>
-        <p class="lede">The {{ $league->name }} is {{ $league->country }}'s top professional football division, contested by {{ $league->teams_count }} clubs across {{ $league->total_matchdays }} matchdays every season.</p>
+        <p class="lede">The {{ $league->name }} is {{ $league->country }}'s top professional football division, contested by {{ $league->teams_count }} clubs across {{ $league->total_matchdays }} rounds every season.</p>
         @if($matchesTotal > 0)
         <p style="font-size:13.5px;color:var(--ink-faint);">{{ $matchesPlayed }} of {{ $matchesTotal }} matches played this season &middot; {{ $matchesPlayed > 0 ? round($matchesPlayed / $matchesTotal * 100) : 0 }}% complete.</p>
         @endif
@@ -296,7 +296,7 @@
       </div>
 
       <div class="widget newsletter-widget">
-        <h2>The Matchday Briefing</h2>
+        <h2>The Daily Briefing</h2>
         <p>Every score, every storyline, every morning &mdash; straight to your inbox.</p>
         <form class="nl-form" onsubmit="return false;">
           <input type="email" placeholder="you@email.com" required aria-label="Email address">

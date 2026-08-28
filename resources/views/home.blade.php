@@ -55,7 +55,7 @@
                 <svg class="flag" role="img" aria-label="{{ $grpLeague->country }} flag"><use href="#flag-{{ $grpLeague->flag_code }}"></use></svg>
                 <a href="{{ route('leagues.show', $grpLeague->slug) }}" class="today-comp-name">{{ $grpLeague->name }}</a>
               </div>
-              @if($grpMatchday)<span class="today-comp-round">Matchday {{ $grpMatchday }}</span>@endif
+              @if($grpMatchday)<span class="today-comp-round">Round {{ $grpMatchday }}</span>@endif
             </div>
             <div class="match-list">
               @foreach ($leagueMatches as $m)
@@ -279,7 +279,7 @@
 
       <div class="two-col" style="align-items:start;">
         <div class="widget newsletter-widget">
-          <h2>The Matchday Briefing</h2>
+          <h2>The Daily Briefing</h2>
           <p>Every score, every storyline, every morning &mdash; straight to your inbox.</p>
           <form class="nl-form" onsubmit="return false;">
             <input type="email" placeholder="you@email.com" required aria-label="Email address">

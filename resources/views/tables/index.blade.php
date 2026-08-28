@@ -13,7 +13,7 @@
       'eyebrow' => "All {$leagueCount} Leagues · " . ($leagues->first()->season ?? '2026-27') . ' Season',
       'pageTitle' => 'Points Tables',
       'heroMeta' => 'Select a competition to see its full standings.',
-      'introText' => 'Choose a league below to see the complete points table, updated after every matchday.',
+      'introText' => 'Choose a league below to see the complete points table, updated after every round.',
       'destinationRoute' => 'leagues.show',
       'ctaLabel' => 'View Table',
   ])
