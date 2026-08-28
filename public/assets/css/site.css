@@ -432,24 +432,28 @@
   .drawer-cta{display:flex;gap:10px;margin-top:6px;}
 
   /* ---------- Live ticker ---------- */
-  .live-ticker{background:var(--topbar-bg);color:#fff;}
+  /* Deliberately theme-stable WHITE, not var(--surface) - the strip stays
+     a bright band under the dark utility-bar/header in both themes,
+     the same way topbar-bg stays a dark band in both themes elsewhere.
+     Every color below is a literal, not a token, to match. */
+  .live-ticker{background:#fff;color:#12151B;border-bottom:1px solid #E1E4EA;}
   .live-ticker .wrap{display:flex;align-items:center;gap:16px;padding-block:11px;}
   .ticker-label{
     font-family:var(--font-display);font-size:12px;font-weight:600;letter-spacing:.08em;
-    color:#fff;display:flex;align-items:center;gap:7px;flex-shrink:0;
+    color:#12151B;display:flex;align-items:center;gap:7px;flex-shrink:0;
   }
   .dot-live{width:7px;height:7px;border-radius:50%;background:var(--live);animation:pulse 1.6s ease-in-out infinite;}
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
   /* No live match right now: same slot, quieter treatment - muted color,
      no red dot, no pulse - so the label stops asserting something that
      isn't true instead of just relabeling itself while still shouting. */
-  .ticker-label-idle{color:var(--topbar-ink);}
+  .ticker-label-idle{color:#6B7280;}
   .ticker-nav{
     flex-shrink:0;width:24px;height:24px;border-radius:50%;
     display:inline-flex;align-items:center;justify-content:center;
-    background:rgba(255,255,255,.08);color:#fff;transition:background .15s ease;
+    background:#EFF1F5;color:#12151B;transition:background .15s ease;
   }
-  .ticker-nav:hover{background:rgba(255,255,255,.18);}
+  .ticker-nav:hover{background:#E1E4EA;}
   .ticker-nav svg{width:13px;height:13px;}
   /* Hide on narrow screens: touch scrolling already works there, and at
      this width the buttons would eat too much of the strip. */
@@ -471,19 +475,19 @@
      scores stay tabular-aligned per team instead of squeezed centre. */
   .ticker-chip{
     flex-shrink:0;display:flex;flex-direction:column;gap:5px;min-width:150px;
-    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+    background:#F5F6F9;border:1px solid #E1E4EA;
     border-radius:var(--radius-md);padding:8px 12px;font-size:12px;
     transition:background .15s ease;
   }
-  .ticker-chip:hover{background:rgba(255,255,255,.12);}
+  .ticker-chip:hover{background:#EFF1F5;}
   .ticker-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
-  .ticker-comp{font-family:var(--font-display);font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#828AA0;}
-  .ticker-status{font-family:var(--font-mono);font-weight:700;font-size:10.5px;letter-spacing:.02em;color:#9FB6C9;flex-shrink:0;}
+  .ticker-comp{font-family:var(--font-display);font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6B7280;}
+  .ticker-status{font-family:var(--font-mono);font-weight:700;font-size:10.5px;letter-spacing:.02em;color:#5B6472;flex-shrink:0;}
   .ticker-status.is-live{color:var(--live);display:inline-flex;align-items:center;gap:4px;}
   .ticker-status.is-live .dot{width:4px;height:4px;border-radius:50%;background:var(--live);animation:pulse 1.5s ease-in-out infinite;}
-  .ticker-team-name{display:flex;align-items:center;gap:6px;font-weight:600;color:#fff;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ticker-team-name{display:flex;align-items:center;gap:6px;font-weight:600;color:#12151B;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .ticker-team-name .crest{flex-shrink:0;}
-  .ticker-score{font-family:var(--font-mono);font-weight:700;color:#fff;flex-shrink:0;}
+  .ticker-score{font-family:var(--font-mono);font-weight:700;color:#12151B;flex-shrink:0;}
 
   /* ---------- Ad slots ---------- */
   .ad-slot{
