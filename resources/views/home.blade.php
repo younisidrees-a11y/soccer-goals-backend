@@ -236,34 +236,45 @@
       </div>
 
       <section aria-labelledby="standings-heading" id="tables">
-        <div class="section-head"><h2 id="standings-heading">Standings Snapshot</h2></div>
-        <div class="widget table-widget">
-          <div class="table-tabs" role="tablist" aria-label="Select league table" style="flex-wrap:wrap;margin-bottom:14px;">
-            @foreach ($leagueTables as $i => $t)
-            <button class="ttab{{ $i === $defaultLeagueIndex ? ' is-active' : '' }}" data-table="home-lt-{{ $t['league']->slug }}" aria-selected="{{ $i === $defaultLeagueIndex ? 'true' : 'false' }}"><svg class="flag" role="img" aria-label="{{ $t['league']->country }} flag"><use href="#flag-{{ $t['league']->flag_code }}"></use></svg>{{ $t['league']->name }}</button>
-            @endforeach
-          </div>
-
-          @foreach ($leagueTables as $i => $t)
-          <div class="standings-panel{{ $i === $defaultLeagueIndex ? ' is-active' : '' }}" data-panel="home-lt-{{ $t['league']->slug }}">
-            @unless ($t['hasStarted'])
-            <p style="font-size:12.5px;color:var(--ink-muted);margin:0 0 10px;">Season hasn&rsquo;t kicked off yet &mdash; table will fill in once matches are played.</p>
+        <div class="section-head">
+          <h2 id="standings-heading">Standings Snapshot</h2>
+          <a href="{{ route('tables.index') }}" class="section-link">All {{ $leagueTables->count() }} leagues
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+        {{-- Three real leagues side by side, not a single tab-switched
+             table - every other league's table is still one click away
+             via the link above and the Rankings nav item. --}}
+        <div class="standings-snapshot-grid">
+          @foreach (['premier-league', 'la-liga', 'bundesliga'] as $snapSlug)
+          @php $snapT = $leagueTables->first(fn ($x) => $x['league']->slug === $snapSlug); @endphp
+          @if($snapT)
+          <div class="standings-snapshot-col">
+            <div class="standings-snapshot-head">
+              <svg class="flag" role="img" aria-label="{{ $snapT['league']->country }} flag"><use href="#flag-{{ $snapT['league']->flag_code }}"></use></svg>
+              <a href="{{ route('leagues.show', $snapT['league']->slug) }}">{{ $snapT['league']->name }}</a>
+            </div>
+            @unless ($snapT['hasStarted'])
+            <p class="standings-snapshot-note">Season hasn&rsquo;t kicked off yet.</p>
             @endunless
-            <table class="standings">
-              <thead><tr><th></th><th class="th-team">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>Pts</th></tr></thead>
-              <tbody>
-                @foreach ($t['standings'] as $s)
-                <tr class="{{ $s->zone === 'ucl' ? 'zone-ucl' : ($s->zone === 'rel' ? 'zone-rel' : '') }}"><td class="pos">{{ $s->position }}</td><td class="team-td"><a href="{{ route('teams.show', $s->team->slug) }}" class="team-td-inner"><span class="crest crest-{{ $s->team->crest_code }}" role="img" aria-label="{{ $s->team->full_name }} badge" style="width:20px;height:22px;"></span>{{ $s->team->name }}</a></td><td>{{ $s->played }}</td><td>{{ $s->won }}</td><td>{{ $s->drawn }}</td><td>{{ $s->lost }}</td><td class="pts">{{ $s->points }}</td></tr>
-                @endforeach
-              </tbody>
-            </table>
+            <div class="table-scroll">
+              <table class="standings">
+                <thead><tr><th></th><th class="th-team">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>Pts</th></tr></thead>
+                <tbody>
+                  @foreach ($snapT['standings'] as $s)
+                  <tr class="{{ $s->zone === 'ucl' ? 'zone-ucl' : ($s->zone === 'rel' ? 'zone-rel' : '') }}"><td class="pos">{{ $s->position }}</td><td class="team-td"><a href="{{ route('teams.show', $s->team->slug) }}" class="team-td-inner"><span class="crest crest-{{ $s->team->crest_code }}" role="img" aria-label="{{ $s->team->full_name }} badge" style="width:18px;height:20px;"></span>{{ $s->team->name }}</a></td><td>{{ $s->played }}</td><td>{{ $s->won }}</td><td>{{ $s->drawn }}</td><td>{{ $s->lost }}</td><td class="pts">{{ $s->points }}</td></tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
           </div>
+          @endif
           @endforeach
+        </div>
 
-          <div class="table-legend">
-            <span class="legend-item"><span class="legend-dot ucl"></span>Champions League</span>
-            <span class="legend-item"><span class="legend-dot rel"></span>Relegation</span>
-          </div>
+        <div class="table-legend">
+          <span class="legend-item"><span class="legend-dot ucl"></span>Champions League</span>
+          <span class="legend-item"><span class="legend-dot rel"></span>Relegation</span>
         </div>
       </section>
 

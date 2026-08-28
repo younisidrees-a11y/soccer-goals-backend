@@ -84,18 +84,6 @@
     });
   });
 
-  // Standings table tabs
-  var ttabs = document.querySelectorAll('.ttab');
-  ttabs.forEach(function(tab){
-    tab.addEventListener('click', function(){
-      var target = tab.getAttribute('data-table');
-      ttabs.forEach(function(t){ t.setAttribute('aria-selected', String(t === tab)); });
-      document.querySelectorAll('.standings-panel').forEach(function(panel){
-        panel.classList.toggle('is-active', panel.getAttribute('data-panel') === target);
-      });
-    });
-  });
-
 
   // Cookie bar
   var cookieBar = document.getElementById('cookieBar');
