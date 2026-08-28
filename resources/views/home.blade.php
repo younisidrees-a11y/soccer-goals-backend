@@ -309,8 +309,16 @@
           <div class="news-timeline">
             @foreach ($newsTimeline as $nt)
             @php
-              $ntHours = (int) ($nt->published_at?->diffInHours(now()) ?? 0);
-              $ntRel = $ntHours < 1 ? (int) $nt->published_at->diffInMinutes(now()).'m' : ($ntHours < 24 ? $ntHours.'h' : (int) $nt->published_at->diffInDays(now()).'d');
+              // published_at has been NULL on real published rows before
+              // (caught earlier this session on two other articles) - a
+              // single null check here instead of chaining ?-> through
+              // every branch, so that data problem can't crash the page.
+              if ($nt->published_at) {
+                  $ntMinutes = (int) $nt->published_at->diffInMinutes(now());
+                  $ntRel = $ntMinutes < 60 ? $ntMinutes.'m' : ($ntMinutes < 1440 ? intdiv($ntMinutes, 60).'h' : intdiv($ntMinutes, 1440).'d');
+              } else {
+                  $ntRel = '--';
+              }
             @endphp
             <a href="{{ route('news.show', $nt->slug) }}" class="tl-item">
               <span class="tl-time">{{ $ntRel }}</span>
