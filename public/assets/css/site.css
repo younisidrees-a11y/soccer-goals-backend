@@ -814,8 +814,12 @@
   .two-col{display:grid;gap:28px;grid-template-columns:1fr;}
   @media (min-width:768px){.two-col{grid-template-columns:1fr 1fr;}}
   .list-panel h3{font-family:var(--font-display);font-size:16px;font-weight:600;margin-bottom:14px;}
+  /* Real per-match colour ribbon, not decoration - --team is the home
+     side's actual color_hex, set inline per row; falls back to
+     transparent wherever a row doesn't set it. */
   .fixture-row,.result-row{
-    display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;
+    display:flex;align-items:center;gap:12px;padding:12px 0 12px 10px;border-bottom:1px solid var(--border);font-size:13.5px;
+    border-left:3px solid var(--team,transparent);
   }
   .fixture-row:last-child,.result-row:last-child{border-bottom:0;}
   .fx-date{width:52px;flex-shrink:0;color:var(--ink-faint);font-size:11.5px;line-height:1.3;font-weight:600;}

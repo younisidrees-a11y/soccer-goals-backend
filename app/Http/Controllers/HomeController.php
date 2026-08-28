@@ -30,6 +30,17 @@ class HomeController extends Controller
         'bundesliga' => '#D20515',
         'ligue-1' => '#C8E600',
         'saudi-pro-league' => '#0B7A3B',
+        'mls' => '#041E42',
+        // Reuse the same national colours already in the flag sprite
+        // (layouts/site.blade.php) rather than inventing new ones for
+        // these three - one real source of truth for "this country's
+        // colour" instead of two.
+        'primeira-liga' => '#046A38',
+        'scottish-premiership' => '#0065BD',
+        'super-lig' => '#E30A17',
+        'championship' => '#E5007D',
+        'eredivisie' => '#E52421',
+        'liga-mx' => '#00B2A9',
     ];
 
     public function index(Request $request)
