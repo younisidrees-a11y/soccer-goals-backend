@@ -259,10 +259,11 @@
             @endunless
             <div class="table-scroll">
               <table class="standings">
-                <thead><tr><th></th><th class="th-team">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>Pts</th></tr></thead>
+                <thead><tr><th></th><th class="th-team">Team</th><th>MP</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th><th class="th-form">Form</th></tr></thead>
                 <tbody>
                   @foreach ($snapT['standings'] as $s)
-                  <tr class="{{ $s->zone === 'ucl' ? 'zone-ucl' : ($s->zone === 'rel' ? 'zone-rel' : '') }}"><td class="pos">{{ $s->position }}</td><td class="team-td"><a href="{{ route('teams.show', $s->team->slug) }}" class="team-td-inner"><span class="crest crest-{{ $s->team->crest_code }}" role="img" aria-label="{{ $s->team->full_name }} badge" style="width:18px;height:20px;"></span>{{ $s->team->name }}</a></td><td>{{ $s->played }}</td><td>{{ $s->won }}</td><td>{{ $s->drawn }}</td><td>{{ $s->lost }}</td><td class="pts">{{ $s->points }}</td></tr>
+                  @php $sForm = $formByTeam[$s->team_id] ?? collect(); @endphp
+                  <tr class="{{ $s->zone === 'ucl' ? 'zone-ucl' : ($s->zone === 'rel' ? 'zone-rel' : '') }}"><td class="pos">{{ $s->position }}</td><td class="team-td"><a href="{{ route('teams.show', $s->team->slug) }}" class="team-td-inner"><span class="crest crest-{{ $s->team->crest_code }}" role="img" aria-label="{{ $s->team->full_name }} badge" style="width:18px;height:20px;"></span>{{ $s->team->name }}</a></td><td>{{ $s->played }}</td><td>{{ $s->won }}</td><td>{{ $s->drawn }}</td><td>{{ $s->lost }}</td><td>{{ $s->goals_for }}</td><td>{{ $s->goals_against }}</td><td>{{ $s->goal_difference > 0 ? '+'.$s->goal_difference : $s->goal_difference }}</td><td class="pts">{{ $s->points }}</td><td class="form-cell">@forelse($sForm as $fr)<span class="form-pip form-{{ strtolower($fr) }}">{{ $fr }}</span>@empty<span class="form-pip-empty">&mdash;</span>@endforelse</td></tr>
                   @endforeach
                 </tbody>
               </table>

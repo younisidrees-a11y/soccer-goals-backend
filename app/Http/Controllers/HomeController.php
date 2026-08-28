@@ -7,6 +7,7 @@ use App\Models\MatchFixture;
 use App\Models\NewsArticle;
 use App\Models\Player;
 use App\Models\Standing;
+use App\Models\Team;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -15,6 +16,9 @@ class HomeController extends Controller
 {
     /** How far either side of real "today" the date strip allows browsing to. */
     private const DATE_RANGE_DAYS = 10;
+
+    /** Leagues shown side by side in the homepage's Leagues Teams Standings section. */
+    private const SNAPSHOT_LEAGUE_SLUGS = ['premier-league', 'la-liga'];
 
     /**
      * Official competition brand colours for the leagues this site
@@ -200,6 +204,34 @@ class HomeController extends Controller
             ->values()
             ->map(fn ($t) => $t + ['hasStarted' => $t['standings']->sum('played') > 0]);
 
+        // Form guide (last 5 real results, oldest to newest) for the two
+        // leagues shown in the homepage standings snapshot - computed from
+        // actual finished matches, not simulated. One shared query for
+        // every team in both leagues rather than one query per team.
+        $snapshotTeamIds = Team::whereHas('league', fn ($q) => $q->whereIn('slug', self::SNAPSHOT_LEAGUE_SLUGS))
+            ->pluck('id');
+        $snapshotFormMatches = MatchFixture::where('status', 'final')
+            ->where(fn ($q) => $q->whereIn('home_team_id', $snapshotTeamIds)->orWhereIn('away_team_id', $snapshotTeamIds))
+            ->orderByDesc('kickoff_at')
+            ->limit(400)
+            ->get(['home_team_id', 'away_team_id', 'home_score', 'away_score', 'kickoff_at']);
+
+        $formByTeam = [];
+        foreach ($snapshotTeamIds as $teamId) {
+            $formByTeam[$teamId] = $snapshotFormMatches
+                ->filter(fn ($m) => $m->home_team_id === $teamId || $m->away_team_id === $teamId)
+                ->take(5)
+                ->reverse()
+                ->map(function ($m) use ($teamId) {
+                    $isHome = $m->home_team_id === $teamId;
+                    $for = $isHome ? $m->home_score : $m->away_score;
+                    $against = $isHome ? $m->away_score : $m->home_score;
+
+                    return $for > $against ? 'W' : ($for < $against ? 'L' : 'D');
+                })
+                ->values();
+        }
+
         // Alphabetical order can easily land on a league whose season hasn't
         // kicked off yet (every row still 0-0-0-0-0), which is a useless
         // default view. Default to the first league that actually has
@@ -284,6 +316,7 @@ class HomeController extends Controller
             'spotlight',
             'spotMatch',
             'topScorersByLeague',
+            'formByTeam',
         ));
     }
 }

@@ -1008,6 +1008,16 @@
   .standings td.team-td{text-align:left;font-weight:700;}
   .team-td-inner{display:flex;align-items:center;gap:9px;}
   .standings td.pts{font-weight:800;color:var(--ink);}
+  .standings th.th-form{text-align:left;}
+  .form-cell{text-align:left;white-space:nowrap;}
+  .form-pip{
+    display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin-right:2px;
+    border-radius:4px;font-size:10px;font-weight:700;color:#fff;
+  }
+  .form-w{background:var(--accent-2);}
+  .form-d{background:var(--ink-faint);}
+  .form-l{background:var(--live);}
+  .form-pip-empty{color:var(--ink-faint);}
   .table-legend{display:flex;gap:16px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);flex-wrap:wrap;}
   .legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink-muted);}
   .legend-dot{width:8px;height:8px;border-radius:2px;}
