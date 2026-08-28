@@ -5,10 +5,28 @@ namespace App\Http\Controllers;
 use App\Models\League;
 use App\Models\MatchFixture;
 use App\Models\NewsArticle;
+use App\Models\Player;
 use App\Models\Standing;
+use Illuminate\Support\Str;
 
 class HomeController extends Controller
 {
+    /**
+     * Official competition brand colours for the leagues this site
+     * actually covers - used as the accent bar on dashboard match groups
+     * and league tiles, same idea as a team's own color_hex. Not
+     * decorative guesswork: these are each league's real primary brand
+     * colour, limited to leagues we publish.
+     */
+    private const LEAGUE_COLORS = [
+        'premier-league' => '#3D195B',
+        'la-liga' => '#FF4B44',
+        'serie-a' => '#00A650',
+        'bundesliga' => '#D20515',
+        'ligue-1' => '#C8E600',
+        'saudi-pro-league' => '#0B7A3B',
+    ];
+
     public function index()
     {
         // No take() limit here - the homepage groups these by competition
@@ -23,23 +41,26 @@ class HomeController extends Controller
 
         $todaysMatchesByLeague = $todaysMatches->groupBy('league_id');
 
+        // Feeds both the Latest News section (1 featured + 2 medium + a
+        // timeline of the rest) and the dashboard sidebar's Latest Stories
+        // card, so it needs enough rows for both slices.
         $latestNews = NewsArticle::with(['league', 'team'])
             ->published()
             ->orderByDesc('published_at')
-            ->take(6)
+            ->take(10)
             ->get();
 
-        $heroArticles = NewsArticle::published()->pinned()->orderByDesc('published_at')->take(4)->get();
-
-        if ($heroArticles->count() < 4) {
-            $heroArticles = $heroArticles->concat(
-                NewsArticle::published()
-                    ->whereNotIn('id', $heroArticles->pluck('id'))
-                    ->orderByDesc('published_at')
-                    ->take(4 - $heroArticles->count())
-                    ->get()
-            );
-        }
+        // Real category, not a fabricated deal table - the mockup's
+        // "Transfer Center" invented sample players/clubs it flagged as a
+        // placeholder with no backing data model; this queries the same
+        // published-news pipeline as everything else and shows a genuine
+        // empty state if nothing's been published under this category yet.
+        $transferNews = NewsArticle::with(['league', 'team'])
+            ->published()
+            ->where('category', 'transfers')
+            ->orderByDesc('published_at')
+            ->take(5)
+            ->get();
 
         $upcomingFixtures = MatchFixture::with(['homeTeam', 'awayTeam', 'league'])
             ->published()
@@ -73,15 +94,58 @@ class HomeController extends Controller
         $defaultLeagueIndex = $leagueTables->search(fn ($t) => $t['hasStarted']);
         $defaultLeagueIndex = $defaultLeagueIndex === false ? 0 : $defaultLeagueIndex;
 
+        // Top Scorer widget: real goals tally from Player, not a
+        // fabricated stat - scoped to whichever league the standings
+        // panel defaults to, so the two sidebar/table modules agree on
+        // which competition they're describing.
+        $topScorerLeague = $leagueTables[$defaultLeagueIndex]['league'] ?? null;
+        $topScorer = $topScorerLeague
+            ? Player::with('team')
+                ->whereHas('team', fn ($q) => $q->where('league_id', $topScorerLeague->id)->published())
+                ->whereNotNull('goals')
+                ->where('goals', '>', 0)
+                ->orderByDesc('goals')
+                ->first()
+            : null;
+
+        // Popular Competitions strip: every published league with a real,
+        // computed status line rather than static filler text - how many
+        // of today's real matches belong to it, or an honest "season
+        // hasn't started" / "no matches today" line when there are none.
+        $popularLeagues = League::published()
+            ->orderBy('name')
+            ->get()
+            ->map(function (League $l) use ($todaysMatchesByLeague) {
+                $todayCount = $todaysMatchesByLeague->get($l->id, collect())->count();
+                $liveCount = $todaysMatchesByLeague->get($l->id, collect())->filter(fn ($m) => $m->isLive())->count();
+
+                return [
+                    'league' => $l,
+                    'color' => self::LEAGUE_COLORS[$l->slug] ?? null,
+                    'todayCount' => $todayCount,
+                    'liveCount' => $liveCount,
+                    'statusLabel' => match (true) {
+                        $liveCount > 0 => $liveCount.' live now',
+                        $todayCount > 0 => $todayCount.' '.Str::plural('fixture', $todayCount).' today',
+                        default => 'No matches today',
+                    },
+                ];
+            });
+
+        $leagueColors = self::LEAGUE_COLORS;
+
         return view('home', compact(
             'todaysMatches',
             'todaysMatchesByLeague',
             'latestNews',
-            'heroArticles',
+            'transferNews',
             'upcomingFixtures',
             'recentResults',
             'leagueTables',
             'defaultLeagueIndex',
+            'topScorer',
+            'popularLeagues',
+            'leagueColors',
         ));
     }
 }

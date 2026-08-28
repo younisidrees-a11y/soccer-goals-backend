@@ -171,7 +171,7 @@
   if (!tabsWrap) return;
   var groupsWrap = document.querySelector('[data-status-groups]');
   var tabs = Array.prototype.slice.call(tabsWrap.querySelectorAll('[data-status-filter]'));
-  var cards = Array.prototype.slice.call(groupsWrap.querySelectorAll('.match-card[data-status]'));
+  var cards = Array.prototype.slice.call(groupsWrap.querySelectorAll('.match-card[data-status], .match-row[data-status]'));
   var groups = Array.prototype.slice.call(groupsWrap.querySelectorAll('.today-comp-group'));
 
   tabsWrap.addEventListener('click', function(e){
@@ -190,7 +190,7 @@
     });
 
     groups.forEach(function(group){
-      var anyVisible = Array.prototype.slice.call(group.querySelectorAll('.match-card[data-status]'))
+      var anyVisible = Array.prototype.slice.call(group.querySelectorAll('.match-card[data-status], .match-row[data-status]'))
         .some(function(card){ return !card.classList.contains('is-hidden'); });
       group.classList.toggle('is-empty', !anyVisible);
     });

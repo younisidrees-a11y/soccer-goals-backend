@@ -9,53 +9,6 @@
 
 @section('content')
 
-  <section class="hero wrap" aria-labelledby="hero-heading">
-    @if($heroArticles->isNotEmpty())
-    @php $lead = $heroArticles->first(); @endphp
-    <article class="hero-lead">
-      <a href="{{ route('news.show', $lead->slug) }}" class="media media-hero" aria-hidden="true">
-        @if($lead->image_url)
-          <img src="{{ $lead->image_url }}" alt="{{ $lead->title }}" loading="lazy">
-        @else
-          <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
-            <line x1="400" y1="0" x2="400" y2="450" stroke="#fff" stroke-opacity=".18" stroke-width="2"/>
-            <circle cx="400" cy="225" r="62" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="2"/>
-            <circle cx="400" cy="225" r="3" fill="#fff" fill-opacity=".3"/>
-            <path d="M0 90 h110 v150 h-110 z" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width="2"/>
-            <path d="M800 90 h-110 v150 h110 z" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width="2"/>
-            <circle cx="140" cy="120" r="46" fill="#fff" fill-opacity=".07"/>
-            <circle cx="700" cy="340" r="70" fill="#fff" fill-opacity=".06"/>
-          </svg>
-        @endif
-        <span class="media-tag">{{ $lead->category_label }}</span>
-      </a>
-      <div class="eyebrow">{{ $lead->league->name ?? $lead->category_label }} &middot; {{ $lead->category_label }}</div>
-      <a href="{{ route('news.show', $lead->slug) }}"><h1 id="hero-heading">{{ $lead->title }}</h1></a>
-      <p class="dek">{{ $lead->dek }}</p>
-      <div class="byline">By {{ $lead->author }} <span class="dot"></span> {{ $lead->published_at?->format('j M Y') }}</div>
-    </article>
-
-    <div class="hero-side">
-      @foreach($heroArticles->slice(1, 3) as $side)
-      <article class="hero-side-card">
-        <a href="{{ route('news.show', $side->slug) }}" class="media" aria-hidden="true">
-          @if($side->image_url)
-            <img src="{{ $side->image_url }}" alt="{{ $side->title }}" loading="lazy">
-          @else
-            <svg viewBox="0 0 200 140" preserveAspectRatio="xMidYMid slice"><circle cx="160" cy="20" r="50" fill="#fff" fill-opacity=".08"/><circle cx="20" cy="120" r="40" fill="#fff" fill-opacity=".08"/></svg>
-          @endif
-        </a>
-        <div>
-          <div class="eyebrow">{{ $side->category_label }}</div>
-          <a href="{{ route('news.show', $side->slug) }}"><h3>{{ $side->title }}</h3></a>
-          <div class="byline">{{ $side->published_at?->format('M j') }}</div>
-        </div>
-      </article>
-      @endforeach
-    </div>
-    @endif
-  </section>
-
   <div class="wrap">
     <div class="ad-slot ad-leaderboard">
       <span class="ad-eyebrow">Advertisement</span>
@@ -63,16 +16,16 @@
     </div>
   </div>
 
-  <div class="wrap content-grid">
-    <div class="content-main">
-
-      <section aria-labelledby="matches-heading" id="fixtures">
+  <div class="wrap">
+    <div class="dash">
+      <div>
         <div class="section-head">
-          <h2 id="matches-heading">Today's Matches</h2>
+          <h2>Today's Football</h2>
           <a href="{{ route('today.index') }}" class="section-link">Full schedule
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
         </div>
+        <div class="dash-date">{{ now()->format('l, j F Y') }}</div>
 
         @if($todaysMatches->isEmpty())
         <p style="color:var(--ink-faint);font-size:14.5px;">No matches kicking off today across any covered league &mdash; check <a href="{{ route('fixtures.index') }}">upcoming fixtures</a> instead.</p>
@@ -91,26 +44,37 @@
 
         <div data-status-groups>
           @foreach ($todaysMatchesByLeague as $leagueMatches)
-          @php $grpLeague = $leagueMatches->first()->league; @endphp
-          <div class="today-comp-group">
+          @php
+            $grpLeague = $leagueMatches->first()->league;
+            $grpMatchday = $leagueMatches->first()->matchday;
+            $grpColor = $leagueColors[$grpLeague->slug] ?? null;
+          @endphp
+          <div class="today-comp-group"@if($grpColor) style="--comp-color:{{ $grpColor }};"@endif>
             <div class="today-comp-head">
-              <svg class="flag" role="img" aria-label="{{ $grpLeague->country }} flag"><use href="#flag-{{ $grpLeague->flag_code }}"></use></svg>
-              <a href="{{ route('leagues.show', $grpLeague->slug) }}" class="today-comp-name">{{ $grpLeague->name }}</a>
+              <div class="today-comp-head-left">
+                <svg class="flag" role="img" aria-label="{{ $grpLeague->country }} flag"><use href="#flag-{{ $grpLeague->flag_code }}"></use></svg>
+                <a href="{{ route('leagues.show', $grpLeague->slug) }}" class="today-comp-name">{{ $grpLeague->name }}</a>
+              </div>
+              @if($grpMatchday)<span class="today-comp-round">Matchday {{ $grpMatchday }}</span>@endif
             </div>
-            <div class="match-grid">
+            <div class="match-list">
               @foreach ($leagueMatches as $m)
               @php
                 $mShowScore = $m->isFinal() || ($m->isLive() && $m->home_score !== null);
-                $mStatusLabel = $m->isFinal() ? 'Full-Time' : ($m->isLive() ? 'LIVE' : $m->kickoff_at->format('H:i').' UTC');
+                $mStatusLabel = $m->isFinal() ? 'FT' : ($m->isLive() ? 'LIVE' : $m->kickoff_at->format('H:i'));
                 $mStatusKey = $m->isFinal() ? 'final' : ($m->isLive() ? 'live' : 'scheduled');
               @endphp
-              <a href="{{ $m->prettyUrl() }}" class="match-card" data-status="{{ $mStatusKey }}">
-                <div class="match-meta"><span class="match-comp">{{ $m->league->name }} &middot; {{ $m->venue }}</span><span class="match-status{{ $m->isLive() ? ' is-live' : '' }}">@unless($m->isFinal() || $m->isLive())<span class="dot-waiting" aria-hidden="true"></span>@endunless{{ $mStatusLabel }}</span></div>
-                <div class="match-teams">
-                  <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->homeTeam->crest_code }}" role="img" aria-label="{{ $m->homeTeam->full_name }} badge"></span><span class="team-name">{{ $m->homeTeam->name }}</span></div>@if($mShowScore)<span class="team-score{{ $m->isFinal() && $m->home_score > $m->away_score ? ' winning' : '' }}">{{ $m->home_score }}</span>@endif</div>
-                  <div class="match-team"><div class="team-id"><span class="crest crest-{{ $m->awayTeam->crest_code }}" role="img" aria-label="{{ $m->awayTeam->full_name }} badge"></span><span class="team-name">{{ $m->awayTeam->name }}</span></div>@if($mShowScore)<span class="team-score{{ $m->isFinal() && $m->away_score > $m->home_score ? ' winning' : '' }}">{{ $m->away_score }}</span>@endif</div>
+              <a href="{{ $m->prettyUrl() }}" class="match-row" data-status="{{ $mStatusKey }}">
+                <div class="match-row-teams">
+                  <div class="match-row-team"><span class="crest crest-{{ $m->homeTeam->crest_code }}" role="img" aria-label="{{ $m->homeTeam->full_name }} badge"></span><span class="match-row-team-name">{{ $m->homeTeam->name }}</span></div>
+                  <div class="match-row-team"><span class="crest crest-{{ $m->awayTeam->crest_code }}" role="img" aria-label="{{ $m->awayTeam->full_name }} badge"></span><span class="match-row-team-name">{{ $m->awayTeam->name }}</span></div>
                 </div>
-                <div class="match-venue">{{ $m->venue }}</div>
+                <div class="match-row-side">
+                  @if($mShowScore)
+                  <div class="match-row-score"><span>{{ $m->home_score }}</span><span>{{ $m->away_score }}</span></div>
+                  @endif
+                  <span class="match-row-status{{ $m->isLive() ? ' is-live' : '' }}">@if($m->isLive())<span class="dot" aria-hidden="true"></span>@endif{{ $mStatusLabel }}</span>
+                </div>
               </a>
               @endforeach
             </div>
@@ -118,34 +82,71 @@
           @endforeach
         </div>
         @endif
-      </section>
+      </div>
 
-      <section aria-labelledby="news-heading">
-        <div class="section-head">
-          <h2 id="news-heading">Latest News</h2>
-          <a href="{{ route('news.index') }}" class="section-link">View all news
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </a>
+      <aside class="sidebar" aria-label="Sidebar">
+        <div class="widget">
+          <div class="widget-head"><h2>Latest Stories</h2></div>
+          @if($latestNews->isEmpty())
+          <p style="color:var(--ink-faint);font-size:13px;">No published stories yet &mdash; check back soon.</p>
+          @else
+          <ul class="trending-list">
+            @foreach ($latestNews->take(4) as $i => $article)
+            <li>
+              <span class="trend-num">{{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}</span>
+              <div class="trend-text">
+                <a href="{{ route('news.show', $article->slug) }}">{{ $article->title }}</a>
+                <div class="trend-meta">{{ $article->category_label }} &middot; {{ $article->published_at?->format('j M') }}</div>
+              </div>
+            </li>
+            @endforeach
+          </ul>
+          @endif
         </div>
-        <div class="news-grid">
-          @forelse ($latestNews as $article)
-          <article class="news-card">
-            <a href="{{ route('news.show', $article->slug) }}"><div class="media" aria-hidden="true">
-              @if($article->image_url)
-                <img src="{{ $article->image_url }}" alt="{{ $article->title }}" loading="lazy">
-              @else
-                <svg viewBox="0 0 200 150"><circle cx="160" cy="20" r="60" fill="#fff" fill-opacity=".08"/></svg>
-              @endif
-            </div></a>
-            <span class="cat-tag {{ $article->category_badge_class }}">{{ $article->category_label }}</span>
-            <a href="{{ route('news.show', $article->slug) }}"><h3>{{ $article->title }}</h3></a>
-            <p class="dek">{{ $article->dek }}</p>
-          </article>
-          @empty
-          <p>No published stories yet &mdash; check back soon.</p>
-          @endforelse
+
+        <div class="ad-slot ad-mpu">
+          <span class="ad-eyebrow">Advertisement</span>
+          <span class="ad-size">300 &times; 250 &middot; AdSense unit</span>
         </div>
-      </section>
+
+        @php $topScorerLeague = $leagueTables[$defaultLeagueIndex]['league'] ?? null; @endphp
+        @if($topScorerLeague)
+        <div class="widget">
+          <div class="widget-head"><h2>Top Scorer</h2></div>
+          <p style="font-size:12px;color:var(--ink-faint);margin:-8px 0 12px;">{{ $topScorerLeague->name }}</p>
+          @if($topScorer)
+          <div class="top-scorer-row">
+            <span class="crest crest-{{ $topScorer->team->crest_code }}" role="img" aria-label="{{ $topScorer->team->full_name }} badge"></span>
+            <div>
+              <a href="{{ $topScorer->prettyUrl() }}" class="top-scorer-name">{{ $topScorer->name }}</a>
+              <div class="top-scorer-meta">{{ $topScorer->goals }} {{ Str::plural('goal', $topScorer->goals) }} &middot; {{ $topScorer->team->name }}</div>
+            </div>
+          </div>
+          @else
+          <p style="color:var(--ink-faint);font-size:13px;">No scoring data yet this season.</p>
+          @endif
+        </div>
+        @endif
+      </aside>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="section-head"><h2>Popular Competitions</h2></div>
+    <div class="comp-strip">
+      @foreach ($popularLeagues as $pl)
+      <a href="{{ route('leagues.show', $pl['league']->slug) }}" class="comp-tile"@if($pl['color']) style="--comp-color:{{ $pl['color'] }};"@endif>
+        <svg class="flag" role="img" aria-label="{{ $pl['league']->country }} flag"><use href="#flag-{{ $pl['league']->flag_code }}"></use></svg>
+        <span class="comp-tile-name">{{ $pl['league']->name }}</span>
+        <span class="comp-tile-meta">{{ $pl['league']->country }}</span>
+        <span class="comp-tile-status{{ $pl['liveCount'] > 0 ? ' has-live' : '' }}"><span class="dot" aria-hidden="true"></span>{{ $pl['statusLabel'] }}</span>
+      </a>
+      @endforeach
+    </div>
+  </div>
+
+  <div class="wrap content-grid" style="grid-template-columns:1fr;">
+    <div class="content-main">
 
       <section aria-labelledby="fx-results-heading" id="results">
         <div class="section-head"><h2 id="fx-results-heading">Fixtures &amp; Results</h2></div>
@@ -170,6 +171,65 @@
         <span class="ad-size">Native in-content unit</span>
       </div>
 
+      <section aria-labelledby="standings-heading" id="tables">
+        <div class="section-head"><h2 id="standings-heading">Standings Snapshot</h2></div>
+        <div class="widget table-widget">
+          <div class="table-tabs" role="tablist" aria-label="Select league table" style="flex-wrap:wrap;margin-bottom:14px;">
+            @foreach ($leagueTables as $i => $t)
+            <button class="ttab{{ $i === $defaultLeagueIndex ? ' is-active' : '' }}" data-table="home-lt-{{ $t['league']->slug }}" aria-selected="{{ $i === $defaultLeagueIndex ? 'true' : 'false' }}"><svg class="flag" role="img" aria-label="{{ $t['league']->country }} flag"><use href="#flag-{{ $t['league']->flag_code }}"></use></svg>{{ $t['league']->name }}</button>
+            @endforeach
+          </div>
+
+          @foreach ($leagueTables as $i => $t)
+          <div class="standings-panel{{ $i === $defaultLeagueIndex ? ' is-active' : '' }}" data-panel="home-lt-{{ $t['league']->slug }}">
+            @unless ($t['hasStarted'])
+            <p style="font-size:12.5px;color:var(--ink-muted);margin:0 0 10px;">Season hasn&rsquo;t kicked off yet &mdash; table will fill in once matches are played.</p>
+            @endunless
+            <table class="standings">
+              <thead><tr><th></th><th class="th-team">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>Pts</th></tr></thead>
+              <tbody>
+                @foreach ($t['standings'] as $s)
+                <tr class="{{ $s->zone === 'ucl' ? 'zone-ucl' : ($s->zone === 'rel' ? 'zone-rel' : '') }}"><td class="pos">{{ $s->position }}</td><td class="team-td"><a href="{{ route('teams.show', $s->team->slug) }}" class="team-td-inner"><span class="crest crest-{{ $s->team->crest_code }}" role="img" aria-label="{{ $s->team->full_name }} badge" style="width:20px;height:22px;"></span>{{ $s->team->name }}</a></td><td>{{ $s->played }}</td><td>{{ $s->won }}</td><td>{{ $s->drawn }}</td><td>{{ $s->lost }}</td><td class="pts">{{ $s->points }}</td></tr>
+                @endforeach
+              </tbody>
+            </table>
+          </div>
+          @endforeach
+
+          <div class="table-legend">
+            <span class="legend-item"><span class="legend-dot ucl"></span>Champions League</span>
+            <span class="legend-item"><span class="legend-dot rel"></span>Relegation</span>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="news-heading">
+        <div class="section-head">
+          <h2 id="news-heading">Latest Football News</h2>
+          <a href="{{ route('news.index') }}" class="section-link">View all news
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+        <div class="news-grid">
+          @forelse ($latestNews as $article)
+          <article class="news-card">
+            <a href="{{ route('news.show', $article->slug) }}"><div class="media" aria-hidden="true">
+              @if($article->image_url)
+                <img src="{{ $article->image_url }}" alt="{{ $article->title }}" loading="lazy">
+              @else
+                <svg viewBox="0 0 200 150"><circle cx="160" cy="20" r="60" fill="#fff" fill-opacity=".08"/></svg>
+              @endif
+            </div></a>
+            <span class="cat-tag {{ $article->category_badge_class }}">{{ $article->category_label }}</span>
+            <a href="{{ route('news.show', $article->slug) }}"><h3>{{ $article->title }}</h3></a>
+            <p class="dek">{{ $article->dek }}</p>
+          </article>
+          @empty
+          <p>No published stories yet &mdash; check back soon.</p>
+          @endforelse
+        </div>
+      </section>
+
       <section aria-labelledby="history-heading" class="history-feature">
         <div class="history-grid">
           <div class="media" aria-hidden="true">
@@ -190,61 +250,50 @@
         </div>
       </section>
 
+      <section aria-labelledby="transfers-heading">
+        <div class="section-head">
+          <h2 id="transfers-heading">Transfer News</h2>
+          <a href="{{ route('news.category', 'transfers') }}" class="section-link">View all transfers
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+        <div class="news-grid">
+          @forelse ($transferNews as $article)
+          <article class="news-card">
+            <a href="{{ route('news.show', $article->slug) }}"><div class="media" aria-hidden="true">
+              @if($article->image_url)
+                <img src="{{ $article->image_url }}" alt="{{ $article->title }}" loading="lazy">
+              @else
+                <svg viewBox="0 0 200 150"><circle cx="160" cy="20" r="60" fill="#fff" fill-opacity=".08"/></svg>
+              @endif
+            </div></a>
+            <span class="cat-tag {{ $article->category_badge_class }}">{{ $article->category_label }}</span>
+            <a href="{{ route('news.show', $article->slug) }}"><h3>{{ $article->title }}</h3></a>
+            <p class="dek">{{ $article->dek }}</p>
+          </article>
+          @empty
+          <p style="color:var(--ink-faint);font-size:14.5px;">No transfer news published yet &mdash; check back soon.</p>
+          @endforelse
+        </div>
+      </section>
+
+      <div class="two-col" style="align-items:start;">
+        <div class="widget newsletter-widget">
+          <h2>The Matchday Briefing</h2>
+          <p>Every score, every storyline, every morning &mdash; straight to your inbox.</p>
+          <form class="nl-form" onsubmit="return false;">
+            <input type="email" placeholder="you@email.com" required aria-label="Email address">
+            <button class="btn btn-accent btn-block" type="submit">Sign Up Free</button>
+          </form>
+          <p class="nl-fine">No spam. Unsubscribe anytime.</p>
+        </div>
+        <div class="ad-slot ad-skyscraper" style="min-height:250px;">
+          <span class="ad-eyebrow">Advertisement</span>
+          <span class="ad-size">300 &times; 250 &middot; AdSense unit</span>
+        </div>
+      </div>
+
     </div>
-
-    <aside class="sidebar" aria-label="Sidebar">
-      <div class="widget table-widget" id="tables">
-        <div class="widget-head">
-          <h2>Points Table</h2>
-        </div>
-        <div class="table-tabs" role="tablist" aria-label="Select league table" style="flex-wrap:wrap;margin-bottom:14px;">
-          @foreach ($leagueTables as $i => $t)
-          <button class="ttab{{ $i === $defaultLeagueIndex ? ' is-active' : '' }}" data-table="home-lt-{{ $t['league']->slug }}" aria-selected="{{ $i === $defaultLeagueIndex ? 'true' : 'false' }}"><svg class="flag" role="img" aria-label="{{ $t['league']->country }} flag"><use href="#flag-{{ $t['league']->flag_code }}"></use></svg>{{ $t['league']->name }}</button>
-          @endforeach
-        </div>
-
-        @foreach ($leagueTables as $i => $t)
-        <div class="standings-panel{{ $i === $defaultLeagueIndex ? ' is-active' : '' }}" data-panel="home-lt-{{ $t['league']->slug }}">
-          @unless ($t['hasStarted'])
-          <p style="font-size:12.5px;color:var(--ink-muted);margin:0 0 10px;">Season hasn&rsquo;t kicked off yet &mdash; table will fill in once matches are played.</p>
-          @endunless
-          <table class="standings">
-            <thead><tr><th></th><th class="th-team">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>Pts</th></tr></thead>
-            <tbody>
-              @foreach ($t['standings'] as $s)
-              <tr class="{{ $s->zone === 'ucl' ? 'zone-ucl' : ($s->zone === 'rel' ? 'zone-rel' : '') }}"><td class="pos">{{ $s->position }}</td><td class="team-td"><a href="{{ route('teams.show', $s->team->slug) }}" class="team-td-inner"><span class="crest crest-{{ $s->team->crest_code }}" role="img" aria-label="{{ $s->team->full_name }} badge" style="width:20px;height:22px;"></span>{{ $s->team->name }}</a></td><td>{{ $s->played }}</td><td>{{ $s->won }}</td><td>{{ $s->drawn }}</td><td>{{ $s->lost }}</td><td class="pts">{{ $s->points }}</td></tr>
-              @endforeach
-            </tbody>
-          </table>
-        </div>
-        @endforeach
-
-        <div class="table-legend">
-          <span class="legend-item"><span class="legend-dot ucl"></span>Champions League</span>
-          <span class="legend-item"><span class="legend-dot rel"></span>Relegation</span>
-        </div>
-      </div>
-
-      <div class="ad-slot ad-mpu">
-        <span class="ad-eyebrow">Advertisement</span>
-        <span class="ad-size">300 &times; 250 &middot; AdSense unit</span>
-      </div>
-
-      <div class="widget newsletter-widget">
-        <h2>The Matchday Briefing</h2>
-        <p>Every score, every storyline, every morning &mdash; straight to your inbox.</p>
-        <form class="nl-form" onsubmit="return false;">
-          <input type="email" placeholder="you@email.com" required aria-label="Email address">
-          <button class="btn btn-accent btn-block" type="submit">Sign Up Free</button>
-        </form>
-        <p class="nl-fine">No spam. Unsubscribe anytime.</p>
-      </div>
-
-      <div class="ad-slot ad-skyscraper">
-        <span class="ad-eyebrow">Advertisement</span>
-        <span class="ad-size">300 &times; 600 &middot; AdSense unit</span>
-      </div>
-    </aside>
   </div>
 
   <section class="promo-band">
