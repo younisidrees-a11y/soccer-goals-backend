@@ -247,6 +247,25 @@ class HomeController extends Controller
 
         $leagueColors = self::LEAGUE_COLORS;
 
+        // Top Scorers section: real leading goalscorer for every published
+        // league, not just the one the standings panel defaults to. One
+        // query per league (13 leagues, run once per request) rather than
+        // a single grouped query, since "highest goals per league" needs
+        // a per-league MAX anyway and this stays simple to read.
+        $topScorersByLeague = League::published()
+            ->orderBy('name')
+            ->get()
+            ->map(fn (League $l) => [
+                'league' => $l,
+                'color' => self::LEAGUE_COLORS[$l->slug] ?? null,
+                'player' => Player::with('team')
+                    ->whereHas('team', fn ($q) => $q->where('league_id', $l->id)->published())
+                    ->whereNotNull('goals')
+                    ->where('goals', '>', 0)
+                    ->orderByDesc('goals')
+                    ->first(),
+            ]);
+
         return view('home', compact(
             'todaysMatches',
             'todaysMatchesByLeague',
@@ -264,6 +283,7 @@ class HomeController extends Controller
             'dateStrip',
             'spotlight',
             'spotMatch',
+            'topScorersByLeague',
         ));
     }
 }

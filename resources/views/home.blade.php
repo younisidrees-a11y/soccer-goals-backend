@@ -376,6 +376,32 @@
         </div>
       </section>
 
+      <section aria-labelledby="scorers-heading">
+        <div class="section-head"><h2 id="scorers-heading">Top Scorers</h2></div>
+        <div class="scorers-grid">
+          @foreach ($topScorersByLeague as $ts)
+          <div class="scorer-card"@if($ts['color']) style="--comp-color:{{ $ts['color'] }};"@endif>
+            <div class="scorer-card-league">
+              <svg class="flag" role="img" aria-label="{{ $ts['league']->country }} flag"><use href="#flag-{{ $ts['league']->flag_code }}"></use></svg>
+              {{ $ts['league']->name }}
+            </div>
+            @if($ts['player'])
+            <a href="{{ $ts['player']->prettyUrl() }}" class="scorer-card-body">
+              <span class="crest crest-{{ $ts['player']->team->crest_code }}" role="img" aria-label="{{ $ts['player']->team->full_name }} badge"></span>
+              <span class="scorer-card-name-wrap">
+                <span class="scorer-card-name">{{ $ts['player']->name }}</span>
+                <span class="scorer-card-team">{{ $ts['player']->team->name }}</span>
+              </span>
+              <span class="scorer-card-goals">{{ $ts['player']->goals }}</span>
+            </a>
+            @else
+            <p class="scorer-card-empty">No scoring data yet.</p>
+            @endif
+          </div>
+          @endforeach
+        </div>
+      </section>
+
       <div class="two-col" style="align-items:start;">
         <div class="widget newsletter-widget">
           <h2>The Daily Briefing</h2>
