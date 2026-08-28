@@ -89,17 +89,18 @@
 
 <div class="top-bar">
   <div class="wrap top-bar-inner">
-    <div class="top-bar-date">{{ now()->format('l j F Y') }}</div>
+    <div class="top-bar-date">
+      {{ now()->format('l j F Y') }}
+      {{-- Real count from the same query that drives the ticker's LIVE
+           label and the favicon blink - never a static/decorative number. --}}
+      <span class="tb-live{{ ($liveMatchCount ?? 0) > 0 ? ' is-live' : '' }}"><span class="dot" aria-hidden="true"></span>{{ $liveMatchCount ?? 0 }} Live</span>
+    </div>
     <div class="top-bar-links">
       <a href="#" class="tb-hide-mobile">Advertise</a>
       <a href="#" class="tb-hide-mobile">Help Center</a>
       <span class="tb-divider tb-hide-mobile"></span>
       <a href="#">Sign In</a>
       <a href="#" class="tb-register">Register</a>
-      <span class="tb-social">
-        <a href="#" aria-label="The Soccer Goals on X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23.3 22h-6.9l-5.4-6.7L4.8 22H1.6l8.2-9.4L1 2h7l4.9 6.1L18.9 2Zm-1.2 18h1.9L7.4 4h-2l12.3 16Z"/></svg></a>
-        <a href="#" aria-label="The Soccer Goals on Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
-      </span>
     </div>
   </div>
 </div>
@@ -117,6 +118,7 @@
     <nav class="main-nav" aria-label="Primary">
       <ul>
         <li><a class="nav-link" href="{{ route('home') }}">Home</a></li>
+        <li><a class="nav-link" href="{{ route('today.index') }}">Scores</a></li>
 
         <li class="has-mega" data-mega>
           <button class="nav-link mega-trigger" aria-expanded="false">Leagues
@@ -209,10 +211,24 @@
           </div>
         </li>
 
-        <li><a class="nav-link" href="{{ route('fixtures.index') }}">Fixtures</a></li>
-        <li><a class="nav-link" href="{{ route('results.index') }}">Results</a></li>
-        <li><a class="nav-link" href="{{ route('tables.index') }}">Points Table</a></li>
         <li><a class="nav-link" href="{{ route('news.category', 'transfers') }}">Transfers</a></li>
+        <li><a class="nav-link" href="{{ route('tables.index') }}">Rankings</a></li>
+
+        <li class="has-mega" data-mega>
+          <button class="nav-link mega-trigger" aria-expanded="false">More
+            <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 4l4 4 4-4"/></svg>
+          </button>
+          <div class="mega-panel mega-panel-more">
+            <div class="mega-col">
+              <ul>
+                <li><a href="{{ route('fixtures.index') }}">Fixtures</a></li>
+                <li><a href="{{ route('results.index') }}">Results</a></li>
+                <li><a href="{{ route('leagues.index') }}">All Leagues</a></li>
+                <li><a href="{{ route('about') }}">About</a></li>
+              </ul>
+            </div>
+          </div>
+        </li>
       </ul>
     </nav>
 
@@ -224,7 +240,50 @@
       <button class="icon-btn" aria-label="Search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
       </button>
-      <button class="btn btn-accent">Subscribe</button>
+
+      {{-- Favorites: real, working localStorage list (no account needed) -
+           the heart on team pages adds/removes a team here; this panel
+           reads and renders whatever's actually stored, with a genuine
+           empty state rather than a dead button. --}}
+      <div class="panel-wrap" data-panel="favorites">
+        <button class="icon-btn" aria-label="Favorite teams" aria-expanded="false" data-panel-toggle>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7.5-4.6-10-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 10 6c-2.5 4.4-10 9-10 9Z"/></svg>
+        </button>
+        <div class="header-panel" role="dialog" aria-label="Favorite teams">
+          <div class="header-panel-title">Favorite Teams</div>
+          <div class="header-panel-list" data-favorites-list>
+            <p class="header-panel-empty">No favorite teams yet &mdash; tap the heart on any team page to add one.</p>
+          </div>
+        </div>
+      </div>
+
+      {{-- Notifications: real live-match state, not a fake unread count -
+           the badge only appears when hasLiveMatch is actually true, and
+           the panel lists whichever matches are really live right now. --}}
+      <div class="panel-wrap" data-panel="live">
+        <button class="icon-btn" aria-label="Live matches" aria-expanded="false" data-panel-toggle>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"/></svg>
+          @if($hasLiveMatch ?? false)<span class="icon-btn-badge" aria-hidden="true"></span>@endif
+        </button>
+        <div class="header-panel" role="dialog" aria-label="Live matches">
+          <div class="header-panel-title"><span class="dot-live" aria-hidden="true"></span>Live Now</div>
+          <div class="header-panel-list">
+            @php $liveNow = ($tickerMatches ?? collect())->filter(fn ($m) => $m->status === 'live'); @endphp
+            @forelse ($liveNow as $lm)
+            <a href="{{ $lm->prettyUrl() }}" class="header-panel-item">
+              <span class="crest crest-{{ $lm->homeTeam->crest_code }}" role="img" aria-label="{{ $lm->homeTeam->full_name }} badge" style="width:18px;height:20px;"></span>
+              <span class="header-panel-item-text">{{ $lm->homeTeam->name }} {{ $lm->home_score }}&ndash;{{ $lm->away_score }} {{ $lm->awayTeam->name }}</span>
+              <span class="crest crest-{{ $lm->awayTeam->crest_code }}" role="img" aria-label="{{ $lm->awayTeam->full_name }} badge" style="width:18px;height:20px;"></span>
+            </a>
+            @empty
+            <p class="header-panel-empty">No matches live right now &mdash; check back once today's fixtures kick off.</p>
+            @endforelse
+          </div>
+        </div>
+      </div>
+
+      <a href="#" class="btn-signin tb-hide-mobile">Sign In</a>
+      <a href="#" class="btn btn-accent">Register</a>
       <button class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
       </button>
@@ -312,24 +371,29 @@
     </button>
     <div class="ticker-track" tabindex="0" data-ticker-track>
       @foreach ($tickerMatches ?? [] as $tm)
+      @php $tmIsScheduled = $tm->status === 'scheduled'; @endphp
       <a href="{{ $tm->prettyUrl() }}" class="ticker-chip">
-        <span class="ticker-status{{ $tm->status === 'live' ? ' is-live' : '' }}">
-          @if($tm->status === 'live') LIVE
-          @elseif($tm->status === 'final') FT
-          @elseif($tm->kickoff_at->isToday()) {{ $tm->kickoff_at->format('H:i') }}
-          @elseif($tm->kickoff_at->isTomorrow()) Tomorrow {{ $tm->kickoff_at->format('H:i') }}
-          @else {{ $tm->kickoff_at->format('D H:i') }}
-          @endif
-        </span>
-        <span class="ticker-teams">
-          <span class="crest crest-{{ $tm->homeTeam->crest_code }}" role="img" aria-label="{{ $tm->homeTeam->full_name }} badge" style="width:15px;height:17px;"></span>
-          @if($tm->status === 'scheduled')
-            <span class="ticker-vs">{{ $tm->homeTeam->name }} v {{ $tm->awayTeam->name }}</span>
-          @else
-            <span class="ticker-score">{{ $tm->home_score }}</span>&ndash;<span class="ticker-score">{{ $tm->away_score }}</span>
-          @endif
-          <span class="crest crest-{{ $tm->awayTeam->crest_code }}" role="img" aria-label="{{ $tm->awayTeam->full_name }} badge" style="width:15px;height:17px;"></span>
-        </span>
+        <div class="ticker-teams">
+          <div class="ticker-row">
+            <span class="ticker-comp">{{ $tm->league->name }}</span>
+            <span class="ticker-status{{ $tm->status === 'live' ? ' is-live' : '' }}">
+              @if($tm->status === 'live')<span class="dot" aria-hidden="true"></span>LIVE
+              @elseif($tm->status === 'final') FT
+              @elseif($tm->kickoff_at->isToday()) {{ $tm->kickoff_at->format('H:i') }}
+              @elseif($tm->kickoff_at->isTomorrow()) Tomorrow {{ $tm->kickoff_at->format('H:i') }}
+              @else {{ $tm->kickoff_at->format('D H:i') }}
+              @endif
+            </span>
+          </div>
+          <div class="ticker-row">
+            <span class="ticker-team-name"><span class="crest crest-{{ $tm->homeTeam->crest_code }}" role="img" aria-label="{{ $tm->homeTeam->full_name }} badge" style="width:14px;height:16px;"></span>{{ $tm->homeTeam->name }}</span>
+            @unless($tmIsScheduled)<span class="ticker-score">{{ $tm->home_score }}</span>@endunless
+          </div>
+          <div class="ticker-row">
+            <span class="ticker-team-name"><span class="crest crest-{{ $tm->awayTeam->crest_code }}" role="img" aria-label="{{ $tm->awayTeam->full_name }} badge" style="width:14px;height:16px;"></span>{{ $tm->awayTeam->name }}</span>
+            @unless($tmIsScheduled)<span class="ticker-score">{{ $tm->away_score }}</span>@endunless
+          </div>
+        </div>
       </a>
       @endforeach
     </div>

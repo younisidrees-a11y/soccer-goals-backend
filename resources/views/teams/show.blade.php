@@ -58,6 +58,12 @@
             @endif
           </div>
         </div>
+        {{-- Real localStorage favorite toggle, not decoration - state is
+             set on load by site.js reading the same list the header's
+             Favorites panel renders from. --}}
+        <button type="button" class="fav-toggle" data-fav-toggle data-fav-slug="{{ $team->slug }}" data-fav-name="{{ $team->name }}" data-fav-crest="{{ $team->crest_code }}" aria-pressed="false" aria-label="Add {{ $team->name }} to favorites">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7.5-4.6-10-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 10 6c-2.5 4.4-10 9-10 9Z"/></svg>
+        </button>
       </div>
 
       @if($standing)

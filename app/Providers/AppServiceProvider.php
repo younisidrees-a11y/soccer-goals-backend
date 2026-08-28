@@ -41,7 +41,9 @@ class AppServiceProvider extends ServiceProvider
         URL::forceRootUrl(config('app.url'));
 
         View::composer('layouts.site', function ($view) {
-            $view->with('hasLiveMatch', MatchFixture::where('status', 'live')->where('is_published', true)->exists());
+            $liveMatchCount = MatchFixture::where('status', 'live')->where('is_published', true)->count();
+            $view->with('hasLiveMatch', $liveMatchCount > 0);
+            $view->with('liveMatchCount', $liveMatchCount);
             $view->with('siteSettings', SiteSetting::current());
             $view->with('tickerMatches', $this->buildTickerMatches());
             // Powers the "Just In" column of the News mega menu, which is

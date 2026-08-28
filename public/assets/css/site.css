@@ -245,10 +245,14 @@
   .top-bar-links a:hover{color:var(--topbar-ink-strong);}
   .tb-divider{width:1px;height:14px;background:rgba(255,255,255,.18);}
   .tb-register{color:var(--topbar-ink-strong);font-weight:700;}
-  .tb-social{display:none;align-items:center;gap:10px;}
-  .tb-social svg{width:14px;height:14px;opacity:.8;}
   .tb-hide-mobile{display:none;}
-  @media (min-width:640px){.tb-hide-mobile{display:inline;} .tb-social{display:flex;}}
+  @media (min-width:640px){.tb-hide-mobile{display:inline;}}
+  /* Real count (same query behind the ticker's LIVE label), not a static
+     "0 Live" - dims when nothing's live, goes red and pulses when it is. */
+  .tb-live{display:inline-flex;align-items:center;gap:5px;margin-left:14px;font-weight:600;color:var(--topbar-ink);}
+  .tb-live .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+  .tb-live.is-live{color:var(--live);}
+  .tb-live.is-live .dot{animation:pulse 1.5s ease-in-out infinite;}
 
   /* ---------- Header ---------- */
   .site-header{
@@ -286,6 +290,46 @@
   .header-actions{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0;}
   .header-actions .btn-accent{display:none;}
   @media (min-width:1024px){.header-actions .btn-accent{display:inline-flex;}}
+  .btn-signin{display:none;font-size:13.5px;font-weight:700;color:var(--ink-muted);padding:0 4px;transition:color .15s ease;}
+  .btn-signin:hover{color:var(--ink);}
+  @media (min-width:1024px){.btn-signin{display:inline-flex;align-items:center;}}
+
+  /* Favorites / Live Now icon panels - same trigger+dropdown interaction
+     language as the mega menus, just anchored to a single icon button
+     instead of a nav item. */
+  .panel-wrap{position:relative;}
+  .icon-btn-badge{
+    position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;
+    background:var(--live);box-shadow:0 0 0 2px var(--surface);
+  }
+  .header-panel{
+    position:absolute;top:100%;right:0;transform:translateY(6px);
+    width:280px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-lg);padding:16px;display:none;z-index:400;
+  }
+  .panel-wrap.is-open .header-panel{display:block;animation:mega-in .16s ease both;}
+  .header-panel-title{
+    display:flex;align-items:center;gap:7px;font-family:var(--font-display);font-size:12.5px;font-weight:700;
+    letter-spacing:.02em;margin-bottom:10px;
+  }
+  .header-panel-list{display:flex;flex-direction:column;gap:2px;max-height:280px;overflow-y:auto;}
+  .header-panel-empty{font-size:12.5px;color:var(--ink-faint);line-height:1.5;}
+  .header-panel-item{
+    display:flex;align-items:center;gap:9px;padding:7px 4px;border-radius:var(--radius-sm);
+    font-size:13px;font-weight:600;transition:background .15s ease;
+  }
+  .header-panel-item:hover{background:var(--surface-2);}
+  .header-panel-item-text{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .header-panel-remove{
+    flex-shrink:0;width:20px;height:20px;border-radius:50%;color:var(--ink-faint);font-size:16px;line-height:1;
+    display:inline-flex;align-items:center;justify-content:center;
+  }
+  .header-panel-remove:hover{background:var(--surface-3,var(--surface-2));color:var(--live);}
+
+  /* "More" nav item reuses .mega-panel but only needs one narrow column -
+     the default 3-col-plus-feature grid would leave most of it empty. */
+  .mega-panel-more{width:200px;grid-template-columns:1fr;padding:14px;}
+  .mega-panel-more .mega-col ul{gap:2px;}
 
   .hamburger{
     width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;
@@ -421,18 +465,25 @@
     mask-image:linear-gradient(to right, transparent 0, black 18px, black calc(100% - 24px), transparent 100%);
   }
   .ticker-track::-webkit-scrollbar{display:none;}
+  /* Card-style chip: competition + status on top, then each team on its
+     own row with a real crest and (once there's a result) its own score -
+     denser real information than a single inline "Team v Team" line, and
+     scores stay tabular-aligned per team instead of squeezed centre. */
   .ticker-chip{
-    flex-shrink:0;display:flex;align-items:center;gap:9px;
+    flex-shrink:0;display:flex;flex-direction:column;gap:5px;min-width:150px;
     background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-    border-radius:var(--radius-pill);padding:6px 14px 6px 12px;font-size:12.5px;
+    border-radius:var(--radius-md);padding:8px 12px;font-size:12px;
     transition:background .15s ease;
   }
   .ticker-chip:hover{background:rgba(255,255,255,.12);}
-  .ticker-status{font-family:var(--font-display);font-weight:600;font-size:11px;letter-spacing:.03em;color:#9FB6C9;min-width:34px;}
-  .ticker-status.is-live{color:var(--live);}
-  .ticker-teams{font-weight:600;font-variant-numeric:tabular-nums;color:#fff;display:inline-flex;align-items:center;gap:5px;}
-  .ticker-score{color:#828AA0;}
-  .ticker-vs{color:#C7D6E2;font-weight:600;white-space:nowrap;}
+  .ticker-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .ticker-comp{font-family:var(--font-display);font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#828AA0;}
+  .ticker-status{font-family:var(--font-mono);font-weight:700;font-size:10.5px;letter-spacing:.02em;color:#9FB6C9;flex-shrink:0;}
+  .ticker-status.is-live{color:var(--live);display:inline-flex;align-items:center;gap:4px;}
+  .ticker-status.is-live .dot{width:4px;height:4px;border-radius:50%;background:var(--live);animation:pulse 1.5s ease-in-out infinite;}
+  .ticker-team-name{display:flex;align-items:center;gap:6px;font-weight:600;color:#fff;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ticker-team-name .crest{flex-shrink:0;}
+  .ticker-score{font-family:var(--font-mono);font-weight:700;color:#fff;flex-shrink:0;}
 
   /* ---------- Ad slots ---------- */
   .ad-slot{
@@ -1004,6 +1055,19 @@
     color:#fff;
   }
   .team-hero-inner{display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding-block:36px 8px;}
+  /* margin-left:auto on the flex row, not absolute positioning - .wrap's
+     padding/max-width already centers the row, so an absolutely
+     positioned button would need to duplicate that math to line up with
+     the right edge instead of just riding along with it. */
+  .fav-toggle{
+    margin-left:auto;flex-shrink:0;align-self:flex-start;width:38px;height:38px;border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;color:#fff;
+    background:rgba(255,255,255,.12);transition:background .15s ease,color .15s ease;
+  }
+  .fav-toggle:hover{background:rgba(255,255,255,.22);}
+  .fav-toggle.is-favorited{color:var(--live);background:rgba(255,255,255,.9);}
+  .fav-toggle.is-favorited svg{fill:currentColor;}
+  .fav-toggle svg{width:19px;height:19px;}
   .team-hero-crest{width:84px;height:84px;flex-shrink:0;filter:drop-shadow(0 8px 20px rgba(0,0,0,.35));}
   .team-hero-title{color:#fff;font-size:clamp(1.9rem,1.5rem + 1.8vw,2.7rem);margin-top:2px;text-wrap:balance;}
   .team-hero-meta{color:rgba(255,255,255,.72);font-size:14px;margin-top:6px;display:flex;gap:14px;flex-wrap:wrap;}

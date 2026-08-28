@@ -222,3 +222,134 @@
     });
   });
 })();
+
+(function(){
+  "use strict";
+  // Header icon panels (Favorites, Live Now): click-to-open/close,
+  // closes on outside click or Escape - same interaction pattern as the
+  // mega menus above, just a smaller panel.
+  var wraps = Array.prototype.slice.call(document.querySelectorAll('[data-panel]'));
+  if (!wraps.length) return;
+
+  function closeAll(except){
+    wraps.forEach(function(w){
+      if (w === except) return;
+      w.classList.remove('is-open');
+      var t = w.querySelector('[data-panel-toggle]');
+      if (t) t.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  wraps.forEach(function(wrap){
+    var toggle = wrap.querySelector('[data-panel-toggle]');
+    if (!toggle) return;
+    toggle.addEventListener('click', function(e){
+      e.stopPropagation();
+      var open = wrap.classList.contains('is-open');
+      closeAll(null);
+      wrap.classList.toggle('is-open', !open);
+      toggle.setAttribute('aria-expanded', String(!open));
+    });
+  });
+
+  document.addEventListener('click', function(){ closeAll(null); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeAll(null); });
+})();
+
+(function(){
+  "use strict";
+  // Favorite teams: real, working, no account needed - a plain
+  // localStorage list of {slug,name,crest}. The heart on a team page
+  // writes to it; the header panel reads and renders it. Deliberately
+  // storing the team's own name/crest at favorite-time rather than just
+  // an id, so the header panel never needs a second lookup or a big
+  // client-side team table just to render itself.
+  var STORAGE_KEY = 'favoriteTeams';
+
+  function readFavorites(){
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      var parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) { return []; }
+  }
+
+  function writeFavorites(list){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); } catch (e) {}
+  }
+
+  function isFavorited(slug){
+    return readFavorites().some(function(f){ return f.slug === slug; });
+  }
+
+  function toggleFavorite(slug, name, crest){
+    var list = readFavorites();
+    var idx = list.findIndex(function(f){ return f.slug === slug; });
+    if (idx === -1) { list.push({ slug: slug, name: name, crest: crest }); }
+    else { list.splice(idx, 1); }
+    writeFavorites(list);
+    return idx === -1; // true = now favorited
+  }
+
+  function renderFavoritesList(){
+    var container = document.querySelector('[data-favorites-list]');
+    if (!container) return;
+    var list = readFavorites();
+    if (!list.length) {
+      container.innerHTML = '<p class="header-panel-empty">No favorite teams yet &mdash; tap the heart on any team page to add one.</p>';
+      return;
+    }
+    container.innerHTML = list.map(function(f){
+      var safeName = String(f.name).replace(/[&<>"']/g, function(c){
+        return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+      });
+      var safeCrest = String(f.crest || '').replace(/[^a-z0-9-]/gi, '');
+      return '<a href="/teams/' + encodeURIComponent(f.slug) + '" class="header-panel-item">' +
+        '<span class="crest crest-' + safeCrest + '" role="img" aria-label="' + safeName + ' badge" style="width:18px;height:20px;"></span>' +
+        '<span class="header-panel-item-text">' + safeName + '</span>' +
+        '<button type="button" class="header-panel-remove" data-fav-remove="' + f.slug + '" aria-label="Remove ' + safeName + ' from favorites">&times;</button>' +
+        '</a>';
+    }).join('');
+  }
+
+  // Team-page toggle button
+  var toggleBtn = document.querySelector('[data-fav-toggle]');
+  if (toggleBtn) {
+    var slug = toggleBtn.getAttribute('data-fav-slug');
+    var name = toggleBtn.getAttribute('data-fav-name');
+    var crest = toggleBtn.getAttribute('data-fav-crest');
+    function reflectToggle(){
+      var fav = isFavorited(slug);
+      toggleBtn.classList.toggle('is-favorited', fav);
+      toggleBtn.setAttribute('aria-pressed', String(fav));
+      toggleBtn.setAttribute('aria-label', (fav ? 'Remove ' : 'Add ') + name + (fav ? ' from' : ' to') + ' favorites');
+    }
+    reflectToggle();
+    toggleBtn.addEventListener('click', function(){
+      toggleFavorite(slug, name, crest);
+      reflectToggle();
+      renderFavoritesList();
+    });
+  }
+
+  renderFavoritesList();
+
+  // Remove button inside the header panel (event delegation - the list
+  // is re-rendered on every change, so a static listener would go stale)
+  var favoritesList = document.querySelector('[data-favorites-list]');
+  if (favoritesList) {
+    favoritesList.addEventListener('click', function(e){
+      var removeBtn = e.target.closest('[data-fav-remove]');
+      if (!removeBtn) return;
+      e.preventDefault();
+      e.stopPropagation();
+      var list = readFavorites().filter(function(f){ return f.slug !== removeBtn.getAttribute('data-fav-remove'); });
+      writeFavorites(list);
+      renderFavoritesList();
+      if (toggleBtn && toggleBtn.getAttribute('data-fav-slug') === removeBtn.getAttribute('data-fav-remove')) {
+        toggleBtn.classList.remove('is-favorited');
+        toggleBtn.setAttribute('aria-pressed', 'false');
+      }
+    });
+  }
+})();
