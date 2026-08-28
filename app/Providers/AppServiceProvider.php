@@ -73,10 +73,18 @@ class AppServiceProvider extends ServiceProvider
     /**
      * The header ticker is styled and labelled as live coverage, so it
      * needs to actually be that: any match in progress right now, padded
-     * out with the most recent final scores and the soonest upcoming
-     * fixtures so it's never empty on a quiet day. Previously every
+     * out with the soonest upcoming fixtures and the most recent final
+     * scores so it's never empty on a quiet day. Previously every
      * controller copy-pasted an identical "last 7 final matches" query -
      * this is now the single source of truth.
+     *
+     * Order matters here beyond just the data: the ticker track is wider
+     * than its viewport and doesn't auto-scroll, so only the first ~6
+     * chips are ever seen without a manual scroll. Live matches lead,
+     * then upcoming kickoffs, with recent results padded in last - on a
+     * quiet day that meant the visible chips were exclusively yesterday's
+     * results with every upcoming fixture scrolled off-screen, which
+     * reads as a stale ticker even though the data itself was current.
      */
     private function buildTickerMatches()
     {
@@ -104,6 +112,6 @@ class AppServiceProvider extends ServiceProvider
             ->limit($upcomingCount)
             ->get();
 
-        return $live->concat($recent)->concat($upcoming);
+        return $live->concat($upcoming)->concat($recent);
     }
 }
