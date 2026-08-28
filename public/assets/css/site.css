@@ -297,7 +297,12 @@
   /* Favorites / Live Now icon panels - same trigger+dropdown interaction
      language as the mega menus, just anchored to a single icon button
      instead of a nav item. */
-  .panel-wrap{position:relative;}
+  /* Hidden below 640px - confirmed via real viewport testing that adding
+     these two icon buttons pushed .header-actions past a 375px header,
+     forcing the whole page to scroll horizontally (flex-shrink:0 on
+     .header-actions means it doesn't compress, it overflows instead). */
+  .panel-wrap{position:relative;display:none;}
+  @media (min-width:640px){.panel-wrap{display:block;}}
   .icon-btn-badge{
     position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;
     background:var(--live);box-shadow:0 0 0 2px var(--surface);
@@ -993,7 +998,16 @@
   /* ---------- Standings Snapshot: 3 leagues side by side ---------- */
   .standings-snapshot-grid{display:grid;grid-template-columns:1fr;gap:20px;}
   @media (min-width:700px){.standings-snapshot-grid{grid-template-columns:repeat(2,1fr);}}
-  .standings-snapshot-col{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;box-shadow:var(--shadow-sm);}
+  /* min-width:0 is required here: a grid track's implicit min-width is
+     auto, meaning it won't shrink below its content's intrinsic minimum
+     - the table inside (min-width:560px via .table-scroll .standings)
+     forced both columns to 594px each, overflowing a 689px container at
+     tablet widths, even though the .table-scroll inside each column is
+     supposed to be the thing that scrolls, not the column itself. */
+  .standings-snapshot-col{
+    min-width:0;
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;box-shadow:var(--shadow-sm);
+  }
   .standings-snapshot-head{
     display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:600;font-size:14px;
     margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);
