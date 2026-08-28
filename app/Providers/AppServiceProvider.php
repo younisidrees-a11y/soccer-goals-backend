@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\League;
 use App\Models\MatchFixture;
 use App\Models\NewsArticle;
 use App\Models\SiteSetting;
@@ -49,7 +50,24 @@ class AppServiceProvider extends ServiceProvider
             // and frozen in time. Small limit since it's a nav dropdown,
             // not a feed.
             $view->with('megaLatestNews', NewsArticle::published()->latest('published_at')->take(3)->get());
+            $view->with('footerLeagues', $this->buildFooterLeagues());
         });
+    }
+
+    /**
+     * Footer's "Leagues & Teams" sitemap - every real published team for
+     * the five biggest leagues, so it's a genuine index rather than a
+     * flat list of 13 league names with no way to reach an individual
+     * club from the footer.
+     */
+    private function buildFooterLeagues()
+    {
+        return League::published()
+            ->whereIn('slug', ['premier-league', 'la-liga', 'bundesliga', 'serie-a', 'saudi-pro-league'])
+            ->with(['teams' => fn ($q) => $q->published()->orderBy('name')])
+            ->get()
+            ->sortBy(fn ($l) => array_search($l->slug, ['premier-league', 'la-liga', 'bundesliga', 'serie-a', 'saudi-pro-league']))
+            ->values();
     }
 
     /**

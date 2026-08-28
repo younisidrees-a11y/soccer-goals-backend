@@ -976,14 +976,37 @@
   .promo-form input:focus{outline:none;border-color:#fff;}
   @media (min-width:900px){.promo-inner{flex-direction:row;align-items:center;justify-content:space-between;}}
 
+  /* ---------- Footer: Leagues & Teams ---------- */
+  /* Real teams (published(), same scope every other page uses), not a
+     flat league-name list - every club here is a real route. Plain
+     heading + list, not a card or an accordion: nothing to click open,
+     every team already on the page. */
+  .footer-leagues{padding:40px 0 8px;border-bottom:1px solid rgba(255,255,255,.09);}
+  .footer-leagues-title{font-family:var(--font-display);font-size:15px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;color:#fff;margin-bottom:22px;}
+  .footer-league-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:28px 24px;padding-bottom:32px;}
+  .footer-league-col h3{font-family:var(--font-display);font-size:13px;font-weight:600;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.09);}
+  .footer-league-col h3 a{color:#fff;}
+  .footer-league-col h3 a:hover{color:var(--accent);}
+  .footer-league-teams{columns:2;column-gap:14px;}
+  .footer-league-teams a{display:block;font-size:12px;color:#8FA6BA;padding:4px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;break-inside:avoid;}
+  .footer-league-teams a:hover{color:#fff;text-decoration:underline;text-underline-offset:2px;}
+  .footer-league-empty{font-size:12px;color:#6C88A0;font-style:italic;}
+  @media (max-width:420px){.footer-league-teams{columns:1;}}
+
   /* ---------- Footer ---------- */
-  .site-footer{background:var(--ink);color:#B9CBDA;}
+  /* topbar-bg/topbar-ink, not --ink/hardcoded white text: --ink flips
+     meaning between themes (dark in light mode, near-white in dark
+     mode), so a footer that reused it went near-white-on-dark-page the
+     moment dark mode shipped. topbar-bg/ink are the token pair already
+     built to stay a dark band in both themes - reuse them instead of
+     inventing a third set. */
+  .site-footer{background:var(--topbar-bg);color:var(--topbar-ink);}
   .footer-grid{
     display:grid;gap:32px;grid-template-columns:repeat(2,1fr);padding-block:52px 32px;
   }
   @media (min-width:640px){.footer-grid{grid-template-columns:repeat(3,1fr);}}
   @media (min-width:1024px){.footer-grid{grid-template-columns:1.4fr repeat(4,1fr);}}
-  .footer-brand .brand-badge{background:#fff;color:var(--ink);}
+  .footer-brand .brand-badge{background:#fff;color:#0E2233;}
   .footer-brand .brand-name{color:#fff;}
   .footer-brand .brand-tag{color:#7E96AC;}
   .footer-brand p{font-size:13px;line-height:1.6;margin-top:14px;max-width:32ch;color:#8FA6BA;}
@@ -1010,7 +1033,7 @@
   .back-to-top{
     position:fixed;right:20px;bottom:20px;z-index:300;
     width:44px;height:44px;border-radius:50%;
-    background:var(--ink);color:#fff;box-shadow:var(--shadow-lg);
+    background:var(--topbar-bg);color:#fff;box-shadow:var(--shadow-lg);
     display:flex;align-items:center;justify-content:center;
     opacity:0;pointer-events:none;transform:translateY(8px);
     transition:opacity .2s ease, transform .2s ease;
