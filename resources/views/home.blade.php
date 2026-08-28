@@ -237,7 +237,7 @@
 
       <section aria-labelledby="standings-heading" id="tables">
         <div class="section-head">
-          <h2 id="standings-heading">Standings Snapshot</h2>
+          <h2 id="standings-heading">Leagues Teams Standings</h2>
           <a href="{{ route('tables.index') }}" class="section-link">All {{ $leagueTables->count() }} leagues
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
@@ -246,7 +246,7 @@
              table - every other league's table is still one click away
              via the link above and the Rankings nav item. --}}
         <div class="standings-snapshot-grid">
-          @foreach (['premier-league', 'la-liga', 'bundesliga'] as $snapSlug)
+          @foreach (['premier-league', 'la-liga'] as $snapSlug)
           @php $snapT = $leagueTables->first(fn ($x) => $x['league']->slug === $snapSlug); @endphp
           @if($snapT)
           <div class="standings-snapshot-col">
