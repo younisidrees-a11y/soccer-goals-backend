@@ -6,6 +6,7 @@ use App\Models\MatchFixture;
 use App\Models\NewsArticle;
 use App\Models\Standing;
 use App\Models\Team;
+use App\Services\AiFactChecker;
 use App\Services\AiNewsWriter;
 use App\Services\NewsGraphicGenerator;
 use Illuminate\Console\Attributes\Description;
@@ -59,6 +60,29 @@ class PublishNewsArticle extends Command
             $this->error('AI generation failed - check storage/logs/laravel.log. No article was created.');
 
             return self::FAILURE;
+        }
+
+        // Deterministic checks against the real data, not more prompt
+        // instructions the model could still ignore - this is what caught
+        // and would have blocked the "Sunday" for a real Friday match.
+        // A match report that doesn't state the real score is discarded
+        // outright rather than risking a wrong scoreline going live; a
+        // wrong day of the week is safely correctable (always the same
+        // drop-in swap), so that gets fixed instead of losing the article.
+        if ($category === 'match-report' && isset($context['expected_score'])) {
+            [$expectedHome, $expectedAway] = $context['expected_score'];
+
+            if (! AiFactChecker::containsScore($written['body'], $expectedHome, $expectedAway)) {
+                $this->error("AI-written body didn't state the real score ({$expectedHome}-{$expectedAway}) - discarded rather than publishing a mismatched result. No article was created.");
+
+                return self::FAILURE;
+            }
+        }
+
+        if (isset($context['real_date'])) {
+            $written['title'] = AiFactChecker::fixDayOfWeek($written['title'], $context['real_date']);
+            $written['dek'] = AiFactChecker::fixDayOfWeek($written['dek'], $context['real_date']);
+            $written['body'] = AiFactChecker::fixDayOfWeek($written['body'], $context['real_date']);
         }
 
         $slug = Str::slug($written['title']).'-'.Str::random(6);
@@ -175,6 +199,8 @@ class PublishNewsArticle extends Command
             'league_id' => $match->league_id,
             'team_id' => $match->home_team_id,
             'match_id' => $match->id,
+            'expected_score' => [$match->home_score, $match->away_score],
+            'real_date' => $match->kickoff_at,
             'image' => [
                 'label' => 'MATCH REPORT',
                 'line1' => $home,

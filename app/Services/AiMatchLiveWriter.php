@@ -56,7 +56,14 @@ class AiMatchLiveWriter
             return null;
         }
 
-        return ['home' => $data['home'], 'away' => $data['away']];
+        // Deterministic fix, not just another prompt instruction the model
+        // could still ignore - same class of bug as the "Sunday" match
+        // report: a single real kickoff date, so any wrong weekday found
+        // is safely correctable rather than something to discard over.
+        return [
+            'home' => AiFactChecker::fixDayOfWeek($data['home'], $fixture->kickoff_at),
+            'away' => AiFactChecker::fixDayOfWeek($data['away'], $fixture->kickoff_at),
+        ];
     }
 
     public function writeHalftime(MatchFixture $fixture, int $homeScoreHt, int $awayScoreHt): ?string

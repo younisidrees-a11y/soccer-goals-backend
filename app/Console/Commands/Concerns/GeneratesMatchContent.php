@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Concerns;
 
 use App\Models\MatchFixture;
+use App\Services\AiFactChecker;
 use App\Services\AiMatchReportWriter;
 
 /**
@@ -108,8 +109,16 @@ trait GeneratesMatchContent
             $stats ?? $this->generateStats($homeScore, $awayScore)
         );
 
-        if ($aiReport) {
-            return $aiReport;
+        // Deterministic checks, not more prompt instructions the model
+        // could still ignore. A report that doesn't state the real score
+        // is discarded outright (falls through to the always-consistent
+        // template bank below) rather than risking a wrong scoreline going
+        // out - unlike a wrong day of the week, there's no safe way to
+        // "correct" a report that describes the wrong result. A wrong day
+        // of the week, once found, IS safely correctable (it's always the
+        // same drop-in swap), so that gets fixed rather than discarded.
+        if ($aiReport && AiFactChecker::containsScore($aiReport, $homeScore, $awayScore)) {
+            return AiFactChecker::fixDayOfWeek($aiReport, $fixture->kickoff_at);
         }
 
         $bank = match (true) {
