@@ -30,7 +30,7 @@ class AiMatchLiveWriter
         $homePoints = $homeStanding?->points ?? 0;
         $awayPosition = $awayStanding?->position ?? 'n/a';
         $awayPoints = $awayStanding?->points ?? 0;
-        $kickoff = $fixture->kickoff_at->format('j F Y, g:i A');
+        $kickoff = $fixture->kickoff_at->format('l, j F Y, g:i A');
 
         $prompt = <<<PROMPT
         You are a football news editor writing a short pre-match preview for a sports website. Write in a natural, human-sounding style, avoiding robotic AI phrasing (no "furthermore", "it is important to note").
@@ -42,7 +42,7 @@ class AiMatchLiveWriter
         {$home->name} current league position: {$homePosition} ({$homePoints} points)
         {$away->name} current league position: {$awayPosition} ({$awayPoints} points)
 
-        Write two short previews, 2-3 sentences each, one written from each team's perspective - what's at stake for them in this match given their current position. Only use the facts given above. Do not name any manager, player, or other real person not given above - not even ones you're confident about from general knowledge, since names change and may already be outdated.
+        Write two short previews, 2-3 sentences each, one written from each team's perspective - what's at stake for them in this match given their current position. Only use the facts given above - do not invent or guess any detail not explicitly listed. Do not name any manager, player, or other real person not given above - not even ones you're confident about from general knowledge, since names change and may already be outdated. If you reference when the match kicks off, use the exact date given above - never state a day of the week without checking it against that date first.
 
         Write like a real person, not like an AI trying to sound human: vary sentence length rather than a smooth even rhythm, never use "not only X but also Y", and avoid words like moreover, delve, boasts, showcases, testament to, seamless.
 

@@ -155,6 +155,7 @@ class PublishNewsArticle extends Command
         You are a football news editor writing for a sports website. Write a genuinely original, natural, human-sounding news article about the following completed match. Avoid robotic AI phrasing (no "furthermore", "it is important to note", no bullet points), and avoid stock phrases that would feel repeated across many articles.
 
         Match: {$home} {$match->home_score}-{$match->away_score} {$away}
+        Date played: {$match->kickoff_at->format('l, j F Y')}
         Competition: {$match->league->name}
         Venue: {$match->venue}
         Possession: {$home} {$possessionHome}% - {$possessionAway}% {$away}
@@ -162,7 +163,7 @@ class PublishNewsArticle extends Command
         {$home} current league position: {$homePosition} ({$homePoints} points)
         {$away} current league position: {$awayPosition} ({$awayPoints} points)
 
-        Write a 4-5 paragraph match report (roughly 350-450 words). Cover how the match unfolded, what the result means for both teams' league position, and a forward-looking closing line. Only use the facts given above - do not invent goal scorers, cards, or incidents not implied by the numbers.
+        Write a 4-5 paragraph match report (roughly 350-450 words). Cover how the match unfolded, what the result means for both teams' league position, and a forward-looking closing line. Only use the facts given above - do not invent or guess ANY detail not explicitly listed, including but not limited to goal scorers, cards, incidents, the day of the week, weather, attendance, or crowd atmosphere. If you want to reference when the match was played, use the exact date given above - never state a day of the week without checking it against that date first.
 
         The exact score ({$match->home_score}-{$match->away_score}) MUST appear as digits somewhere in the first paragraph - do not describe the result only in vague words like "a point apiece" or "shared the points" without also stating the literal scoreline. The title and every description of the result (draw, win, thriller, rout, etc.) must be factually consistent with that exact score - for example, never call a drawn match a "five-goal thriller" or any other framing that implies a result other than what the score above shows.
 
@@ -219,11 +220,11 @@ class PublishNewsArticle extends Command
             ->first();
 
         $lastResultLine = $lastMatch
-            ? "{$lastMatch->homeTeam->name} {$lastMatch->home_score}-{$lastMatch->away_score} {$lastMatch->awayTeam->name}"
+            ? "{$lastMatch->homeTeam->name} {$lastMatch->home_score}-{$lastMatch->away_score} {$lastMatch->awayTeam->name} (played {$lastMatch->kickoff_at->format('l, j F Y')})"
             : 'no matches played yet';
 
         $nextFixtureLine = $nextMatch
-            ? "{$nextMatch->homeTeam->name} vs {$nextMatch->awayTeam->name} on {$nextMatch->kickoff_at->format('j F Y')}"
+            ? "{$nextMatch->homeTeam->name} vs {$nextMatch->awayTeam->name} on {$nextMatch->kickoff_at->format('l, j F Y')}"
             : 'fixture list not yet published';
 
         $prompt = <<<PROMPT
@@ -235,7 +236,7 @@ class PublishNewsArticle extends Command
         Most recent result: {$lastResultLine}
         Next fixture: {$nextFixtureLine}
 
-        Write a 3-4 paragraph club news article (roughly 280-350 words) about how {$team->name}'s season is going right now - form, mood around the club, what's coming up. Only use the facts given above - do not invent transfers, injuries, or manager changes.
+        Write a 3-4 paragraph club news article (roughly 280-350 words) about how {$team->name}'s season is going right now - form, mood around the club, what's coming up. Only use the facts given above - do not invent or guess any detail not explicitly listed, including transfers, injuries, manager changes, or a day of the week that isn't the one given above.
 
         {$this->jsonInstructions(3)}
         PROMPT;

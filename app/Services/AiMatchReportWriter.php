@@ -67,7 +67,10 @@ class AiMatchReportWriter
         $venue = $fixture->venue;
         $league = $fixture->league->name;
 
-        $facts = ["Match: {$home} {$homeScore}-{$awayScore} {$away}"];
+        $facts = [
+            "Match: {$home} {$homeScore}-{$awayScore} {$away}",
+            "Date played: {$fixture->kickoff_at->format('l, j F Y')}",
+        ];
 
         if ($venue) {
             $facts[] = "Venue: {$venue}";
@@ -112,7 +115,7 @@ class AiMatchReportWriter
 
         {$factsBlock}
 
-        Only use the facts given above - if possession or shot counts aren't listed, don't mention or estimate them at all, just describe the match in terms of the score and any half-time score given.
+        Only use the facts given above - if possession or shot counts aren't listed, don't mention or estimate them at all, just describe the match in terms of the score and any half-time score given. If you reference when the match was played, use the exact date given above - never state a day of the week without checking it against that date first.
 
         Write two short paragraphs, around 90-130 words in total, covering how the game went and what the result means. Weave the numbers in naturally rather than listing them. Return only the two paragraphs, no title, no headings, no markdown formatting.
 
