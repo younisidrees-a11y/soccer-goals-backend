@@ -110,14 +110,19 @@ trait GeneratesMatchContent
         );
 
         // Deterministic checks, not more prompt instructions the model
-        // could still ignore. A report that doesn't state the real score
-        // is discarded outright (falls through to the always-consistent
-        // template bank below) rather than risking a wrong scoreline going
-        // out - unlike a wrong day of the week, there's no safe way to
-        // "correct" a report that describes the wrong result. A wrong day
-        // of the week, once found, IS safely correctable (it's always the
-        // same drop-in swap), so that gets fixed rather than discarded.
-        if ($aiReport && AiFactChecker::containsScore($aiReport, $homeScore, $awayScore)) {
+        // could still ignore. A report that doesn't state the real score,
+        // or still uses a banned AI-tone word despite the prompt banning
+        // it, is discarded outright (falls through to the
+        // always-consistent template bank below) rather than risking a
+        // wrong scoreline or leftover robotic phrasing going out - there's
+        // no safe way to "correct" either of those without rewriting the
+        // whole report. A wrong day of the week, once found, IS safely
+        // correctable (it's always the same drop-in swap), so that gets
+        // fixed rather than discarded.
+        if ($aiReport
+            && AiFactChecker::containsScore($aiReport, $homeScore, $awayScore)
+            && ! AiFactChecker::findBannedTone($aiReport)
+        ) {
             return AiFactChecker::fixDayOfWeek($aiReport, $fixture->kickoff_at);
         }
 

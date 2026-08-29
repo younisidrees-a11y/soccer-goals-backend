@@ -20,6 +20,13 @@ class AiFactChecker
 {
     private const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
+    /** Every prompt already bans these; this is the code-level backstop for when the model uses one anyway. */
+    private const BANNED_WORDS = [
+        'moreover', 'furthermore', 'delve', 'tapestry', 'boasts', 'showcases', 'underscores',
+        'testament to', 'realm', 'seamless', 'ever-evolving', 'landscape', 'game-changer',
+        "in today's world", "it's worth noting", 'at the end of the day', 'in conclusion', 'overall,',
+    ];
+
     /**
      * Language that only makes sense if a goal, card, or substitution
      * actually happened - used to catch a "quiet stretch" commentary line
@@ -110,5 +117,19 @@ class AiFactChecker
         }
 
         return false;
+    }
+
+    /** Returns the first banned AI-tone word/phrase found in $text, or null if it's clean. */
+    public static function findBannedTone(string $text): ?string
+    {
+        $lower = Str::lower($text);
+
+        foreach (self::BANNED_WORDS as $word) {
+            if (str_contains($lower, $word)) {
+                return $word;
+            }
+        }
+
+        return null;
     }
 }

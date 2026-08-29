@@ -79,6 +79,12 @@ class PublishNewsArticle extends Command
             }
         }
 
+        if ($word = AiFactChecker::findBannedTone($written['title'].' '.$written['dek'].' '.$written['body'])) {
+            $this->error("AI-written article still used a banned AI-tone word (\"{$word}\") despite the prompt banning it - discarded. No article was created.");
+
+            return self::FAILURE;
+        }
+
         if (isset($context['real_date'])) {
             $written['title'] = AiFactChecker::fixDayOfWeek($written['title'], $context['real_date']);
             $written['dek'] = AiFactChecker::fixDayOfWeek($written['dek'], $context['real_date']);
