@@ -42,11 +42,16 @@ class NewsArticleResource extends Resource
                             ->columnSpanFull(),
                         Forms\Components\FileUpload::make('image_path')
                             ->label('Article image')
+                            ->helperText('Every upload is resized to a fixed 1600×900 automatically - crop to the part of the photo you want kept before saving, since anything outside the crop box is cut at this step (the site itself never re-crops it after that).')
                             ->image()
                             ->disk('public')
                             ->directory('news-images')
                             ->visibility('public')
                             ->imageEditor()
+                            ->imageEditorAspectRatios(['16:9'])
+                            ->imageResizeTargetWidth('1600')
+                            ->imageResizeTargetHeight('900')
+                            ->imageResizeMode('cover')
                             ->columnSpanFull(),
                         Forms\Components\Select::make('category')
                             ->options([
