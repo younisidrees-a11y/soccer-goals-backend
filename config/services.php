@@ -37,7 +37,15 @@ return [
 
     'anthropic' => [
         'key' => env('ANTHROPIC_API_KEY'),
-        'model' => env('ANTHROPIC_MODEL', 'claude-haiku-4-5-20251001'),
+        // Every AI writer on the site (match reports, club news, transfers,
+        // previews, club history, live commentary) shares this one model.
+        // Haiku was cheap but visibly weaker at actually holding onto the
+        // "sound human, don't invent details" style rules baked into every
+        // prompt - it's what let a match report state the wrong day of the
+        // week despite being told not to. Defaulting to Sonnet here too so
+        // a fresh environment without an explicit override doesn't quietly
+        // fall back to the weaker tier.
+        'model' => env('ANTHROPIC_MODEL', 'claude-sonnet-5'),
     ],
 
     'football_data' => [
