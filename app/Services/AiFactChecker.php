@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 /**
  * A deterministic, code-level safety net for AI-written text - not a
@@ -18,6 +19,20 @@ use Carbon\Carbon;
 class AiFactChecker
 {
     private const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+    /**
+     * Language that only makes sense if a goal, card, or substitution
+     * actually happened - used to catch a "quiet stretch" commentary line
+     * (no real events given) that invents one anyway. Deliberately broad:
+     * false positives (a fine line discarded because it brushed one of
+     * these words) are the acceptable cost of never letting a phantom
+     * event through - matches the site's own zero-tolerance rule on this.
+     */
+    private const EVENT_CLAIM_KEYWORDS = [
+        'scores', 'scored', 'nets', 'finds the net', 'back of the net', 'beats the keeper', 'header home', 'taps in', 'slots home',
+        'yellow card', 'red card', 'sent off', 'booked', 'dismissed', 'second yellow',
+        'substituted', 'brought on', 'comes on for', 'replaces him', 'replaces her',
+    ];
 
     /** True only if the exact "home-away" scoreline appears as digits somewhere in the text. */
     public static function containsScore(string $text, int $homeScore, int $awayScore): bool
@@ -46,5 +61,54 @@ class AiFactChecker
         }
 
         return $text;
+    }
+
+    /**
+     * True if $text names a day of the week that matches none of the real
+     * dates given - for content that legitimately references more than
+     * one real date (e.g. club news covering both a past result and an
+     * upcoming fixture), where a single blind swap-to-the-real-day
+     * (fixDayOfWeek) risks "correcting" a mention that was already right
+     * about the OTHER date. Safer to reject outright than to guess which
+     * date a mismatch was supposed to refer to.
+     */
+    public static function containsUnrecognizedDayOfWeek(string $text, array $realDates): bool
+    {
+        $allowedDays = collect($realDates)
+            ->filter()
+            ->map(fn (Carbon $date) => $date->format('l'))
+            ->unique()
+            ->all();
+
+        foreach (self::WEEKDAYS as $day) {
+            if (in_array($day, $allowedDays, true)) {
+                continue;
+            }
+
+            if (preg_match('/\b'.$day.'\b/', $text)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * True if $text uses language claiming a goal, card, or substitution
+     * happened. Only meaningful when checking a "quiet stretch" commentary
+     * line written from no real events - a line describing real given
+     * events is expected and fine to use this language.
+     */
+    public static function containsUnverifiedEventClaim(string $text): bool
+    {
+        $lower = Str::lower($text);
+
+        foreach (self::EVENT_CLAIM_KEYWORDS as $keyword) {
+            if (str_contains($lower, $keyword)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

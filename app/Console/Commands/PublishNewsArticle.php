@@ -85,6 +85,19 @@ class PublishNewsArticle extends Command
             $written['body'] = AiFactChecker::fixDayOfWeek($written['body'], $context['real_date']);
         }
 
+        // Club news references two real dates (last result, next fixture)
+        // with no single correct day to swap a mismatch to - reject rather
+        // than guess which date it was supposed to mean.
+        if (isset($context['real_dates']) && (
+            AiFactChecker::containsUnrecognizedDayOfWeek($written['title'], $context['real_dates'])
+            || AiFactChecker::containsUnrecognizedDayOfWeek($written['dek'], $context['real_dates'])
+            || AiFactChecker::containsUnrecognizedDayOfWeek($written['body'], $context['real_dates'])
+        )) {
+            $this->error('AI-written club news named a day of the week matching neither real date on record - discarded rather than risking a wrong date. No article was created.');
+
+            return self::FAILURE;
+        }
+
         $slug = Str::slug($written['title']).'-'.Str::random(6);
 
         $imagePath = app(NewsGraphicGenerator::class)->generate(
@@ -272,6 +285,11 @@ class PublishNewsArticle extends Command
             'league_id' => $team->league_id,
             'team_id' => $team->id,
             'match_id' => $lastMatch?->id,
+            // Two real dates in play here (last result, next fixture), so
+            // there's no single "correct day" to blindly swap a mismatch
+            // to - handle() rejects the draft outright instead if it names
+            // a day matching neither.
+            'real_dates' => array_filter([$lastMatch?->kickoff_at, $nextMatch?->kickoff_at]),
             'image' => [
                 'label' => 'CLUB NEWS',
                 'line1' => $team->name,

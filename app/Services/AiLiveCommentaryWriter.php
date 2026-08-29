@@ -71,7 +71,29 @@ class AiLiveCommentaryWriter
 
         $line = $data['line'] ?? null;
 
-        return is_string($line) && trim($line) !== '' ? trim($line) : null;
+        if (! is_string($line) || trim($line) === '') {
+            return null;
+        }
+
+        $line = trim($line);
+
+        // Deterministic check, not just another prompt instruction the
+        // model could still ignore: on a genuinely quiet stretch (no real
+        // events given), a line that still uses goal/card/substitution
+        // language is describing something that didn't happen. Discarded
+        // rather than published - same rule as everywhere else on this
+        // site, nothing goes out that isn't grounded in real data.
+        if (empty($newEvents) && AiFactChecker::containsUnverifiedEventClaim($line)) {
+            Log::warning('AI live commentary invented an event on a quiet stretch - discarded', [
+                'match' => "{$homeTeam} vs {$awayTeam}",
+                'minute' => $elapsedMinute,
+                'line' => $line,
+            ]);
+
+            return null;
+        }
+
+        return $line;
     }
 
     private function callAndParseJson(string $prompt, int $maxTokens): ?array
