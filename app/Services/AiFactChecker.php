@@ -42,9 +42,23 @@ class AiFactChecker
     ];
 
     /** True only if the exact "home-away" scoreline appears as digits somewhere in the text. */
+    /**
+     * True if the real score appears as digits in the natural home-away
+     * order ("1-2"), OR in winner-first order when the away side actually
+     * won ("2-1" for an away win, as in "City beat United 2-1"). The
+     * reversed order is deliberately NOT accepted for a home win or a
+     * draw - that would just as easily accept a backwards, wrong claim
+     * (a real 1-2 away win misreported as a 2-1 home win) as it would a
+     * legitimate away-win phrasing, and there's no way to tell those
+     * apart from the digits alone.
+     */
     public static function containsScore(string $text, int $homeScore, int $awayScore): bool
     {
-        return str_contains($text, "{$homeScore}-{$awayScore}");
+        if (str_contains($text, "{$homeScore}-{$awayScore}")) {
+            return true;
+        }
+
+        return $awayScore > $homeScore && str_contains($text, "{$awayScore}-{$homeScore}");
     }
 
     /**
