@@ -66,7 +66,78 @@ class NewsArticle extends Model
             if ($article->status === 'published' && ! $article->published_at) {
                 $article->published_at = now();
             }
+
+            // Filament's upload editor already fixes every photo at
+            // 1600x900, but a JPEG straight off that client-side canvas
+            // export can still run 300-500KB - dimensions alone don't make
+            // a "light" image, actual file weight does. Re-encode real
+            // uploads (never the AI pipeline's .svg placeholders, never an
+            // already-compressed .webp) as WebP at a quality that stays
+            // visually sharp for a news photo while cutting real weight.
+            // Only runs when the image actually changed, so editing other
+            // fields on an existing article doesn't repeatedly re-compress
+            // the same photo and slowly degrade it.
+            if ($article->isDirty('image_path') && $article->image_path) {
+                if ($lighter = self::compressUploadedImage($article->image_path)) {
+                    $article->image_path = $lighter;
+                }
+            }
         });
+    }
+
+    /**
+     * Re-encodes a real photo upload (jpg/png/gif) as WebP on the public
+     * disk to cut its file size, leaving SVGs and already-webp files
+     * untouched. Returns the new relative path on success, or null if
+     * there was nothing to do (missing file, unsupported type, GD not
+     * available) - callers should fall back to the original path.
+     */
+    private static function compressUploadedImage(string $path): ?string
+    {
+        $disk = Storage::disk('public');
+
+        if (! $disk->exists($path) || ! function_exists('imagewebp')) {
+            return null;
+        }
+
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+        if (! in_array($extension, ['jpg', 'jpeg', 'png', 'gif'], true)) {
+            return null;
+        }
+
+        $fullPath = $disk->path($path);
+
+        $image = match ($extension) {
+            'jpg', 'jpeg' => @imagecreatefromjpeg($fullPath),
+            'png' => @imagecreatefrompng($fullPath),
+            'gif' => @imagecreatefromgif($fullPath),
+        };
+
+        if (! $image) {
+            return null;
+        }
+
+        // Flatten any transparency onto white before encoding - a news
+        // photo has no alpha channel to preserve, and leaving it
+        // half-converted can render as a black background in some readers.
+        imagepalettetotruecolor($image);
+        imagealphablending($image, true);
+        imagesavealpha($image, false);
+
+        $webpPath = Str::beforeLast($path, '.').'.webp';
+        $webpFullPath = $disk->path($webpPath);
+
+        $encoded = imagewebp($image, $webpFullPath, 78);
+        imagedestroy($image);
+
+        if (! $encoded || ! $disk->exists($webpPath)) {
+            return null;
+        }
+
+        $disk->delete($path);
+
+        return $webpPath;
     }
 
     /**
