@@ -25,6 +25,17 @@ class NewsArticle extends Model
         'published_at' => 'datetime',
     ];
 
+    // The review-queue approve() action stamps published_at itself, but an
+    // editor can also set status to "Published" directly on the create/edit
+    // form (e.g. publishing human-written news straight away) - that path
+    // saves the model without ever calling approve(), so published_at was
+    // staying null. Everything downstream (homepage ordering, Match
+    // Spotlight, "newest first" queries) sorts and filters on published_at,
+    // so a null value there silently pushes an otherwise-live article to
+    // the bottom and out of every featured slot. Catch it here instead of
+    // in every place that sets status, so it can't happen again regardless
+    // of which path (form, approve(), tinker) sets status to published.
+
     private const CATEGORY_LABELS = [
         'match-report' => ['cat-report', 'Match Report'],
         'transfers' => ['cat-transfers', 'Transfers'],
@@ -48,6 +59,12 @@ class NewsArticle extends Model
         static::creating(function (NewsArticle $article) {
             if (empty($article->slug)) {
                 $article->slug = Str::slug($article->title).'-'.Str::random(6);
+            }
+        });
+
+        static::saving(function (NewsArticle $article) {
+            if ($article->status === 'published' && ! $article->published_at) {
+                $article->published_at = now();
             }
         });
     }
