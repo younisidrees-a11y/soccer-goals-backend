@@ -418,11 +418,10 @@
         </span>
       </a>
       <p>Independent soccer journalism covering every major league, every fixture, worldwide.</p>
-      <div class="footer-social">
-        <a href="#" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23.3 22h-6.9l-5.4-6.7L4.8 22H1.6l8.2-9.4L1 2h7l4.9 6.1L18.9 2Z"/></svg></a>
-        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a>
-        <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9l6 3-6 3z" fill="currentColor" stroke="none"/></svg></a>
-      </div>
+      {{-- No footer-social block: these were href="#" placeholders with
+           no real account behind them. Add it back once there's an
+           actual X/Instagram/YouTube presence to link, alongside the
+           matching sameAs entries in the Organization schema above. --}}
     </div>
 
     <div class="footer-col">
