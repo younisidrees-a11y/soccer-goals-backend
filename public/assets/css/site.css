@@ -1255,6 +1255,42 @@
   .player-name .cap-tag{color:var(--team-color, var(--accent));font-weight:800;}
   .player-role{font-size:11px;color:var(--ink-faint);margin-top:2px;}
 
+  /* Fixture page: each team's squad as its own real-color-branded panel,
+     instead of a bare list - same team-color token pattern already used
+     on team pages, just scoped to a bordered card here. */
+  .fixture-squad{
+    margin-top:24px;padding:18px 20px 22px;
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+    border-top:3px solid var(--team-color, var(--accent));box-shadow:var(--shadow-sm);
+  }
+  .fixture-squad-head{display:flex;align-items:center;gap:10px;margin-bottom:2px;}
+  .fixture-squad-head .crest{width:26px;height:28px;flex-shrink:0;}
+  .fixture-squad-head h3{font-family:var(--font-display);font-size:17px;font-weight:700;}
+  .fixture-squad-head h3 a{color:inherit;text-decoration:none;}
+  .fixture-squad-head h3 a:hover{color:var(--team-color, var(--accent));}
+  .squad-empty{color:var(--ink-muted);font-size:14px;margin-top:10px;}
+
+  /* Squad card reveal: [data-reveal-io] on the .squad-grid is added only
+     by JS right before it also sets up the observer (see site.js), so a
+     card is never left permanently hidden if JS fails to run - it just
+     renders normally visible, no animation. Reuses the same
+     resultCardIn keyframe and cubic-bezier already established for
+     match-card reveals elsewhere on the site, not a new motion language. */
+  .squad-grid[data-reveal-pending] .player-card{opacity:0;transform:translateY(14px) scale(.97);}
+  .squad-grid[data-reveal-visible] .player-card{animation:resultCardIn .45s cubic-bezier(.34,1.56,.64,1) forwards;}
+  .squad-grid[data-reveal-visible] .player-card:nth-child(1){animation-delay:.00s;}
+  .squad-grid[data-reveal-visible] .player-card:nth-child(2){animation-delay:.03s;}
+  .squad-grid[data-reveal-visible] .player-card:nth-child(3){animation-delay:.06s;}
+  .squad-grid[data-reveal-visible] .player-card:nth-child(4){animation-delay:.09s;}
+  .squad-grid[data-reveal-visible] .player-card:nth-child(5){animation-delay:.12s;}
+  .squad-grid[data-reveal-visible] .player-card:nth-child(6){animation-delay:.15s;}
+  .squad-grid[data-reveal-visible] .player-card:nth-child(7){animation-delay:.18s;}
+  .squad-grid[data-reveal-visible] .player-card:nth-child(8){animation-delay:.21s;}
+  .squad-grid[data-reveal-visible] .player-card:nth-child(n+9){animation-delay:.24s;}
+  @media (prefers-reduced-motion: reduce){
+    .squad-grid[data-reveal-pending] .player-card{opacity:1;transform:none;animation:none;}
+  }
+
   /* ---------- Honours ---------- */
   .honours-strip{display:grid;gap:14px;grid-template-columns:repeat(2,1fr);}
   @media (min-width:640px){.honours-strip{grid-template-columns:repeat(3,1fr);}}

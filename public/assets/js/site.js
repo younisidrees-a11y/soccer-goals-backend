@@ -340,4 +340,25 @@
       }
     });
   }
+
+  // Squad card reveal: fades/lifts each player card in with a stagger as
+  // its .squad-grid scrolls into view (team pages, and both squads on a
+  // fixture preview page). data-reveal-pending is only ever added here,
+  // immediately before the observer that's about to remove it - so if
+  // this script doesn't run at all, cards just stay at their normal CSS
+  // opacity:1 and nothing is ever left stuck invisible.
+  var squadGrids = Array.prototype.slice.call(document.querySelectorAll('.squad-grid'));
+  var squadReduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (squadGrids.length && !squadReduceMotion && 'IntersectionObserver' in window) {
+    squadGrids.forEach(function (grid) { grid.setAttribute('data-reveal-pending', ''); });
+    var squadObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.removeAttribute('data-reveal-pending');
+        entry.target.setAttribute('data-reveal-visible', '');
+        squadObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    squadGrids.forEach(function (grid) { squadObserver.observe(grid); });
+  }
 })();
