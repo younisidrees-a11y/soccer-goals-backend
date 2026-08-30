@@ -1,6 +1,6 @@
 @extends('layouts.site')
 
-@section('title', $league->meta_title ?: $league->name . ' Points Table Season ' . $league->season)
+@section('title', $league->meta_title ?: $league->name . ' Points Table ' . $league->season)
 @section('meta_description', $league->meta_description ?: $league->name . ' table, fixtures, results and team news for the ' . $league->season . ' season. Full ' . $league->name . ' coverage on The Soccer Goals.')
 @section('meta_keywords', $league->meta_keywords ?: $league->name . ', ' . $league->country . ' football, football table, standings, fixtures, results, live scores, ' . $league->season . ' season, ' . $league->name . ' news')
 @section('canonical', route('leagues.show', $league->slug))
