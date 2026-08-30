@@ -26,24 +26,24 @@
 
       $defaultKeywords = "{$match->homeTeam->name}, {$match->awayTeam->name}, {$title}, {$score}, match result, final score, {$match->league->name}, {$year}"
           . ($isDraw ? ', draw' : ", {$winner} win");
-  } elseif ($isLive) {
-      // Genuinely in progress right now - the only case "live" is accurate.
-      $score = "{$match->home_score}-{$match->away_score}";
-
-      $defaultTitle = "{$title} Live Score {$score} | {$match->league->name} {$year} | The Soccer Goals";
-
-      $defaultDescription = "{$title} live now at {$match->venue}, currently {$score}. Live score, commentary and stats as this {$match->league->name} {$match->league->season} match happens.";
-
-      $defaultKeywords = "{$match->homeTeam->name}, {$match->awayTeam->name}, {$title}, live score, live match, {$match->league->name}, {$year}";
   } else {
-      // Scheduled but not yet kicked off - "live" is inaccurate here, it
-      // hasn't started. This was previously worded as "Live Match... Going
-      // to Play", the same self-contradiction for every upcoming fixture.
-      $defaultTitle = "{$title} Preview {$year}: Kick-off {$dateLong} at {$kickoffTime} | The Soccer Goals";
+      // One shared title for every not-yet-final fixture - scheduled
+      // (kickoff still to come) and live (already underway) alike. This
+      // is accurate either way: "Kick Off Time" names a real fact of the
+      // match whether it's upcoming or already happened, and "Live
+      // Score" becomes true the moment the match actually starts -
+      // unlike the earlier per-status title, description/keywords still
+      // differ below since those genuinely say different things (a
+      // live score right now vs. a pre-match preview).
+      $defaultTitle = "{$title} Match {$year} Live Score, Kick Off Time | The Soccer Goals";
 
-      $defaultDescription = "{$match->homeTeam->name} face {$match->awayTeam->name} at {$match->venue} on {$dateLong}, kick-off {$kickoffTime}. Team news, form and match preview for this {$match->league->name} {$match->league->season} fixture.";
+      $defaultDescription = $isLive
+          ? "{$title} live now at {$match->venue}, currently {$match->home_score}-{$match->away_score}. Live score, commentary and stats as this {$match->league->name} {$match->league->season} match happens."
+          : "{$match->homeTeam->name} face {$match->awayTeam->name} at {$match->venue} on {$dateLong}, kick-off {$kickoffTime}. Team news, form and match preview for this {$match->league->name} {$match->league->season} fixture.";
 
-      $defaultKeywords = "{$match->homeTeam->name}, {$match->awayTeam->name}, {$title}, match preview, {$match->league->name}, fixture {$year}, kick off time";
+      $defaultKeywords = $isLive
+          ? "{$match->homeTeam->name}, {$match->awayTeam->name}, {$title}, live score, live match, {$match->league->name}, {$year}"
+          : "{$match->homeTeam->name}, {$match->awayTeam->name}, {$title}, match preview, {$match->league->name}, fixture {$year}, kick off time";
   }
 @endphp
 
