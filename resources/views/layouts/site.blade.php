@@ -14,6 +14,7 @@
 <title>@yield('title', 'The Soccer Goals — Soccer, Covered.')</title>
 <meta name="description" content="@yield('meta_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the English Premier League, Spanish La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')">
 <meta name="keywords" content="@yield('meta_keywords', 'soccer news, football news, English Premier League, Spanish La Liga, Serie A, Bundesliga, Ligue 1, fixtures, results, points table, football scores')">
+<meta name="robots" content="@yield('robots', 'index, follow')">
 <link rel="canonical" href="@yield('canonical', url()->current())">
 <meta property="og:type" content="@yield('og_type', 'website')">
 <meta property="og:site_name" content="The Soccer Goals">
