@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MatchFixture;
+use App\Models\Player;
 use Illuminate\Http\Request;
 
 class MatchController extends Controller
@@ -67,9 +68,17 @@ class MatchController extends Controller
         $homeNextTwo = $nextTwoFor($match->home_team_id);
         $awayNextTwo = $nextTwoFor($match->away_team_id);
 
+        // Real squad lists for both teams, shown on the fixture page
+        // wherever the actual confirmed starting lineup isn't available
+        // yet (i.e. before a match kicks off) - same grouping as a team's
+        // own squad page, via the shared Player::groupByPosition() helper.
+        $homeSquadByPosition = Player::groupByPosition($match->homeTeam->players()->orderBy('shirt_number')->get());
+        $awaySquadByPosition = Player::groupByPosition($match->awayTeam->players()->orderBy('shirt_number')->get());
+
         return view('matches.show', compact(
             'match', 'homeStanding', 'awayStanding', 'homeNext', 'awayNext',
-            'homeLastMatch', 'awayLastMatch', 'homeNextTwo', 'awayNextTwo'
+            'homeLastMatch', 'awayLastMatch', 'homeNextTwo', 'awayNextTwo',
+            'homeSquadByPosition', 'awaySquadByPosition'
         ));
     }
 }

@@ -271,6 +271,41 @@
             @include('partials.pitch-lineups', ['lineups' => $match->lineups, 'homeTeam' => $match->homeTeam, 'awayTeam' => $match->awayTeam])
           @else
             <div class="lineups-unavailable">Lineups haven't been confirmed yet — teams usually announce their starting XI shortly before kick-off. Check back closer to {{ $match->kickoff_at->format('H:i') }} UTC on {{ $match->kickoff_at->format('j F') }}.</div>
+
+            {{-- Real squad lists for both teams, so this fixture page has
+                 genuine content while the actual starting XI is still
+                 unknown - same squad data and layout as each team's own
+                 squad page. --}}
+            @foreach ([[$match->homeTeam, $homeSquadByPosition], [$match->awayTeam, $awaySquadByPosition]] as [$squadTeam, $squadByPosition])
+            <div style="margin-top:28px;">
+              <div style="display:flex;align-items:center;gap:9px;">
+                <span class="crest crest-{{ $squadTeam->crest_code }}" role="img" aria-label="{{ $squadTeam->full_name }} badge" style="width:24px;height:26px;"></span>
+                <h3 style="font-family:var(--font-display);font-size:17px;"><a href="{{ route('teams.show', $squadTeam->slug) }}" style="color:inherit;text-decoration:none;">{{ $squadTeam->name }}</a> Squad</h3>
+              </div>
+
+              @if(collect($squadByPosition)->every(fn ($group) => $group->isEmpty()))
+                <p style="color:var(--ink-muted);font-size:14px;margin-top:10px;">No squad list published for {{ $squadTeam->name }} yet.</p>
+              @else
+                @foreach ($squadByPosition as $label => $players)
+                  @if($players->isNotEmpty())
+                  <div class="squad-position-title">{{ $label }}</div>
+                  <div class="squad-grid">
+                    @foreach ($players as $p)
+                    <a href="{{ $p->prettyUrl() }}" class="player-card{{ $p->is_captain ? ' is-captain' : '' }}" style="text-decoration:none;color:inherit;">
+                      @if($p->photo_url)
+                        <img src="{{ $p->photo_url }}" alt="{{ $p->name }}" class="player-photo" loading="lazy">
+                      @else
+                        <span class="player-photo player-photo-fallback">{{ $p->shirt_number ?? '?' }}</span>
+                      @endif
+                      <div><div class="player-name">{{ $p->name }}@if($p->is_captain) <span class="cap-tag">(C)</span>@endif</div><div class="player-role">{{ $p->position }}@if($p->shirt_number) &middot; #{{ $p->shirt_number }}@endif</div></div>
+                    </a>
+                    @endforeach
+                  </div>
+                  @endif
+                @endforeach
+              @endif
+            </div>
+            @endforeach
           @endif
         </section>
 

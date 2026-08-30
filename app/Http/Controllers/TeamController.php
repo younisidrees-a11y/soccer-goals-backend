@@ -4,18 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\MatchFixture;
 use App\Models\NewsArticle;
+use App\Models\Player;
 use App\Models\Standing;
 use App\Models\Team;
 
 class TeamController extends Controller
 {
-    private const POSITION_GROUPS = [
-        'Goalkeepers' => ['Goalkeeper'],
-        'Defenders' => ['Centre-Back', 'Left-Back', 'Right-Back', 'Defender'],
-        'Midfielders' => ['Midfielder', 'Attacking Mid.', 'Defensive Mid.'],
-        'Forwards' => ['Forward', 'Winger'],
-    ];
-
     public function show(string $slug)
     {
         $team = Team::with('league')->published()->where('slug', $slug)->firstOrFail();
@@ -44,10 +38,7 @@ class TeamController extends Controller
         $nextFixture = $upcomingMatches->first();
 
         $squad = $team->players()->orderBy('shirt_number')->get();
-        $squadByPosition = [];
-        foreach (self::POSITION_GROUPS as $label => $positions) {
-            $squadByPosition[$label] = $squad->filter(fn ($p) => in_array($p->position, $positions));
-        }
+        $squadByPosition = Player::groupByPosition($squad);
 
         $topScorers = $squad->filter(fn ($p) => $p->goals > 0 || $p->assists > 0)
             ->sortByDesc(fn ($p) => $p->goals * 1000 + $p->assists)
