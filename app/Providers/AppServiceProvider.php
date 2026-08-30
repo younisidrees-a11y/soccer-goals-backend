@@ -87,12 +87,38 @@ class AppServiceProvider extends ServiceProvider
      */
     private function buildTickerMatches()
     {
+        // A real three-tier priority, not just "live vs. everything
+        // else": that only pass sorted by kickoff_at first, then pulled
+        // live matches to the front, but left scheduled and final
+        // matches interleaved by kickoff time within the "not live"
+        // group - and a finished match almost always kicked off earlier
+        // in the day than one still upcoming, so finals quietly ended up
+        // leading the ticker with upcoming matches pushed after them.
+        $statusRank = fn (MatchFixture $m) => match ($m->status) {
+            'live' => 0,
+            'scheduled' => 1,
+            default => 2, // final and anything else trail
+        };
+
         $today = MatchFixture::with(['homeTeam', 'awayTeam'])
             ->published()
             ->whereDate('kickoff_at', now()->toDateString())
-            ->orderBy('kickoff_at')
             ->get()
-            ->sortByDesc(fn (MatchFixture $m) => $m->status === 'live')
+            ->sort(function (MatchFixture $a, MatchFixture $b) use ($statusRank) {
+                $rankA = $statusRank($a);
+                $rankB = $statusRank($b);
+
+                if ($rankA !== $rankB) {
+                    return $rankA <=> $rankB;
+                }
+
+                // Within a tier: live/upcoming soonest-first, but an
+                // already-finished match reads better newest-first - the
+                // most recent result is the one worth seeing first.
+                return $rankA === 2
+                    ? $b->kickoff_at <=> $a->kickoff_at
+                    : $a->kickoff_at <=> $b->kickoff_at;
+            })
             ->values();
 
         $minimum = 8;
