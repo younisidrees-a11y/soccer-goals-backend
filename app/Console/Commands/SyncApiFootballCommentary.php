@@ -93,8 +93,16 @@ class SyncApiFootballCommentary extends Command
             return false;
         }
 
-        $round = "Regular Season - {$match->matchday}";
-        $response = $client->getFixturesByRound($league->api_football_id, (int) $league->season, $round);
+        // One call for the whole season's fixtures, matched by team pair -
+        // not a per-matchday "Regular Season - N" round lookup, which is
+        // wrong for any league that doesn't use that exact round-name
+        // format (confirmed live: Liga MX uses "Apertura - N" /
+        // "Clausura - N") and would silently resolve nothing. Not
+        // currently reachable in practice (commentary only runs for
+        // la-liga/saudi-pro-league today), but fixed here too so turning
+        // it on for another league later doesn't quietly hit the same
+        // bug found in sync-stats and sync-previews.
+        $response = $client->getSeasonFixtures($league->api_football_id, (int) $league->season);
 
         if (! $response || empty($response['response'])) {
             return false;

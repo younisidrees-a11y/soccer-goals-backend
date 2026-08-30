@@ -58,63 +58,69 @@ class SyncApiFootballPreviews extends Command
         $lineupsFetched = 0;
         $skippedUnmapped = 0;
 
-        foreach ($pending->groupBy('matchday') as $matchday => $matches) {
-            $round = "Regular Season - {$matchday}";
-            $response = $client->getFixturesByRound($league->api_football_id, (int) $league->season, $round);
+        // One call for the WHOLE season's fixtures, matched by team pair -
+        // not a per-matchday "Regular Season - N" round lookup. That
+        // guessed round-name format is wrong for any league that doesn't
+        // use it (confirmed live: Liga MX's real round names are
+        // "Apertura - N" / "Clausura - N", so every matchday silently
+        // came back empty and previews never got resolved) and would
+        // break the same way for any other league with its own naming
+        // scheme - matching directly against the real season fixture
+        // list needs no assumption about round-name format at all.
+        $seasonResponse = $client->getSeasonFixtures($league->api_football_id, (int) $league->season);
 
-            if (! $response || empty($response['response'])) {
-                $this->warn("Matchday {$matchday}: could not fetch round from API-Football, skipping.");
+        if (! $seasonResponse || empty($seasonResponse['response'])) {
+            $this->warn('Could not fetch season fixtures from API-Football - skipping.');
+
+            return self::SUCCESS;
+        }
+
+        $fixturesByTeamPair = collect($seasonResponse['response'])->keyBy(
+            fn ($f) => $f['teams']['home']['id'].'-'.$f['teams']['away']['id']
+        );
+
+        foreach ($pending as $match) {
+            $homeApiId = $match->homeTeam->api_football_id;
+            $awayApiId = $match->awayTeam->api_football_id;
+
+            if (! $homeApiId || ! $awayApiId) {
+                $skippedUnmapped++;
 
                 continue;
             }
 
-            $fixturesByTeamPair = collect($response['response'])->keyBy(
-                fn ($f) => $f['teams']['home']['id'].'-'.$f['teams']['away']['id']
-            );
+            $fixture = $fixturesByTeamPair->get("{$homeApiId}-{$awayApiId}");
 
-            foreach ($matches as $match) {
-                $homeApiId = $match->homeTeam->api_football_id;
-                $awayApiId = $match->awayTeam->api_football_id;
+            if (! $fixture) {
+                continue;
+            }
 
-                if (! $homeApiId || ! $awayApiId) {
-                    $skippedUnmapped++;
+            $fixtureId = $fixture['fixture']['id'];
+            $match->update([
+                'api_football_fixture_id' => $fixtureId,
+                'referee' => $fixture['fixture']['referee'] ?? $match->referee,
+            ]);
+            $resolved++;
 
-                    continue;
+            if (! $match->prediction) {
+                $predResponse = $client->getPredictions($fixtureId);
+                $prediction = $this->parsePrediction($predResponse);
+
+                if ($prediction) {
+                    $match->update(['prediction' => $prediction]);
+                    $predicted++;
                 }
+            }
 
-                $fixture = $fixturesByTeamPair->get("{$homeApiId}-{$awayApiId}");
+            $closeToKickoff = now()->greaterThanOrEqualTo($match->kickoff_at->copy()->subHours(3));
 
-                if (! $fixture) {
-                    continue;
-                }
+            if (! $match->lineups && $closeToKickoff) {
+                $lineupResponse = $client->getLineups($fixtureId);
+                $lineups = $this->parseLineups($lineupResponse);
 
-                $fixtureId = $fixture['fixture']['id'];
-                $match->update([
-                    'api_football_fixture_id' => $fixtureId,
-                    'referee' => $fixture['fixture']['referee'] ?? $match->referee,
-                ]);
-                $resolved++;
-
-                if (! $match->prediction) {
-                    $predResponse = $client->getPredictions($fixtureId);
-                    $prediction = $this->parsePrediction($predResponse);
-
-                    if ($prediction) {
-                        $match->update(['prediction' => $prediction]);
-                        $predicted++;
-                    }
-                }
-
-                $closeToKickoff = now()->greaterThanOrEqualTo($match->kickoff_at->copy()->subHours(3));
-
-                if (! $match->lineups && $closeToKickoff) {
-                    $lineupResponse = $client->getLineups($fixtureId);
-                    $lineups = $this->parseLineups($lineupResponse);
-
-                    if ($lineups) {
-                        $match->update(['lineups' => $lineups]);
-                        $lineupsFetched++;
-                    }
+                if ($lineups) {
+                    $match->update(['lineups' => $lineups]);
+                    $lineupsFetched++;
                 }
             }
         }

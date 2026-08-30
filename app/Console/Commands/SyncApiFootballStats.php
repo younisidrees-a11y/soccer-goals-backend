@@ -58,56 +58,59 @@ class SyncApiFootballStats extends Command
 
         $teamsByApiId = Team::where('league_id', $league->id)->whereNotNull('api_football_id')->get()->keyBy('api_football_id');
 
-        // Fetch each matchday's round once and match fixtures by team pair,
-        // rather than looking up one fixture at a time - far fewer calls.
-        $byMatchday = $pending->groupBy('matchday');
+        // One call for the WHOLE season's fixtures, matched by team pair -
+        // not a per-matchday "Regular Season - N" round lookup. That
+        // guessed round-name format is wrong for any league that doesn't
+        // use it (confirmed live: Liga MX's real round names are
+        // "Apertura - N" / "Clausura - N", so every matchday silently
+        // came back empty and nothing ever got enriched) and would break
+        // the same way for any other league with its own naming scheme -
+        // matching directly against the real season fixture list needs no
+        // assumption about round-name format at all, for any league.
+        $seasonResponse = $client->getSeasonFixtures($league->api_football_id, (int) $league->season);
+
+        if (! $seasonResponse || empty($seasonResponse['response'])) {
+            $this->warn('Could not fetch season fixtures from API-Football - skipping.');
+
+            return self::SUCCESS;
+        }
+
+        $fixturesByTeamPair = collect($seasonResponse['response'])->keyBy(
+            fn ($f) => $f['teams']['home']['id'].'-'.$f['teams']['away']['id']
+        );
+
         $resolved = 0;
         $enriched = 0;
         $skippedUnmapped = 0;
 
-        foreach ($byMatchday as $matchday => $matches) {
-            $round = "Regular Season - {$matchday}";
-            $response = $client->getFixturesByRound($league->api_football_id, (int) $league->season, $round);
+        foreach ($pending as $match) {
+            $homeApiId = $match->homeTeam->api_football_id;
+            $awayApiId = $match->awayTeam->api_football_id;
 
-            if (! $response || empty($response['response'])) {
-                $this->warn("Matchday {$matchday}: could not fetch round from API-Football, skipping.");
+            if (! $homeApiId || ! $awayApiId) {
+                $skippedUnmapped++;
+                $this->warn("Skipped {$match->homeTeam->name} vs {$match->awayTeam->name}: team not mapped to API-Football yet.");
 
                 continue;
             }
 
-            $fixturesByTeamPair = collect($response['response'])->keyBy(
-                fn ($f) => $f['teams']['home']['id'].'-'.$f['teams']['away']['id']
-            );
+            $fixture = $fixturesByTeamPair->get("{$homeApiId}-{$awayApiId}");
 
-            foreach ($matches as $match) {
-                $homeApiId = $match->homeTeam->api_football_id;
-                $awayApiId = $match->awayTeam->api_football_id;
+            if (! $fixture) {
+                $this->warn("Skipped {$match->homeTeam->name} vs {$match->awayTeam->name}: not found in API-Football's season fixture data.");
 
-                if (! $homeApiId || ! $awayApiId) {
-                    $skippedUnmapped++;
-                    $this->warn("Skipped {$match->homeTeam->name} vs {$match->awayTeam->name}: team not mapped to API-Football yet.");
+                continue;
+            }
 
-                    continue;
-                }
+            $fixtureId = $fixture['fixture']['id'];
+            $match->update([
+                'api_football_fixture_id' => $fixtureId,
+                'referee' => $fixture['fixture']['referee'] ?? $match->referee,
+            ]);
+            $resolved++;
 
-                $fixture = $fixturesByTeamPair->get("{$homeApiId}-{$awayApiId}");
-
-                if (! $fixture) {
-                    $this->warn("Skipped {$match->homeTeam->name} vs {$match->awayTeam->name}: not found in API-Football's round {$matchday} data.");
-
-                    continue;
-                }
-
-                $fixtureId = $fixture['fixture']['id'];
-                $match->update([
-                    'api_football_fixture_id' => $fixtureId,
-                    'referee' => $fixture['fixture']['referee'] ?? $match->referee,
-                ]);
-                $resolved++;
-
-                if ($this->enrichMatch($match, $fixtureId, $client, $teamsByApiId)) {
-                    $enriched++;
-                }
+            if ($this->enrichMatch($match, $fixtureId, $client, $teamsByApiId)) {
+                $enriched++;
             }
         }
 
