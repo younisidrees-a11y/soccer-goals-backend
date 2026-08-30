@@ -119,7 +119,6 @@
     <nav class="main-nav" aria-label="Primary">
       <ul>
         <li><a class="nav-link" href="{{ route('home') }}">Home</a></li>
-        <li><a class="nav-link" href="{{ route('today.index') }}">Scores</a></li>
 
         <li class="has-mega" data-mega>
           <button class="nav-link mega-trigger" aria-expanded="false">Leagues
@@ -213,6 +212,7 @@
         </li>
 
         <li><a class="nav-link" href="{{ route('news.category', 'transfers') }}">Transfers</a></li>
+        <li><a class="nav-link" href="{{ route('today.index') }}">Today's Matches</a></li>
         <li><a class="nav-link" href="{{ route('tables.index') }}">Rankings</a></li>
 
         <li class="has-mega" data-mega>
