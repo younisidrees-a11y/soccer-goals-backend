@@ -88,5 +88,6 @@ Allow: /
 
 Sitemap: https://thesoccergoals.com/sitemap.xml
 Sitemap: https://thesoccergoals.com/sitemap-news.xml
-Sitemap: https://thesoccergoals.com/sitemap-matches.xml
+Sitemap: https://thesoccergoals.com/sitemap-fixtures.xml
+Sitemap: https://thesoccergoals.com/sitemap-results.xml
 Sitemap: https://thesoccergoals.com/sitemap-players.xml

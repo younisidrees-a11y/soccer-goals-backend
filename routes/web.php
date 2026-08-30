@@ -15,7 +15,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.index');
 Route::get('/sitemap-news.xml', [SitemapController::class, 'news'])->name('sitemap.news');
-Route::get('/sitemap-matches.xml', [SitemapController::class, 'matches'])->name('sitemap.matches');
+Route::get('/sitemap-fixtures.xml', [SitemapController::class, 'fixtures'])->name('sitemap.fixtures');
+Route::get('/sitemap-results.xml', [SitemapController::class, 'results'])->name('sitemap.results');
 Route::get('/sitemap-players.xml', [SitemapController::class, 'players'])->name('sitemap.players');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');

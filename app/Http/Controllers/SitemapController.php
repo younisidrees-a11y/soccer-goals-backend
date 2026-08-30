@@ -83,21 +83,42 @@ class SitemapController extends Controller
     /**
      * Every published match had no sitemap presence at all before this -
      * thousands of real result/fixture pages discoverable only by
-     * internal-link crawling rather than being told about directly. Kept
-     * as its own sitemap file (like the news one) rather than folded into
-     * the general sitemap, since it's the single largest URL set on the
-     * site.
+     * internal-link crawling rather than being told about directly. Split
+     * into fixtures (not yet final) and results (final) as two separate
+     * sitemaps rather than one combined "matches" file, mirroring the
+     * site's own actual structure - Fixtures and Results are already
+     * separate sections with separate URLs (/fixtures/{league} vs
+     * /results/{league}), so the sitemaps should read the same way
+     * instead of introducing a third "matches" grouping that doesn't
+     * exist anywhere else on the site.
      */
-    public function matches(): Response
+    public function fixtures(): Response
     {
         $urls = MatchFixture::published()
+            ->where('status', '!=', 'final')
+            ->orderBy('kickoff_at')
+            ->get()
+            ->map(fn (MatchFixture $match) => [
+                'loc' => $match->prettyUrl(),
+                'lastmod' => ($match->updated_at ?? $match->kickoff_at)->toAtomString(),
+                'changefreq' => 'hourly',
+                'priority' => '0.7',
+            ]);
+
+        return $this->xmlResponse($this->buildUrlset($urls->all()));
+    }
+
+    public function results(): Response
+    {
+        $urls = MatchFixture::published()
+            ->where('status', 'final')
             ->orderByDesc('kickoff_at')
             ->get()
             ->map(fn (MatchFixture $match) => [
                 'loc' => $match->prettyUrl(),
                 'lastmod' => ($match->updated_at ?? $match->kickoff_at)->toAtomString(),
-                'changefreq' => $match->status === 'final' ? 'monthly' : 'hourly',
-                'priority' => $match->status === 'final' ? '0.5' : '0.7',
+                'changefreq' => 'monthly',
+                'priority' => '0.5',
             ]);
 
         return $this->xmlResponse($this->buildUrlset($urls->all()));
