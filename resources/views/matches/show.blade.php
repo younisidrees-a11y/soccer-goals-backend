@@ -26,12 +26,24 @@
 
       $defaultKeywords = "{$match->homeTeam->name}, {$match->awayTeam->name}, {$title}, {$score}, match result, final score, {$match->league->name}, {$year}"
           . ($isDraw ? ', draw' : ", {$winner} win");
+  } elseif ($isLive) {
+      // Genuinely in progress right now - the only case "live" is accurate.
+      $score = "{$match->home_score}-{$match->away_score}";
+
+      $defaultTitle = "{$title} Live Score {$score} | {$match->league->name} {$year} | The Soccer Goals";
+
+      $defaultDescription = "{$title} live now at {$match->venue}, currently {$score}. Live score, commentary and stats as this {$match->league->name} {$match->league->season} match happens.";
+
+      $defaultKeywords = "{$match->homeTeam->name}, {$match->awayTeam->name}, {$title}, live score, live match, {$match->league->name}, {$year}";
   } else {
-      $defaultTitle = "{$title} Live Match {$year}: Going to Play on {$dateLong} at {$kickoffTime} | The Soccer Goals";
+      // Scheduled but not yet kicked off - "live" is inaccurate here, it
+      // hasn't started. This was previously worded as "Live Match... Going
+      // to Play", the same self-contradiction for every upcoming fixture.
+      $defaultTitle = "{$title} Preview {$year}: Kick-off {$dateLong} at {$kickoffTime} | The Soccer Goals";
 
-      $defaultDescription = "{$match->homeTeam->name} host {$match->awayTeam->name} live at {$match->venue} on {$dateLong}, kick-off {$kickoffTime}. Team news, form and match preview for this {$match->league->name} {$match->league->season} fixture.";
+      $defaultDescription = "{$match->homeTeam->name} face {$match->awayTeam->name} at {$match->venue} on {$dateLong}, kick-off {$kickoffTime}. Team news, form and match preview for this {$match->league->name} {$match->league->season} fixture.";
 
-      $defaultKeywords = "{$match->homeTeam->name}, {$match->awayTeam->name}, {$title}, live match, {$match->league->name}, fixture {$year}, kick off time, match preview";
+      $defaultKeywords = "{$match->homeTeam->name}, {$match->awayTeam->name}, {$title}, match preview, {$match->league->name}, fixture {$year}, kick off time";
   }
 @endphp
 
