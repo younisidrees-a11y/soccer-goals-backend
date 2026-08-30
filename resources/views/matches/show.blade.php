@@ -71,11 +71,10 @@
           <div class="league-hero-eyebrow eyebrow" style="color:#8FB4FF;">{{ $match->league->name }}@if($match->venue) &middot; {{ $match->venue }}@endif</div>
           <h1 class="league-hero-title">{{ $title }}</h1>
           <div class="league-hero-meta">
-            {{ $match->kickoff_at->format('D j M Y') }} &middot;
-            @if($isFinal) Full-Time
-            @elseif($isLive && $match->home_score !== null) LIVE &middot; {{ $match->home_score }}-{{ $match->away_score }}
-            @elseif($isLive) LIVE &middot; just underway
-            @else {{ $match->kickoff_at->format('H:i') }} kick-off
+            {{ $match->kickoff_at->format('D j M Y') }} &middot; {{ $match->kickoff_at->format('H:i') }} kick-off
+            @if($isFinal) &middot; Full-Time
+            @elseif($isLive && $match->home_score !== null) &middot; LIVE &middot; {{ $match->home_score }}-{{ $match->away_score }}
+            @elseif($isLive) &middot; LIVE &middot; just underway
             @endif
           </div>
         </div>
@@ -85,10 +84,9 @@
         <div class="stat-item">
           <div class="stat-label">Kick-off</div>
           <div class="stat-value" style="font-size:15px;">
-            {{ $match->kickoff_at->format('D j M Y') }}
+            {{ $match->kickoff_at->format('D j M Y') }} &middot; {{ $match->kickoff_at->format('H:i') }} UTC
             @if($isFinal) &middot; Full-Time
             @elseif($isLive) &middot; <span class="dot-waiting" aria-hidden="true"></span> LIVE
-            @else &middot; {{ $match->kickoff_at->format('H:i') }} UTC
             @endif
           </div>
         </div>
