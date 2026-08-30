@@ -607,6 +607,34 @@
         </div>
       </div>
 
+      @if($sidebarTable->isNotEmpty())
+      <div class="widget table-widget">
+        <div class="widget-head">
+          <h2>{{ $match->league->name }} Table</h2>
+        </div>
+
+        @php
+          $sidebarRowColor = fn (?string $hex) => $hex && preg_match('/^#[0-9a-fA-F]{3,6}$/', $hex) ? $hex : null;
+        @endphp
+
+        <table class="standings">
+          <thead><tr><th></th><th class="th-team">Team</th><th>P</th><th>Pts</th></tr></thead>
+          <tbody>
+            @foreach ($sidebarTable as $s)
+            @php
+              $isMatchTeam = in_array($s->team_id, [$match->home_team_id, $match->away_team_id], true);
+              $rowColor = $isMatchTeam ? $sidebarRowColor($s->team->color_hex) : null;
+            @endphp
+            <tr class="{{ $s->zone === 'ucl' ? 'zone-ucl' : ($s->zone === 'rel' ? 'zone-rel' : '') }}"@if($rowColor) style="background:color-mix(in srgb, {{ $rowColor }} 8%, transparent);"@endif><td class="pos">{{ $s->position }}</td><td class="team-td"><a href="{{ route('teams.show', $s->team->slug) }}" class="team-td-inner"><span class="crest crest-{{ $s->team->crest_code }}" role="img" aria-label="{{ $s->team->full_name }} badge" style="width:20px;height:22px;"></span>@if($isMatchTeam)<strong>{{ $s->team->name }}</strong>@else{{ $s->team->name }}@endif</a></td><td>{{ $s->played }}</td><td class="pts">{{ $s->points }}</td></tr>
+            @endforeach
+          </tbody>
+        </table>
+        <a href="{{ route('leagues.show', $match->league->slug) }}" class="section-link" style="margin-top:14px;display:inline-flex;">View Full {{ $match->league->name }} Points Table
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+      @endif
+
       <div class="ad-slot ad-mpu">
         <span class="ad-eyebrow">Advertisement</span>
         <span class="ad-size">300 &times; 250 &middot; AdSense unit</span>

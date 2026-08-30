@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MatchFixture;
 use App\Models\Player;
+use App\Models\Standing;
 use Illuminate\Http\Request;
 
 class MatchController extends Controller
@@ -75,10 +76,20 @@ class MatchController extends Controller
         $homeSquadByPosition = Player::groupByPosition($match->homeTeam->players()->orderBy('shirt_number')->get());
         $awaySquadByPosition = Player::groupByPosition($match->awayTeam->players()->orderBy('shirt_number')->get());
 
+        // Sidebar points table for this match's own league - top 5, same
+        // compact widget already used on a team's own page, with a link
+        // through to the real full table.
+        $sidebarTable = Standing::with('team')
+            ->where('league_id', $match->league_id)
+            ->orderBy('position')
+            ->take(5)
+            ->get();
+
         return view('matches.show', compact(
             'match', 'homeStanding', 'awayStanding', 'homeNext', 'awayNext',
             'homeLastMatch', 'awayLastMatch', 'homeNextTwo', 'awayNextTwo',
-            'homeSquadByPosition', 'awaySquadByPosition'
+            'homeSquadByPosition', 'awaySquadByPosition',
+            'sidebarTable'
         ));
     }
 }
