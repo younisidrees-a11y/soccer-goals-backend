@@ -193,6 +193,20 @@ class HomeController extends Controller
             ->take(5)
             ->get();
 
+        // Sidebar "Recent Results" widget - real completed matches across
+        // every league, not just $recentResults' 5 (that's used
+        // elsewhere on this same page for a different section, so this
+        // is deliberately its own query rather than just raising that
+        // take(5), which would also balloon the other section using it).
+        // Widget itself only shows ~10 rows before scrolling; up to 60 is
+        // real headroom for that scroll.
+        $sidebarAllLeagueResults = MatchFixture::with(['homeTeam', 'awayTeam', 'league'])
+            ->published()
+            ->where('status', 'final')
+            ->orderByDesc('kickoff_at')
+            ->take(60)
+            ->get();
+
         $leagueTables = League::published()
             ->orderBy('name')
             ->get()
@@ -305,6 +319,7 @@ class HomeController extends Controller
             'transferNews',
             'upcomingFixtures',
             'recentResults',
+            'sidebarAllLeagueResults',
             'leagueTables',
             'defaultLeagueIndex',
             'topScorer',

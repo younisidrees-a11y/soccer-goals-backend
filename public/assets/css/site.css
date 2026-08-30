@@ -866,6 +866,11 @@
      is actually discoverable, just styled thin rather than left at the
      browser default. */
   .sidebar-scroll-list{max-height:421px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent;}
+  /* Home page's all-leagues widget: taller for ~10 rows (each row is a
+     little taller than the single-league version too, since it also
+     carries a league-name caption) - tuned against the real rendered
+     row height, not guessed. */
+  .sidebar-scroll-list.is-tall{max-height:665px;}
   .sidebar-scroll-list::-webkit-scrollbar{width:6px;}
   .sidebar-scroll-list::-webkit-scrollbar-track{background:transparent;}
   .sidebar-scroll-list::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:var(--radius-pill);}

@@ -191,6 +191,38 @@
           @endif
         </div>
         @endif
+
+        @if($sidebarAllLeagueResults->isNotEmpty())
+        <div class="widget">
+          <div class="widget-head"><h2>Recent Results</h2></div>
+          <p style="font-size:12px;color:var(--ink-faint);margin:-8px 0 12px;">Every league, most recent first</p>
+          @php
+            $homeRowColor = fn (?string $hex) => $hex && preg_match('/^#[0-9a-fA-F]{3,6}$/', $hex) ? $hex : null;
+          @endphp
+          {{-- Up to 60 real results, ~10 rows visible before scrolling -
+               same pattern as the fixture page's sidebar widget, just
+               spanning every league instead of one, so each row also
+               names its competition. --}}
+          <div class="sidebar-scroll-list is-tall">
+            @foreach ($sidebarAllLeagueResults as $r)
+            <a href="{{ $r->prettyUrl() }}" class="result-row"@if($homeRowColor($r->homeTeam->color_hex)) style="--team:{{ $homeRowColor($r->homeTeam->color_hex) }};"@endif>
+              <div style="flex:1;min-width:0;">
+                <span class="fx-teams">
+                  <span class="fx-team"><span class="crest crest-{{ $r->homeTeam->crest_code }}" role="img" aria-label="{{ $r->homeTeam->full_name }} badge"></span>{{ $r->homeTeam->name }}</span>
+                  <span class="vs">vs</span>
+                  <span class="fx-team"><span class="crest crest-{{ $r->awayTeam->crest_code }}" role="img" aria-label="{{ $r->awayTeam->full_name }} badge"></span>{{ $r->awayTeam->name }}</span>
+                </span>
+                <div style="font-size:11px;color:var(--ink-faint);margin-top:3px;">{{ $r->league->name }}</div>
+              </div>
+              <span class="rs-score">{{ $r->home_score }}&ndash;{{ $r->away_score }}</span>
+            </a>
+            @endforeach
+          </div>
+          <a href="{{ route('results.index') }}" class="section-link" style="margin-top:14px;display:inline-flex;">View All Results
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+        @endif
       </aside>
     </div>
   </div>
