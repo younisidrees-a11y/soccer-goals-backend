@@ -9,10 +9,12 @@ class FixtureController extends Controller
 {
     public function index()
     {
-        $leagues = League::published()
-            ->withCount(['teams' => fn ($q) => $q->published()])
-            ->orderBy('name')
-            ->get();
+        $leagues = League::sortForPicker(
+            League::published()
+                ->withCount(['teams' => fn ($q) => $q->published()])
+                ->orderBy('name')
+                ->get()
+        );
 
         return view('fixtures.index', compact('leagues'));
     }
