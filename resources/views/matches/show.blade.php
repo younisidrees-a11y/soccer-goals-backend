@@ -152,6 +152,56 @@
 
       @if($isFinal)
 
+        @php
+          $shownTypes = ['Goal', 'Card', 'subst'];
+          $shownEvents = $match->events ? array_values(array_filter($match->events, fn ($e) => in_array($e['type'], $shownTypes))) : [];
+        @endphp
+        @if(count($shownEvents))
+        @php
+          $runningHome = 0;
+          $runningAway = 0;
+        @endphp
+        <section aria-labelledby="timeline-heading">
+          <div class="section-head"><h2 id="timeline-heading">Match Events</h2></div>
+          <div class="table-scroll">
+            <table class="standings">
+              <thead><tr><th>Min</th><th class="th-team">Team</th><th>Card</th><th class="th-team">Event</th><th>Score</th></tr></thead>
+              <tbody>
+                @foreach($shownEvents as $event)
+                  @php
+                    $isHome = $event['team_id'] === $match->homeTeam->api_football_id;
+                    $team = $isHome ? $match->homeTeam : $match->awayTeam;
+                    $isRed = str_contains($event['detail'], 'Red');
+                    $isGoal = $event['type'] === 'Goal';
+                    $isSub = $event['type'] === 'subst';
+                    $isCard = $event['type'] === 'Card';
+
+                    if ($isGoal) {
+                        $isHome ? $runningHome++ : $runningAway++;
+                    }
+
+                    if ($isSub) {
+                        $description = "Substitution — {$event['player']} on" . ($event['assist'] ? ", {$event['assist']} off" : '');
+                    } elseif ($isCard) {
+                        $description = $event['player'];
+                    } else {
+                        $description = "Goal — {$event['player']}" . ($event['assist'] ? " (assist: {$event['assist']})" : '');
+                    }
+                  @endphp
+                  <tr>
+                    <td>{{ $event['minute'] }}'</td>
+                    <td class="team-td"><span class="crest crest-{{ $team->crest_code }}" role="img" aria-label="{{ $team->full_name }} badge" style="width:18px;height:20px;"></span> {{ $team->name }}</td>
+                    <td>@if($isCard)<span class="card-chip {{ $isRed ? 'card-chip-red' : 'card-chip-yellow' }}" aria-label="{{ $isRed ? 'Red card' : 'Yellow card' }}"></span>@endif</td>
+                    <td style="text-align:left;">{{ $description }}</td>
+                    <td class="pts">{{ $runningHome }}-{{ $runningAway }}</td>
+                  </tr>
+                @endforeach
+              </tbody>
+            </table>
+          </div>
+        </section>
+        @endif
+
         <section aria-label="Match Report">
           <p style="font-size:15px;line-height:1.7;color:var(--ink);">{{ $match->match_report }}</p>
         </section>
@@ -340,7 +390,18 @@
         <div class="section-head"><h2 id="matchup-heading">The Matchup</h2></div>
         <div class="match-grid{{ $isFinal ? ' celebrate-match' : '' }}">
           <div class="match-card" style="grid-column:1/-1;">
-            <div class="match-meta"><span class="match-comp">{{ $match->league->name }}@if($match->venue) &middot; {{ $match->venue }}@endif</span><span class="match-status{{ $isLive ? ' is-live' : '' }}">@if($isFinal)Full-Time@elseif($isLive)LIVE@else<span class="dot-waiting" aria-hidden="true"></span>{{ $match->kickoff_at->format('D j M Y, H:i') }}@endif</span></div>
+            <div class="match-meta">
+              <span class="match-comp">{{ $match->league->name }}@if($match->venue) &middot; {{ $match->venue }}@endif</span>
+              <span class="match-status{{ $isLive ? ' is-live' : '' }}">
+                @if($isFinal)
+                  Full-Time
+                @elseif($isLive)
+                  LIVE
+                @else
+                  <span class="dot-waiting" aria-hidden="true"></span>{{ $match->kickoff_at->format('D j M Y, H:i') }}
+                @endif
+              </span>
+            </div>
             <div class="match-teams">
               @php $showLiveScore = $isLive && $match->home_score !== null; @endphp
               <div class="match-team"><div class="team-id"><span class="crest crest-{{ $match->homeTeam->crest_code }}" role="img" aria-label="{{ $match->homeTeam->full_name }} badge"></span><span class="team-name">{{ $match->homeTeam->name }} <span style="color:var(--ink-faint);font-weight:500;">(Home)</span></span></div>@if($isFinal)<span class="team-score{{ $match->home_score > $match->away_score ? ' winning' : '' }}">{{ $match->home_score }}</span>@elseif($showLiveScore)<span class="team-score">{{ $match->home_score }}</span>@endif</div>
@@ -468,56 +529,6 @@
               <span class="stat-compare-val away" style="color:{{ $statsAwayColor }};">{{ $row['away'] }}{{ $row['suffix'] }}</span>
             </div>
             @endforeach
-          </div>
-        </section>
-        @endif
-
-        @php
-          $shownTypes = ['Goal', 'Card', 'subst'];
-          $shownEvents = $match->events ? array_values(array_filter($match->events, fn ($e) => in_array($e['type'], $shownTypes))) : [];
-        @endphp
-        @if(count($shownEvents))
-        @php
-          $runningHome = 0;
-          $runningAway = 0;
-        @endphp
-        <section aria-labelledby="timeline-heading" style="margin-top:0;">
-          <div class="section-head"><h2 id="timeline-heading">Match Events</h2></div>
-          <div class="table-scroll">
-            <table class="standings">
-              <thead><tr><th>Min</th><th class="th-team">Team</th><th>Card</th><th class="th-team">Event</th><th>Score</th></tr></thead>
-              <tbody>
-                @foreach($shownEvents as $event)
-                  @php
-                    $isHome = $event['team_id'] === $match->homeTeam->api_football_id;
-                    $team = $isHome ? $match->homeTeam : $match->awayTeam;
-                    $isRed = str_contains($event['detail'], 'Red');
-                    $isGoal = $event['type'] === 'Goal';
-                    $isSub = $event['type'] === 'subst';
-                    $isCard = $event['type'] === 'Card';
-
-                    if ($isGoal) {
-                        $isHome ? $runningHome++ : $runningAway++;
-                    }
-
-                    if ($isSub) {
-                        $description = "Substitution — {$event['player']} on" . ($event['assist'] ? ", {$event['assist']} off" : '');
-                    } elseif ($isCard) {
-                        $description = $event['player'];
-                    } else {
-                        $description = "Goal — {$event['player']}" . ($event['assist'] ? " (assist: {$event['assist']})" : '');
-                    }
-                  @endphp
-                  <tr>
-                    <td>{{ $event['minute'] }}'</td>
-                    <td class="team-td"><span class="crest crest-{{ $team->crest_code }}" role="img" aria-label="{{ $team->full_name }} badge" style="width:18px;height:20px;"></span> {{ $team->name }}</td>
-                    <td>@if($isCard)<span class="card-chip {{ $isRed ? 'card-chip-red' : 'card-chip-yellow' }}" aria-label="{{ $isRed ? 'Red card' : 'Yellow card' }}"></span>@endif</td>
-                    <td style="text-align:left;">{{ $description }}</td>
-                    <td class="pts">{{ $runningHome }}-{{ $runningAway }}</td>
-                  </tr>
-                @endforeach
-              </tbody>
-            </table>
           </div>
         </section>
         @endif
