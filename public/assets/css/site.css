@@ -859,6 +859,18 @@
   .fx-time{font-variant-numeric:tabular-nums;color:var(--ink-muted);flex-shrink:0;font-size:12.5px;}
   .rs-score{font-family:var(--font-display);font-weight:600;font-variant-numeric:tabular-nums;flex-shrink:0;background:var(--surface-2);padding:3px 9px;border-radius:var(--radius-sm);font-size:13px;}
 
+  /* Sidebar recent-results: ~7 rows visible, the rest of the real list
+     (up to 20) reachable by scrolling within the widget rather than
+     growing the sidebar indefinitely. Scrollbar stays visible (unlike
+     the horizontal drag-strips elsewhere on the site) so scrolling here
+     is actually discoverable, just styled thin rather than left at the
+     browser default. */
+  .sidebar-scroll-list{max-height:421px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent;}
+  .sidebar-scroll-list::-webkit-scrollbar{width:6px;}
+  .sidebar-scroll-list::-webkit-scrollbar-track{background:transparent;}
+  .sidebar-scroll-list::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:var(--radius-pill);}
+  .sidebar-scroll-list .result-row:last-child{border-bottom:0;}
+
   /* Performance strip */
   .perf-grid{display:grid;gap:24px;grid-template-columns:1fr;}
   @media (min-width:768px){.perf-grid{grid-template-columns:1.1fr 1fr;}}

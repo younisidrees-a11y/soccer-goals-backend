@@ -85,11 +85,23 @@ class MatchController extends Controller
             ->take(5)
             ->get();
 
+        // Sidebar recent-results list for this match's own league - up to
+        // 20 real completed matches, most recent first. The widget itself
+        // only shows ~7 rows before scrolling, so this is real headroom
+        // for that scroll rather than a list that runs out after 7.
+        $sidebarRecentResults = MatchFixture::with(['homeTeam', 'awayTeam'])
+            ->published()
+            ->where('league_id', $match->league_id)
+            ->where('status', 'final')
+            ->orderByDesc('kickoff_at')
+            ->take(20)
+            ->get();
+
         return view('matches.show', compact(
             'match', 'homeStanding', 'awayStanding', 'homeNext', 'awayNext',
             'homeLastMatch', 'awayLastMatch', 'homeNextTwo', 'awayNextTwo',
             'homeSquadByPosition', 'awaySquadByPosition',
-            'sidebarTable'
+            'sidebarTable', 'sidebarRecentResults'
         ));
     }
 }

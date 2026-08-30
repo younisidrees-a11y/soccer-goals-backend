@@ -646,6 +646,32 @@
       </div>
       @endif
 
+      @if($sidebarRecentResults->isNotEmpty())
+      <div class="widget">
+        <div class="widget-head">
+          <h2>{{ $match->league->name }} Recent Results</h2>
+        </div>
+        {{-- Up to 20 real results, but only ~7 rows tall before scrolling
+             - real headroom for the scroll, not a list that runs dry
+             after the visible rows. --}}
+        <div class="sidebar-scroll-list">
+          @foreach ($sidebarRecentResults as $r)
+          <a href="{{ $r->prettyUrl() }}" class="result-row"@if($sidebarRowColor($r->homeTeam->color_hex)) style="--team:{{ $sidebarRowColor($r->homeTeam->color_hex) }};"@endif>
+            <span class="fx-teams">
+              <span class="fx-team"><span class="crest crest-{{ $r->homeTeam->crest_code }}" role="img" aria-label="{{ $r->homeTeam->full_name }} badge"></span>{{ $r->homeTeam->name }}</span>
+              <span class="vs">vs</span>
+              <span class="fx-team"><span class="crest crest-{{ $r->awayTeam->crest_code }}" role="img" aria-label="{{ $r->awayTeam->full_name }} badge"></span>{{ $r->awayTeam->name }}</span>
+            </span>
+            <span class="rs-score">{{ $r->home_score }}&ndash;{{ $r->away_score }}</span>
+          </a>
+          @endforeach
+        </div>
+        <a href="{{ route('results.show', $match->league->slug) }}" class="section-link" style="margin-top:14px;display:inline-flex;">View All {{ $match->league->name }} Results
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+      @endif
+
       <div class="ad-slot ad-mpu">
         <span class="ad-eyebrow">Advertisement</span>
         <span class="ad-size">300 &times; 250 &middot; AdSense unit</span>
