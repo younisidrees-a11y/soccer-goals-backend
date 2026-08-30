@@ -18,7 +18,7 @@
           ? 'Match Ends in a Draw'
           : "{$winner} Win by {$goalDiff} " . Str::plural('Goal', $goalDiff);
 
-      $defaultTitle = "{$match->league->name} {$title} Match {$year} Result Score ({$score}) | The Soccer Goals";
+      $defaultTitle = "{$match->league->name} {$title} Match {$year} Result Score ({$score})";
 
       $defaultDescription = $isDraw
           ? "{$title} ended {$score} at {$match->venue} on {$dateLong}. Full-time result, match report and stats from this {$match->league->name} {$match->league->season} clash."
