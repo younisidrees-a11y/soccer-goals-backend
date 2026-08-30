@@ -1,6 +1,6 @@
 @extends('layouts.site')
 
-@section('title', 'The Soccer Goals — Soccer, Covered.')
+@section('title', 'The Soccer Goals - Football, Fixtures, Live Score, Results, Team Lineups 2026-27')
 @section('meta_description', 'The Soccer Goals brings you live scores, fixtures, results and points tables for the English Premier League, Spanish La Liga, Serie A, Bundesliga and Ligue 1, plus in-depth team news and analysis for every major European club.')
 @section('meta_keywords', 'soccer news, football news, English Premier League, Spanish La Liga, Serie A, Bundesliga, Ligue 1, fixtures, results, points table, football scores')
 @section('canonical', route('home'))
