@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\League;
+use App\Models\MatchFixture;
 use App\Models\NewsArticle;
+use App\Models\Player;
 use App\Models\Team;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\URL;
@@ -76,6 +78,43 @@ class SitemapController extends Controller
         });
 
         return $this->xmlResponse($this->buildNewsUrlset($items));
+    }
+
+    /**
+     * Every published match had no sitemap presence at all before this -
+     * thousands of real result/fixture pages discoverable only by
+     * internal-link crawling rather than being told about directly. Kept
+     * as its own sitemap file (like the news one) rather than folded into
+     * the general sitemap, since it's the single largest URL set on the
+     * site.
+     */
+    public function matches(): Response
+    {
+        $urls = MatchFixture::published()
+            ->orderByDesc('kickoff_at')
+            ->get()
+            ->map(fn (MatchFixture $match) => [
+                'loc' => $match->prettyUrl(),
+                'lastmod' => ($match->updated_at ?? $match->kickoff_at)->toAtomString(),
+                'changefreq' => $match->status === 'final' ? 'monthly' : 'hourly',
+                'priority' => $match->status === 'final' ? '0.5' : '0.7',
+            ]);
+
+        return $this->xmlResponse($this->buildUrlset($urls->all()));
+    }
+
+    /** Same gap as matches() - every real player profile, previously absent from any sitemap. */
+    public function players(): Response
+    {
+        $urls = Player::whereHas('team', fn ($q) => $q->published())
+            ->get()
+            ->map(fn (Player $player) => [
+                'loc' => $player->prettyUrl(),
+                'changefreq' => 'weekly',
+                'priority' => '0.4',
+            ]);
+
+        return $this->xmlResponse($this->buildUrlset($urls->all()));
     }
 
     private function buildUrlset(array $urls): string

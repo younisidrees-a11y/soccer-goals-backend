@@ -1,5 +1,92 @@
+# Default: everything allowed, every crawler not named below.
 User-agent: *
 Disallow:
 
+# --- Major search engines ---
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Googlebot-News
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+# --- AI crawlers / AI search engines ---
+# OpenAI
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+# Anthropic
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# Google AI (training/Gemini use, separate from Googlebot search above)
+User-agent: Google-Extended
+Allow: /
+
+# Apple AI training (separate from Applebot search above)
+User-agent: Applebot-Extended
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# Meta AI
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+# Amazon (Alexa/AI)
+User-agent: Amazonbot
+Allow: /
+
+# Common Crawl - dataset used to train many AI models
+User-agent: CCBot
+Allow: /
+
+# ByteDance
+User-agent: Bytespider
+Allow: /
+
+# You.com
+User-agent: YouBot
+Allow: /
+
 Sitemap: https://thesoccergoals.com/sitemap.xml
 Sitemap: https://thesoccergoals.com/sitemap-news.xml
+Sitemap: https://thesoccergoals.com/sitemap-matches.xml
+Sitemap: https://thesoccergoals.com/sitemap-players.xml
