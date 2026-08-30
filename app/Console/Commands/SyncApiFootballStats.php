@@ -250,7 +250,15 @@ class SyncApiFootballStats extends Command
             'team_id' => $t['team']['id'],
             'formation' => $t['formation'],
             'coach' => $t['coach']['name'] ?? null,
-            'start_xi' => collect($t['startXI'])->map(fn ($p) => [
+            // Real API-Football data doesn't guarantee this key is
+            // present for every team block - confirmed live: a
+            // Championship fixture came back with lineups data missing
+            // startXI entirely, crashing every scheduled sync-stats run
+            // for the whole league from that point on (whereNull('motm')
+            // would keep re-selecting the same broken match forever).
+            // An empty lineup here is the honest state when the real
+            // data doesn't have one, not a guess.
+            'start_xi' => collect($t['startXI'] ?? [])->map(fn ($p) => [
                 'name' => $p['player']['name'],
                 'number' => $p['player']['number'],
                 'position' => $p['player']['pos'],

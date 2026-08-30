@@ -220,7 +220,9 @@ class SyncApiFootballPreviews extends Command
             'team_id' => $t['team']['id'],
             'formation' => $t['formation'],
             'coach' => $t['coach']['name'] ?? null,
-            'start_xi' => collect($t['startXI'])->map(fn ($p) => [
+            // Same real gap found in SyncApiFootballStats: API-Football
+            // doesn't guarantee startXI is present for every team block.
+            'start_xi' => collect($t['startXI'] ?? [])->map(fn ($p) => [
                 'name' => $p['player']['name'],
                 'number' => $p['player']['number'],
                 'position' => $p['player']['pos'],
