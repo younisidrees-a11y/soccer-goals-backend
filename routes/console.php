@@ -132,6 +132,13 @@ Schedule::command('matches:check-stale')->hourly()->withoutOverlapping()->append
 // diagnosing why a match ended up with no commentary after the fact.
 Schedule::command('api-football:sync-commentary la-liga')->everyMinute()->withoutOverlapping()->appendOutputTo(storage_path('logs/commentary.log'));
 Schedule::command('api-football:sync-commentary saudi-pro-league')->everyMinute()->withoutOverlapping()->appendOutputTo(storage_path('logs/commentary.log'));
+// Added MLS to the pilot - the 2-league limit was originally chosen to
+// conserve API quota under the wrong 100/day assumption (confirmed:
+// this account is on 7,500/day). MLS can have several matches live at
+// once (a bigger league than La Liga/Saudi Pro League), so real usage
+// here is worth watching via api-football:status-check, but there's
+// genuine headroom for it.
+Schedule::command('api-football:sync-commentary mls')->everyMinute()->withoutOverlapping()->appendOutputTo(storage_path('logs/commentary.log'));
 
 // Each of these already skips itself when there's nothing new to cover
 // (same match/team not re-covered), so running on a schedule never spams
