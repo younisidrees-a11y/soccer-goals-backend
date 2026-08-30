@@ -1,6 +1,6 @@
 @extends('layouts.site')
 
-@section('title', $league->name . ' Results ' . $league->season)
+@section('title', $league->name . ' Match Results ' . now()->year . ' Today')
 @section('meta_description', 'Every ' . $league->name . ' result so far this season, with full match reports and stats for each game.')
 @section('meta_keywords', $league->name . ' results, ' . $league->name . ' scores, final scores, ' . $league->country . ' football results')
 @section('canonical', route('results.show', $league->slug))
