@@ -58,50 +58,53 @@ Schedule::command('api-football:sync-fixtures scottish-premiership')->everyFiveM
 // it; only touches matches that don't have real stats yet, so most runs
 // make zero real API calls once a league is caught up.
 //
-// Sped back up from every 30 minutes to every 10, for the same reason
-// as the fixtures block above - the account is genuinely on 7,500/day,
-// not the 100/day this was throttled for. Kept at 10 rather than
-// matching fixtures' 5-minute cadence since this runs across all 13
-// leagues x 2 commands (stats + previews below) - a real, if unlikely,
-// worst case of 144 runs/day x 13 leagues = ~1,872/day per command
-// stacks with everything else below it, so this stays a notch more
-// conservative until real usage is confirmed.
-Schedule::command('api-football:sync-stats premier-league')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats la-liga')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats serie-a')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats ligue-1')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats bundesliga')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats saudi-pro-league')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats liga-mx')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats super-lig')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats mls')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats championship')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats scottish-premiership')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats eredivisie')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-stats primeira-liga')->everyTenMinutes()->withoutOverlapping();
+// UPDATE 31 Aug 2026: every-10-minutes here (plus previews below at the
+// same cadence, plus 3-league live commentary) turned out to genuinely
+// exhaust the real 7,500/day quota by 23:14 UTC that day (confirmed
+// live: 7,470/7,500 used) - the earlier "~1,872/day worst case per
+// command" estimate this comment used to cite was wrong in practice,
+// not just theory. That's what left Barcelona vs Rayo Vallecano (and
+// Celta Vigo, Famalicão, two Süper Lig matches) enrichment-less for
+// real - api-football:status-check and matches:check-stale both
+// correctly caught and logged it before anyone noticed on the live
+// site, which is exactly what they're for. Dialed back to every 20
+// minutes (still 33% faster than the original every-30) to leave real
+// daily headroom instead of running the quota to the edge every day.
+Schedule::command('api-football:sync-stats premier-league')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-stats la-liga')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-stats serie-a')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-stats ligue-1')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-stats bundesliga')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-stats saudi-pro-league')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-stats liga-mx')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-stats super-lig')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-stats mls')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-stats championship')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-stats scottish-premiership')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-stats eredivisie')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-stats primeira-liga')->cron('*/20 * * * *')->withoutOverlapping();
 
 // Referee, prediction, coach and (once confirmed, usually ~1h before
 // kick-off) lineups for fixtures in the next 7 days - powers the match
 // preview page. Only fetches lineups/predictions once per match (checks
 // the column is still null first), so most runs are free once a league
-// is caught up. Same 7,500/day headroom and same conservative-for-now
-// 10-minute cadence as sync-stats above - a lineup confirmed a few
-// minutes late is a non-issue for a preview page read hours ahead of
-// kick-off, so there's no real upside to matching fixtures' 5-minute
-// pace here specifically.
-Schedule::command('api-football:sync-previews premier-league')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews la-liga')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews serie-a')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews ligue-1')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews bundesliga')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews saudi-pro-league')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews liga-mx')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews super-lig')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews mls')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews championship')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews scottish-premiership')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews eredivisie')->everyTenMinutes()->withoutOverlapping();
-Schedule::command('api-football:sync-previews primeira-liga')->everyTenMinutes()->withoutOverlapping();
+// is caught up. Dialed back to every 20 minutes alongside sync-stats
+// above for the same real reason (see that comment) - a lineup
+// confirmed a few minutes later is a non-issue for a preview page read
+// hours ahead of kick-off anyway.
+Schedule::command('api-football:sync-previews premier-league')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-previews la-liga')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-previews serie-a')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-previews ligue-1')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-previews bundesliga')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-previews saudi-pro-league')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-previews liga-mx')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-previews super-lig')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-previews mls')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-previews championship')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-previews scottish-premiership')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-previews eredivisie')->cron('*/20 * * * *')->withoutOverlapping();
+Schedule::command('api-football:sync-previews primeira-liga')->cron('*/20 * * * *')->withoutOverlapping();
 
 // Real early warning against a repeat of the incident documented above
 // (four MLS matches stuck on "scheduled" for 13+ hours because the
