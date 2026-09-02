@@ -94,7 +94,14 @@ class SitemapController extends Controller
      */
     public function fixtures(): Response
     {
+        // homeTeam/awayTeam eager-loaded because prettyUrl() -> seoSlug()
+        // reads both team names to build the URL - without this, every
+        // single row lazy-loads two extra queries each (confirmed live:
+        // this is what made the endpoint take over two minutes to
+        // respond at production scale, which is exactly why Google
+        // Search Console reported "Couldn't fetch" on it).
         $urls = MatchFixture::published()
+            ->with(['homeTeam', 'awayTeam'])
             ->where('status', '!=', 'final')
             ->orderBy('kickoff_at')
             ->get()
@@ -110,7 +117,9 @@ class SitemapController extends Controller
 
     public function results(): Response
     {
+        // Same N+1 fix as fixtures() above - same prettyUrl() cause.
         $urls = MatchFixture::published()
+            ->with(['homeTeam', 'awayTeam'])
             ->where('status', 'final')
             ->orderByDesc('kickoff_at')
             ->get()
